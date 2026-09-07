@@ -1,0 +1,4 @@
+[23-Dec-2025 12:22:50 UTC] PHP Fatal error:  Uncaught Error: Class "WpOrg\Requests\Utility\CaseInsensitiveDictionary" not found in /home/compcfgz/alamstores.ma/wp-includes/Requests/src/Response/Headers.php:20
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/Requests/src/Response/Headers.php on line 20

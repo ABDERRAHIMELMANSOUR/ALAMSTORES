@@ -1,0 +1,643 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: OvaTheme Project\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-01-19 04:38+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: \n"
+"Language: \n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.3.2; wp-5.4.2"
+
+#: admin/ovapo-admin-settings.php:219
+msgid ""
+" Name should only contain lowercase letters and the underscore character, "
+"and not be more than 32 characters long and  without any spaces"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_grid.php:74
+msgid "3 Columns"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_grid.php:75
+msgid "4 Columns"
+msgstr ""
+
+#: inc/ovapo-core-functions.php:127
+msgid "</ul></div>"
+msgstr ""
+
+#: inc/ovapo-core-functions.php:91
+msgid "<div class=\"project_pagination\"><ul class=\"pagination\">"
+msgstr ""
+
+#: inc/ovapo-core-functions.php:104 inc/ovapo-core-functions.php:117
+msgid "<li><span class=\"pagi_dots\">...</span></li>"
+msgstr ""
+
+#: admin/views/ovapo-metabox-project-gallery.php:12
+msgid "Add image(s)"
+msgstr ""
+
+#: admin/views/ovapo-metabox-project-gallery.php:12
+msgid "Add image(s) to gallery"
+msgstr ""
+
+#: admin/ovapo-admin-menu.php:32 admin/ovapo-admin-menu.php:33
+msgid "Add New"
+msgstr ""
+
+#: inc/ovapo-custom-post-type.php:68 inc/ovapo-custom-post-type.php:69
+msgid "Add New Categories"
+msgstr ""
+
+#: inc/ovapo-custom-post-type.php:27 inc/ovapo-custom-post-type.php:28
+msgid "Add New Project"
+msgstr ""
+
+#: inc/ovapo-custom-post-type.php:73
+msgid "Add or remove items"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_grid.php:83
+msgid "Alignment"
+msgstr ""
+
+#: templates/archive-project-default.php:12
+#: templates/archive-project-compact.php:13
+#: templates/archive-project-full.php:13
+#: elementor/widgets/ovapo_project_grid.php:460
+msgid "All"
+msgstr ""
+
+#: inc/ovapo-custom-post-type.php:64
+msgid "All Categories"
+msgstr ""
+
+#: inc/ovapo-custom-post-type.php:26
+msgid "All Project"
+msgstr ""
+
+#. ID
+#: admin/ovapo-admin-settings.php:108
+msgid "Archive footer"
+msgstr ""
+
+#. ID
+#: admin/ovapo-admin-settings.php:100
+msgid "Archive header"
+msgstr ""
+
+#. ID
+#: admin/ovapo-admin-settings.php:92
+msgid "Archive Type"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_grid.php:148
+#: elementor/widgets/ovapo_project_slide.php:85
+msgid "Ascending"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_slide.php:140
+msgid "Autoplay"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_slide.php:150
+msgid "Autoplay Speed (ms)"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_grid.php:278
+#: elementor/widgets/ovapo_project_grid.php:288
+msgid "Background"
+msgstr ""
+
+#: admin/views/ovapo-metabox-project.php:14
+msgid "Basic"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_grid.php:206
+msgid "Button Fillter"
+msgstr ""
+
+#: inc/ovapo-custom-post-type.php:63 admin/ovapo-admin-menu.php:40
+#: admin/ovapo-admin-menu.php:41
+msgid "Categories"
+msgstr ""
+
+#: templates/single-project-v3.php:63 templates/single-project-v2.php:116
+#: templates/single-project.php:93
+msgid "Categories:"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_grid.php:337
+#: elementor/widgets/ovapo_project_slide.php:280
+msgid "Category"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_grid.php:92
+msgid "Center"
+msgstr ""
+
+#: admin/views/ovapo-metabox-project-gallery.php:19
+msgid "Change image"
+msgstr ""
+
+#: inc/ovapo-custom-post-type.php:74
+msgid "Choose from the most used"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_slide.php:191
+msgid "Class Nav Next"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_slide.php:181
+msgid "Class Nav Prev"
+msgstr ""
+
+#: admin/views/ovapo-metabox-project-basic.php:20
+msgid "Client:"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_grid.php:223
+#: elementor/widgets/ovapo_project_grid.php:306
+#: elementor/widgets/ovapo_project_grid.php:346
+#: elementor/widgets/ovapo_project_slide.php:232
+msgid "Color"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_grid.php:245
+msgid "Color Active"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_grid.php:234
+msgid "Color Hover"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_grid.php:70
+msgid "Column"
+msgstr ""
+
+#: admin/ovapo-admin-settings.php:281
+msgid "Compact"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_grid.php:270
+msgid "Content"
+msgstr ""
+
+#: admin/ovapo-admin-settings.php:233
+#: elementor/widgets/ovapo_project_grid.php:134
+#: elementor/widgets/ovapo_project_slide.php:71
+msgid "Date"
+msgstr ""
+
+#: admin/ovapo-admin-settings.php:249
+msgid "Decrease"
+msgstr ""
+
+#: admin/ovapo-admin-settings.php:280
+msgid "Default"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_grid.php:149
+#: elementor/widgets/ovapo_project_slide.php:86
+msgid "Descending"
+msgstr ""
+
+#: templates/single-project-v2.php:60 templates/single-project.php:37
+msgid "Description"
+msgstr ""
+
+#: templates/single-project-v2.php:68 templates/single-project.php:45
+msgid "Details"
+msgstr ""
+
+#: inc/ovapo-custom-post-type.php:70
+msgid "Edit Categories"
+msgstr ""
+
+#: inc/ovapo-custom-post-type.php:30
+msgid "Edit Project"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_grid.php:157
+msgid "Excluded Categories"
+msgstr ""
+
+#: admin/views/ovapo-metabox-project-basic.php:50
+msgid "Featured:"
+msgstr ""
+
+#: admin/ovapo-admin-settings.php:282
+msgid "Full"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_grid.php:62
+msgid "Full Width"
+msgstr ""
+
+#: admin/views/ovapo-metabox-project.php:15
+msgid "Gallery"
+msgstr ""
+
+#. ID
+#: admin/ovapo-admin-settings.php:45
+msgid "General Setting"
+msgstr ""
+
+#: admin/ovapo-admin-settings.php:198
+msgid "General Settings"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_grid.php:61
+msgid "Grid"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_grid.php:170
+#: elementor/widgets/ovapo_project_grid.php:182
+#: elementor/widgets/ovapo_project_grid.php:194
+msgid "Hide"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_grid.php:317
+#: elementor/widgets/ovapo_project_slide.php:243
+#: elementor/widgets/ovapo_project_slide.php:322
+msgid "Hover"
+msgstr ""
+
+#. URI of the plugin
+msgid "https://themeforest.net/user/ovatheme"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://themeforest.net/user/ovatheme/portfolio"
+msgstr ""
+
+#: admin/ovapo-admin-settings.php:234
+#: elementor/widgets/ovapo_project_grid.php:135
+#: elementor/widgets/ovapo_project_slide.php:72
+msgid "ID"
+msgstr ""
+
+#: admin/ovapo-admin-settings.php:248
+msgid "Increase"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_slide.php:163
+msgid "Infinite Loop"
+msgstr ""
+
+#: inc/ovapo-custom-post-type.php:23
+msgid "Item Archives"
+msgstr ""
+
+#: inc/ovapo-custom-post-type.php:24
+msgid "Item Attributes"
+msgstr ""
+
+#: inc/ovapo-custom-post-type.php:79
+msgid "Items list"
+msgstr ""
+
+#: inc/ovapo-custom-post-type.php:80
+msgid "Items list navigation"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_grid.php:49
+msgid "Layout"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_slide.php:172
+msgid "Lazy Load"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_grid.php:88
+msgid "Left"
+msgstr ""
+
+#: templates/archive-project-full.php:64
+msgid "Load More"
+msgstr ""
+
+#: templates/archive-project-default.php:72
+#: templates/archive-project-compact.php:74
+#: templates/archive-project-cat.php:70
+msgid "Load More Project"
+msgstr ""
+
+#: templates/single-project-v3.php:47 templates/single-project-v2.php:76
+#: templates/single-project.php:53
+#: admin/views/ovapo-metabox-project-basic.php:26
+msgid "Location:"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_slide.php:112
+#: elementor/widgets/ovapo_project_slide.php:254
+#: elementor/widgets/ovapo_project_slide.php:298
+msgid "Margin"
+msgstr ""
+
+#: inc/ovapo-custom-post-type.php:29
+msgid "New Item"
+msgstr ""
+
+#: inc/ovapo-custom-post-type.php:67
+msgid "New Item Name"
+msgstr ""
+
+#: templates/archive-project-default.php:73
+#: templates/archive-project-compact.php:75
+#: templates/archive-project-full.php:65 templates/archive-project-cat.php:71
+msgid "No Data"
+msgstr ""
+
+#: inc/ovapo-custom-post-type.php:78
+msgid "No items"
+msgstr ""
+
+#: inc/ovapo-custom-post-type.php:77
+msgid "Not Found"
+msgstr ""
+
+#: inc/ovapo-custom-post-type.php:34
+msgid "Not found"
+msgstr ""
+
+#: inc/ovapo-custom-post-type.php:35
+msgid "Not found in Trash"
+msgstr ""
+
+#: templates/archive-project-default.php:88
+#: templates/archive-project-compact.php:90
+#: templates/archive-project-full.php:80 templates/archive-project-cat.php:80
+#: elementor/widgets/ovapo_project_grid.php:518
+#: elementor/widgets/ovapo_project_slide.php:425
+msgid "Not Found Project"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_grid.php:121
+#: elementor/widgets/ovapo_project_slide.php:58
+msgid "Number Post"
+msgstr ""
+
+#. ID
+#: admin/ovapo-admin-settings.php:68
+msgid "Order"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_grid.php:144
+#: elementor/widgets/ovapo_project_slide.php:81
+msgid "Order Post"
+msgstr ""
+
+#. ID
+#: admin/ovapo-admin-settings.php:60
+msgid "Orderby"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_grid.php:130
+#: elementor/widgets/ovapo_project_slide.php:67
+msgid "OrderBy Post"
+msgstr ""
+
+#. Author of the plugin
+#: elementor/ovapo-register-elementor.php:30
+msgid "Ovatheme"
+msgstr ""
+
+#. Name of the plugin
+#. Description of the plugin
+msgid "OvaTheme Project"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_grid.php:256
+#: elementor/widgets/ovapo_project_slide.php:266
+#: elementor/widgets/ovapo_project_slide.php:310
+msgid "Padding"
+msgstr ""
+
+#: inc/ovapo-custom-post-type.php:65
+msgid "Parent Item"
+msgstr ""
+
+#: inc/ovapo-custom-post-type.php:25 inc/ovapo-custom-post-type.php:66
+msgid "Parent Item:"
+msgstr ""
+
+#: inc/ovapo-custom-post-type.php:75
+msgid "Popular Items"
+msgstr ""
+
+#: inc/ovapo-custom-post-type.php:22
+msgid "Post Type"
+msgstr ""
+
+#: inc/ovapo-custom-post-type.php:38
+msgid "Post Type Description"
+msgstr ""
+
+#: inc/ovapo-custom-post-type.php:61
+msgctxt "Post Type General Name"
+msgid "Categories"
+msgstr ""
+
+#: inc/ovapo-custom-post-type.php:19
+msgctxt "Post Type General Name"
+msgid "Project"
+msgstr ""
+
+#: inc/ovapo-custom-post-type.php:62
+msgctxt "Post Type Singular Name"
+msgid "Categories"
+msgstr ""
+
+#: inc/ovapo-custom-post-type.php:20
+msgctxt "Post Type Singular Name"
+msgid "Project"
+msgstr ""
+
+#. ID
+#: admin/ovapo-admin-settings.php:76
+msgid "Posts Per Page Archive"
+msgstr ""
+
+#. ID
+#: admin/ovapo-admin-settings.php:84
+msgid "Posts Per Page Archive Full"
+msgstr ""
+
+#: inc/ovapo-custom-post-type.php:21 admin/ovapo-admin-menu.php:21
+#: admin/ovapo-admin-menu.php:22
+msgid "Project"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_grid.php:20
+msgid "Project Grid"
+msgstr ""
+
+#: admin/ovapo-admin-settings.php:190
+msgid "Project Settings"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_slide.php:18
+msgid "Project Slide"
+msgstr ""
+
+#: admin/views/ovapo-metabox-project-gallery.php:20
+msgid "Remove image"
+msgstr ""
+
+#. ID
+#: admin/ovapo-admin-settings.php:52
+msgid "Rewrite Slug"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_grid.php:96
+msgid "Right"
+msgstr ""
+
+#: inc/ovapo-custom-post-type.php:33
+msgid "Search Item"
+msgstr ""
+
+#: inc/ovapo-custom-post-type.php:76
+msgid "Search Items"
+msgstr ""
+
+#: inc/ovapo-custom-post-type.php:72
+msgid "Separate items with commas"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_grid.php:112
+#: elementor/widgets/ovapo_project_slide.php:49
+msgid "Setting Post"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_slide.php:103
+msgid "Setting Slide"
+msgstr ""
+
+#: admin/ovapo-admin-menu.php:48 admin/ovapo-admin-menu.php:49
+#: elementor/widgets/ovapo_project_grid.php:42
+#: elementor/widgets/ovapo_project_slide.php:42
+msgid "Settings"
+msgstr ""
+
+#: templates/single-project-v3.php:79 templates/single-project-v2.php:49
+#: templates/single-project.php:26
+msgid "SHARE:"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_grid.php:169
+#: elementor/widgets/ovapo_project_grid.php:181
+#: elementor/widgets/ovapo_project_grid.php:193
+msgid "Show"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_grid.php:179
+msgid "Show All"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_grid.php:167
+msgid "Show Filter"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_slide.php:121
+msgid "Show Nav"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_grid.php:191
+msgid "Show Only Featured"
+msgstr ""
+
+#. ID
+#: admin/ovapo-admin-settings.php:132
+msgid "Single footer"
+msgstr ""
+
+#. ID
+#: admin/ovapo-admin-settings.php:124
+msgid "Single header"
+msgstr ""
+
+#. ID
+#: admin/ovapo-admin-settings.php:116
+msgid "Single Type"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_slide.php:205
+msgid "Style"
+msgstr ""
+
+#: templates/single-project-v3.php:51 templates/single-project-v2.php:86
+#: templates/single-project.php:63
+#: admin/views/ovapo-metabox-project-basic.php:32
+msgid "Surface Area:"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_slide.php:94
+msgid "Text Read More"
+msgstr ""
+
+#: admin/ovapo-admin-settings.php:232
+#: elementor/widgets/ovapo_project_grid.php:136
+#: elementor/widgets/ovapo_project_grid.php:297
+#: elementor/widgets/ovapo_project_slide.php:73
+#: elementor/widgets/ovapo_project_slide.php:214
+msgid "Title"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_grid.php:57
+msgid "Type"
+msgstr ""
+
+#: admin/ovapo-admin-settings.php:348
+msgid "Type 1"
+msgstr ""
+
+#: admin/ovapo-admin-settings.php:349
+msgid "Type 2"
+msgstr ""
+
+#: admin/ovapo-admin-settings.php:350
+msgid "Type 3"
+msgstr ""
+
+#: elementor/widgets/ovapo_project_grid.php:215
+#: elementor/widgets/ovapo_project_grid.php:329
+#: elementor/widgets/ovapo_project_grid.php:358
+#: elementor/widgets/ovapo_project_slide.php:224
+#: elementor/widgets/ovapo_project_slide.php:290
+msgid "Typography"
+msgstr ""
+
+#: inc/ovapo-custom-post-type.php:50
+msgctxt "URL slug"
+msgid "project"
+msgstr ""
+
+#: templates/single-project-v3.php:59 templates/single-project-v2.php:106
+#: templates/single-project.php:83
+#: admin/views/ovapo-metabox-project-basic.php:44
+msgid "Value:"
+msgstr ""
+
+#: inc/ovapo-custom-post-type.php:31 inc/ovapo-custom-post-type.php:71
+msgid "View Item"
+msgstr ""
+
+#: inc/ovapo-custom-post-type.php:32
+msgid "View Items"
+msgstr ""
+
+#: templates/single-project-v3.php:55 templates/single-project-v2.php:96
+#: templates/single-project.php:73
+#: admin/views/ovapo-metabox-project-basic.php:38
+msgid "Year:"
+msgstr ""

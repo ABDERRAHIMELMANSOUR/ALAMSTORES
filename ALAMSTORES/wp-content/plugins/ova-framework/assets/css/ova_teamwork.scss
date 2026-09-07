@@ -1,0 +1,100 @@
+.ova-teamwork {
+	h3, p {
+		margin: 0px;
+	}
+	&:hover {
+		.ova-media {
+			img {
+				transform: scale(1.1,1.1);
+			}
+		}
+	}
+	.ova-media {
+		position: relative;
+		overflow: hidden;
+		img {
+			transition: 0.8s;
+		}
+		.button-video {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%,-50%);
+			.image-team {
+				position: relative;
+				display: inline-block;
+				animation: pulse 2s infinite;
+				&:before {
+					position: absolute;
+					top: 50%;
+					left: 50%;
+					transform: translate(-50%,-50%);
+					content: "";
+					width: 50px;
+					height: 50px;
+					background: rgba(255,255,255,0.7);
+					border-radius: 50%;
+					z-index: -1;
+					transition: all .3s;
+				}
+				i{
+					width: 35px;
+					height: 35px;
+					font-size: 20px;
+					border-radius: 50%;
+					-webkit-display: flex; 
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					transition: all .3s;
+					box-shadow: 0 0 10px rgba(0,0,0,0.1);
+					background: #fff;
+					position: relative;
+					&:before {
+						margin-left: 4px;
+					}
+				} 
+				&:hover {
+					i {
+						color: #fff;
+					}
+					&:before {
+						opacity: 0.7;
+					}
+				}
+			}
+		}
+	}
+	.content {
+		.title {
+			margin-top: 35px;
+			a {
+				font-size: 22px;
+				line-height: 26px;
+				color: #333333;
+				font-weight: 600;
+				text-transform: uppercase;
+				transition: 0.4s;
+				// &:hover {
+				// 	color: #fed501;
+				// }
+			}
+		}
+		.desc {
+			margin-top: 13px;
+		}
+		.text_button {
+			font-size: 13px;
+			line-height: 24px;
+			color: #808080;
+			font-weight: 700;
+			text-transform: uppercase;
+			margin-top: 14px;
+			display: inline-block;
+			transition: 0.4s;
+			// &:hover {
+			// 	color: #fed501;
+			// }
+		}
+	}
+}

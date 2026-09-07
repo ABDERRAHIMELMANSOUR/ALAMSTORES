@@ -1,0 +1,47 @@
+
+---Downloaded files---
+The import files for: Demo Import were successfully downloaded!
+Initial max execution time = 1500
+Files info:
+Site URL = https://alamstores.ma
+Data file = /home/compcfgz/alamstores.ma/wp-content/themes/constrau/install_resource/demo_import/demo-content.xml
+Widget file = /home/compcfgz/alamstores.ma/wp-content/themes/constrau/install_resource/demo_import/widgets.wie
+Customizer file = /home/compcfgz/alamstores.ma/wp-content/themes/constrau/install_resource/demo_import/customize.dat
+Redux files:
+not defined!
+
+------
+New AJAX call!
+
+
+------
+New AJAX call!
+
+
+------
+New AJAX call!
+
+
+---Importing widgets---
+Services Sidebar : 
+
+Menu de navigation - Services Menu - Imported
+HTML personnalisé - Featured Work - Imported
+HTML personnalisé - No Title - Imported
+HTML personnalisé - No Title - Imported
+
+Main Sidebar : 
+
+HTML personnalisé - No Title - Imported
+Catégories - Categories - Imported
+Recent Posts With Thumbnails - Latest Posts - Imported
+Archives - Archives - Imported
+Nuage d’étiquettes - Tags - Imported
+
+
+
+---Importing customizer settings---
+Customizer settings import finished!
+
+---ocdi/after_import---
+

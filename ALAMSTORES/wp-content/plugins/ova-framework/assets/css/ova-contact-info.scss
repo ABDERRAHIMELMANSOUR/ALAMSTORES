@@ -1,0 +1,107 @@
+.ova_contact_us {
+	display: flex;
+	align-items: center;
+	position: relative;
+	color: #666666;
+	-webkit-transition: all .3s;
+	transition: all .3s;
+	i {
+		font-size: 18px;
+		padding-right: 15px;
+	}
+	div {
+		font-size: 15px;
+	}
+	.text {
+		//padding-left: 15px;
+		a{
+			color: #666666;
+			-webkit-transition: all .3s;
+			transition: all .3s;
+		}
+	}
+	&:hover{
+		color: #333333;
+		i{
+			color: #333333;
+		}
+		.text{
+			a{
+				color: #333333;
+			}
+		}
+	}
+	&.style2{
+		i{
+			font-size: 42px;
+			padding-right: 20px;
+		}
+		.text-line{
+			//padding-left: 20px;
+			span{
+
+				display: block;
+				color: #e5e5e5;
+				line-height: 25px;
+				font-size: 15px;
+				-webkit-transition: all .3s;
+				transition: all .3s;
+				&.line-info-1{
+					font-weight: bold;
+					text-transform: uppercase;
+				}
+				&.line-info-2{
+					font-weight: 400;
+				}
+				a {
+					color: #e5e5e5;
+					line-height: 25px;
+					font-size: 15px;
+					-webkit-transition: all .3s;
+					transition: all .3s;
+				}
+			}
+		}
+	}
+	&.style3{
+		.text-line{
+			text-align: right;
+			span{
+				display: block;
+			}
+			.line-info-1{
+				font-size: 13px;
+				color: #c5c5c5;
+			}
+			.line-info-2{
+				font-weight: 900;
+				color: #fed501;
+				font-size: 22px;
+				a {
+					font-weight: 900;
+					// color: #fed501;
+					font-size: 22px;
+				}
+			}
+		}
+	}
+	&.style4{
+		.text-line{
+			>span, a{
+				color: #666666;
+				line-height: 28px;
+				font-size: 15px;
+			}
+			>span {
+				display: block;
+			}
+			.line-info-1, .line-info-2{
+				font-weight: bold;
+				span{
+					font-weight: 400;
+				}
+			}
+
+		}
+	}
+}

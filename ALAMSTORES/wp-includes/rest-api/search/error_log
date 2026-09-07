@@ -1,0 +1,12 @@
+[23-Dec-2025 12:28:43 UTC] PHP Fatal error:  Uncaught Error: Class "WP_REST_Search_Handler" not found in /home/compcfgz/alamstores.ma/wp-includes/rest-api/search/class-wp-rest-post-format-search-handler.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/rest-api/search/class-wp-rest-post-format-search-handler.php on line 17
+[23-Dec-2025 12:28:43 UTC] PHP Fatal error:  Uncaught Error: Class "WP_REST_Search_Handler" not found in /home/compcfgz/alamstores.ma/wp-includes/rest-api/search/class-wp-rest-post-search-handler.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/rest-api/search/class-wp-rest-post-search-handler.php on line 17
+[23-Dec-2025 12:28:43 UTC] PHP Fatal error:  Uncaught Error: Class "WP_REST_Search_Handler" not found in /home/compcfgz/alamstores.ma/wp-includes/rest-api/search/class-wp-rest-term-search-handler.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/rest-api/search/class-wp-rest-term-search-handler.php on line 17

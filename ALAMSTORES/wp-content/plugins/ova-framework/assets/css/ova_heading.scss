@@ -1,0 +1,95 @@
+.ova-heading {
+	.sub-title {
+		margin: 0px;
+		font-size: 24px;
+		line-height: 1.2;
+		font-weight: 600;
+		color: #333333;
+		display: inline-block;
+		position: relative;
+		margin-bottom: 4px;
+		&:before {
+			display: none;
+			content: "";
+			width: 20px;
+			height: 2px;
+			
+			position: absolute;
+			bottom: 11px;
+			left: calc(100% + 10px);
+			@media (max-width: 767px) {
+				display: none !important;
+			}
+		}
+		&:after {
+			display: none;
+			content: "";
+			width: 40px;
+			height: 2px;
+			position: absolute;
+			bottom: 7px;
+			left: calc(100% + 10px);
+			@media (max-width: 767px) {
+				display: none !important;
+			}
+		}
+		span {
+			position: relative;
+			display: none;
+			&:before {
+				content: "";
+				width: 20px;
+				height: 2px;
+				position: absolute;
+				bottom: 4px;
+				right: calc(100% + 10px);
+				@media (max-width: 767px) {
+					display: none !important;
+				}
+			}
+			&:after {
+				content: "";
+				width: 40px;
+				height: 2px;
+				position: absolute;
+				bottom: 0px;
+				right: calc(100% + 10px);
+				@media (max-width: 767px) {
+					display: none !important;
+				}
+			}
+		}
+	}
+	.title {
+		margin: 0px;
+		font-size: 36px;
+		line-height: 1.2;
+		font-weight: 700;
+		color: #333333;
+		text-transform: uppercase;
+		margin-bottom: 31px;
+	}
+	.desc {
+		margin: 0px;
+		font-size: 18px;
+		line-height: 29px;
+		color: #333333;
+		margin-bottom: 42px;
+	}
+	.button {
+		a {
+			font-size: 13px;
+			line-height: 24px;
+			color: #333333;
+			font-weight: 700;
+			transition: 0.4s;
+			display: inline-block;
+			text-transform: uppercase;
+			padding: 10px 28px 10px 28px;
+			&:hover {
+				background: #333333;
+				color: #fff;
+			}
+		}
+	}
+}

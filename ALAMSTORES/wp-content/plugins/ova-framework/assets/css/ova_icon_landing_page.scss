@@ -1,0 +1,58 @@
+.ova-icon-landing-page {
+	margin-top: 30px;
+	transition: 0.5s;
+	.wp-icon {
+		.icon {
+			display: inline-block;
+			width: 65px;
+			height: 65px;
+			background-color: #fed501;
+			border-radius: 25px;
+			position: relative;
+			i {
+				color: #fff;
+				font-size: 30px;
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				transform: translate(-50%,-50%);
+				&:before {
+					margin: 0px;
+					color: #fff;
+					font-size: 30px;
+				}
+			}
+		}
+	}
+	.content {
+		h3.title {
+			margin: 0;
+			font-family: archivo;
+			font-size: 18px;
+			line-height: 24px;
+			letter-spacing: 0.2px;
+			color: #222222;
+			margin-top: 25px;
+		}
+		p.desc {
+			font-size: 15px;
+			line-height: 22px;
+			color: #777777;
+			margin: 0;
+			margin-top: 14px;
+			opacity: 0;
+			transition: 0.5s;
+			@media (max-width: 767px) {
+				opacity: 1;
+			}
+		}
+	}
+	&:hover {
+		margin-top: 0px;
+		.content {
+			p.desc {
+				opacity: 1;
+			}
+		}
+	}
+}

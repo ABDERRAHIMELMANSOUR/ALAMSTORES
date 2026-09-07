@@ -1,0 +1,177 @@
+/* Cart Mini */
+.woocommerce .constrau-cart-wrapper,
+.constrau-cart-wrapper{
+	
+	position: relative;
+
+	.cart-total{
+		position: relative;
+		cursor: pointer;
+		i{
+			font-size: 19px;
+			color: #333333;
+		}
+		.items{
+			color: #333333;
+			position: absolute;
+			top: -16px;
+			right: -12px;
+			width: 18px;
+			height: 18px;
+			border-radius: 100%;
+			text-align: center;
+			line-height: 20px;
+			font-size: 13px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+	}
+	.constrau_minicart{
+		
+		position: absolute;
+		right: 0px;
+		top: 100px;
+		min-width: 302px;
+		z-index: -1;
+		background-color: #fff;
+		padding: 1em 1em 1em 1em;
+		-webkit-transition: all .3s ease-in-out;
+		-moz-transition: all .3s ease-in-out;
+		-ms-transition: all .3s ease-in-out;
+		-o-transition: all .3s ease-in-out;
+		transition: all .3s ease-in-out;
+		visibility: hidden;
+		display: block;
+		opacity: 0;
+		top: 150%;
+		p.woocommerce-mini-cart__empty-message{
+			margin-bottom: 0;
+		}
+		.woocommerce-mini-cart__buttons {
+			a {
+				display: inline-block;
+			}
+			.button {
+				transition: 0.4s;
+				margin-bottom: 10px;
+
+				&.wc-forward {
+					font-size: 15px;
+					color: #333333;
+					padding: 11px 25px 12px 25px;
+					&:hover {
+						background: #333333;
+						color: #ffffff;
+					}
+				}
+				&.checkout {
+					background: #333333;
+					margin-left: 10px;
+					font-size: 15px;
+					color: #fff;
+					padding: 11px 25px 12px 25px;
+					&:hover {
+						color: #333333;
+					}
+				}
+			}
+		}
+	}
+	&:hover{
+		.constrau_minicart{
+			z-index: 9999;
+			top: 32px;
+			webkit-transition: all .3s ease-in-out;
+			-moz-transition: all .3s ease-in-out;
+			-ms-transition: all .3s ease-in-out;
+			-o-transition: all .3s ease-in-out;
+			transition: all .3s ease-in-out;
+			visibility: visible;
+			opacity: 1;
+			top: 100%;
+			border: 1px solid #e2e2e2;
+		}
+	}
+
+
+	ul.woocommerce-mini-cart{
+		list-style: none outside;
+		padding: 0;
+		margin: 0;
+		li{
+			margin-bottom: 30px;
+			padding: 0;
+			display: inline-block;
+			width: 100%;
+			a{
+				color: #000;
+				text-transform: capitalize;
+				font-weight: 500;
+				padding: 0;
+				display: inline;
+				&.remove{
+					display: none;
+				}
+			}
+			img{
+				width: 70px;
+				float: right;
+			}
+			dl.variation{
+				display: none;
+			}
+		}
+	}
+
+	&.style2{
+		float: right;
+		text-align: right;
+		.heading{
+			color: #343434;
+			opacity: 0.4;
+			font-size: 20px;
+			font-weight: 500;
+			text-transform: uppercase;
+			display: block;
+			letter-spacing: 0.4px;
+			line-height: 25px;
+		}
+		.info{
+			display: block;
+			color: #343434;
+			font-weight: 300;
+			line-height: 25px;
+			span{
+				font-weight: 500;
+			}
+		}
+		.cart-total{
+			padding-left: 12px;
+			i{
+				color: #231f20;
+			}
+		}
+		.constrau_minicart{
+			float: left;
+			text-align: left;
+		}
+	}
+	&.style3{
+		>div{
+			align-items: center;
+		}
+	}
+
+
+	.woocommerce-mini-cart__total.total{
+		clear: both;
+		margin-bottom: 30px;
+	}
+}
+
+@media( max-width: 420px ){
+	.constrau-cart-wrapper .constrau_minicart{
+		right: -52px;
+	}
+}

@@ -1,0 +1,80 @@
+.ova-partner {
+	h3, p {
+		margin: 0px;
+	}
+	.wp-content {
+		display: flex;
+		.ova-media {
+			width: 200px;
+			.image {
+				border: 1px solid #e5e5e5;
+				transition: 0.4s;
+				height: 150px;
+				width: 200px;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+		}
+		.content {
+			width: calc(100% - 200px);
+			padding-left: 20px;
+			.title {
+				margin-bottom: 2px;
+				a {
+					font-size: 18px;
+					line-height: 25px;
+					color: #333333;
+					font-weight: 700;
+					transition: 0.4s;
+					&:hover {
+						color: #fed501;
+					}
+				}
+			}
+			.sub-title {
+				color: #888888;
+				margin-bottom: 16px;
+			}
+			.desc {
+				margin-bottom: 15px;
+			}
+			.text-button {
+				font-size: 14px;
+				line-height: 24px;
+				font-weight: 700;
+				color: #999999;
+				text-transform: uppercase;
+				transition: 0.4s;
+				&:hover {
+					color: #fed501;
+				}
+			}
+		}
+		&:hover {
+			.ova-media {
+				width: 200px;
+				.image {
+					box-shadow: 0 0 10px rgba(0,0,0,0.1);
+					border: none;
+				}
+			}
+		}
+	}
+}
+
+@media (max-width: 575px) {
+	.ova-partner {
+		.wp-content {
+			flex-wrap: wrap;
+			.ova-media {
+				width: 100%;
+				margin-bottom: 12px;
+			}
+			.content {
+				width: 100%;
+				padding: 0;
+			}
+		}
+	} 
+}

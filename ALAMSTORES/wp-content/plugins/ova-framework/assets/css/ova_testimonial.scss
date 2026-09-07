@@ -1,0 +1,417 @@
+.ova-testimonial{
+	p {
+		margin: 0px;
+	}
+	&.active-nav {
+		padding-top: 90px;
+	}
+
+	.slide-testimonials{
+		position: relative;
+		.ova-media {
+			img {
+				display: inline-block;
+				height: 90px;
+				width: 90px;
+				border-radius: 50%;
+			}
+		}
+		&.version_1 {
+			.owl-stage {
+				margin: 30px 0px 55px 0px;
+				overflow: visible;
+			}
+			.owl-dots{
+				margin-top: 0px;
+			}
+			.owl-nav {
+				position: absolute;
+				top: -60px;
+			}
+
+			.client_info{
+				display: flex;
+				padding: 40px 20px 44px 30px;
+				background: #fff;
+				position: relative;
+				@media (max-width: 425px) {
+					flex-wrap: wrap;
+				}
+				&:before {
+					content: "";
+					position: absolute;
+					bottom: 0;
+					left: 30px;
+					width: 30px;
+					height: 5px;
+					background: #fff;
+					z-index: 2;
+				}
+				&:after {
+					content: "";
+					position: absolute;
+					bottom: -30px;
+					left: 30px;
+					width: 0; 
+					height: 0; 
+					border-left: 0px solid transparent;
+					border-right: 30px solid transparent;
+					border-top: 30px solid #fff;
+					z-index: 1;
+				}
+				.ova-media {
+					@media (max-width: 425px) {
+						padding: 0px;
+						width: 100%;
+						text-align: center;
+						margin-bottom: 20px;
+					}
+				}
+				.info{
+					width: calc(100% - 120px);
+					padding-left: 30px;
+					margin-top: -5px;
+					@media (max-width: 425px) {
+						padding: 0px;
+						width: 100%;
+						text-align: center;
+					}
+					span{
+						display: inline-block;
+						
+						&.name{
+							font-size: 22px;
+							line-height: 26px;
+							font-weight: 600;
+							color: #333333;
+							margin-bottom: 6px;
+						}
+						&.job, small{
+							font-size: 15px;
+							line-height: 25px;
+							font-weight: 500;
+							color: #888888;
+							margin-bottom: 6px;
+						}
+						small {
+							margin: 0px 6px 0 4px;
+						}
+					}
+					.star {
+						margin-bottom: 17px;
+						i {
+							color: #e5e5e5;
+							font-size: 14px;
+						}
+					}
+					.testimonial {
+						font-size: 15px;
+						line-height: 25px;
+						color: #666666;
+					}
+				}
+			}
+		}
+		
+		.owl-dots{
+			text-align: center;
+			margin-top: 32px;
+			.owl-dot{
+				outline: none;
+				&:not(:last-child) {
+					span {
+						margin-right: 10px;
+					}
+				}
+				span{
+					width: 30px;
+					height: 5px;
+					background: transparent;
+					display: block;
+					transition:.2s ;
+					border: 1px solid #fed501;
+					
+				}
+				&.active{
+					span{
+						// background: #fed501;
+					}
+				}
+			}
+		}
+		.owl-nav{
+			position: absolute;
+			right: 0;
+			top: -60px;
+			.owl-prev, .owl-next{
+				width: 30px;
+				height: 30px;
+				border: 2px solid #c5c5c5 !important;
+				background: transparent; 
+				i{
+					color: #c5c5c5;
+					font-size: 25px;
+				}
+				&:focus{
+					outline: none;
+				}
+				&:hover {
+					color: #333333;
+					border-color: #333333 !important;
+					i {
+						color: #333333;
+					}
+				}
+			}
+			.owl-next{
+				margin-left: 5px;
+			}
+			.owl-prev{
+				margin-right: 5px;
+			}
+		}
+
+
+		&.version_2 {
+			.client_info {
+				text-align: center;
+				.info {
+					background: #333333;
+					padding: 45px 28px 37px 30px;
+					position: relative;
+					&:after {
+						content: "";
+						position: absolute;
+						bottom: -20px;
+						left: 50%;
+						width: 0; 
+						height: 0; 
+						border-left: 15px solid transparent;
+						border-right: 15px solid transparent;
+						border-top: 20px solid #333333;
+						transform: translateX(-50%);
+					}
+					.testimonial {
+						font-size: 15px;
+						line-height: 25px;
+						color: #ffffff;
+						text-align: left;
+					}
+					.star {
+						margin-top: 12px;
+						i {
+							color: #e5e5e5;
+							font-size: 14px;
+						}
+					}
+				}
+				.ova-media {
+					text-align: center;
+					margin-top: 35px;
+				}
+				.title {
+					.job {
+						display: block;
+						font-size: 15px;
+						line-height: 25px;
+						color: #888888;
+						margin-top: 12px;
+					}
+					.name {
+						display: block;
+						font-size: 22px;
+						line-height: 26px;
+						font-weight: 600;
+						color: #333333;
+						margin-top: 3px;
+					}
+				}
+			}
+			.owl-nav {
+				top: -90px;
+			}
+		}
+
+		&.version_3 {
+			.item {
+				padding-top: 45px;
+			}
+			.client_info{
+				position: relative;
+				text-align: center;
+				border: 1px solid #e5e5e5;
+				padding: 0 30px 33px 30px;
+				.ova-media {
+					margin-top: -45px;
+					margin-bottom: 25px;
+				}
+				.info{
+					span{
+						display: block;
+						&.name{
+							font-size: 22px;
+							line-height: 26px;
+							font-weight: 600;
+							color: #333333;
+							margin-bottom: 1px;
+						}
+						&.job{
+							font-size: 15px;
+							line-height: 25px;
+							color: #888888;
+							margin-bottom: 2px;
+							&.second_font {
+								font-family: unset;
+							}
+						}
+						small {
+							display: none;
+						}
+					}
+					.star {
+						margin-bottom: 17px;
+						i {
+							color: #e5e5e5;
+							font-size: 14px;
+						}
+					}
+					.testimonial {
+						font-size: 15px;
+						line-height: 25px;
+						color: #666666;
+					}
+				}
+			}
+		}
+
+		&.version_4 {
+			
+			&.active-dots {
+				.owl-nav {
+					button {
+						transform: translateY(calc(-50% - 26px));
+					}
+				}
+			}
+			.owl-nav {
+				position: unset;
+				@media (max-width: 1350px) {
+					display: none;
+				}
+				button {
+					position: absolute;
+					top: 50%;
+					cursor: pointer;
+					transition: 0.4s;
+					right: -30px;
+					transform: translateY(-50%);
+					width: 30px;
+					height: 30px;
+					border: 2px solid #c5c5c5 !important;
+					background: transparent;
+					&:focus {
+						outline: none;
+					}
+					&:first-child {
+						left: -80px;
+					}
+					&:last-child {
+						right: -80px;
+					}
+					&:hover {
+						color: #333333;
+						border-color: #333333 !important;
+						i {
+							color: #333333;
+						}
+					}
+					i {
+						transition: 0.4s;
+						font-size: 27px;
+						color: #cacaca;
+					}
+				}
+			}
+
+			.client_info{
+				display: flex;
+				@media (max-width: 767px) {
+					display: block;
+				}
+				.ova-media {
+					flex-basis: 240px;
+					background-size: cover;
+					background-position: center center;
+					background-repeat: no-repeat;
+					@media (max-width: 725px) {
+						display: none;
+					}
+					img {
+						display: block;
+						height: unset;
+						width: unset;
+						border-radius: unset;
+					}
+				}
+
+				.ova-media-mobile {
+					img {
+						display: block;
+						height: unset;
+						width: unset;
+						border-radius: unset;
+					}
+				}
+				.info{
+					flex-basis: calc(100% - 240px);
+					padding: 0 0 38px 20px;
+					@media (max-width: 767px) {
+						flex-basis: 100%;
+						padding: 0px;
+						padding-top: 16px;
+					}
+					span{
+						display: block;
+						&.name{
+							font-size: 22px;
+							line-height: 26px;
+							font-weight: 600;
+							color: #333333;
+							margin-bottom: 1px;
+						}
+						&.job{
+							font-size: 15px;
+							line-height: 25px;
+							color: #888888;
+							margin-bottom: 7px;
+						}
+					}
+					.social {
+						margin-bottom: 18px;
+						a {
+							&:not(:last-child) {
+								margin-right: 18px;
+							}
+							i {
+								color: #0078d7;
+								transition: 0.4s;
+							}
+							&:hover {
+								i {
+									color: #1da1f2;
+								}
+							}
+						}
+					}
+					.testimonial {
+						font-size: 15px;
+						line-height: 25px;
+						color: #666666;
+					}
+				}
+			}
+
+		}
+	}
+
+}

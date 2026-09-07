@@ -1,0 +1,82 @@
+	/*
+  	Flaticon icon font: Flaticon
+  	Creation date: 19/06/2017 08:34
+  	*/
+
+@font-face {
+  font-family: "Flaticon-poiter";
+  src: url("./Flaticon.eot");
+  src: url("./Flaticon.eot?#iefix") format("embedded-opentype"),
+       url("./Flaticon.woff") format("woff"),
+       url("./Flaticon.ttf") format("truetype"),
+       url("./Flaticon.svg#Flaticon") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: "Flaticon-poiter";
+    src: url("./Flaticon.svg#Flaticon") format("svg");
+  }
+}
+
+[class^="pointer_flaticon-"]:before, [class*=" pointer_flaticon-"]:before,
+[class^="pointer_flaticon-"]:after, [class*=" pointer_flaticon-"]:after {   
+  font-family: Flaticon-poiter;
+        font-size: 20px;
+font-style: normal;
+margin-left: 20px;
+}
+
+.pointer_flaticon-001-turn-left-1:before { content: "\f100"; }
+.pointer_flaticon-002-upload:before { content: "\f101"; }
+.pointer_flaticon-003-resize:before { content: "\f102"; }
+.pointer_flaticon-004-transfer-1:before { content: "\f103"; }
+.pointer_flaticon-005-transfer:before { content: "\f104"; }
+.pointer_flaticon-006-up-arrow-2:before { content: "\f105"; }
+.pointer_flaticon-007-up-arrow-1:before { content: "\f106"; }
+.pointer_flaticon-008-up-arrow:before { content: "\f107"; }
+.pointer_flaticon-009-left-arrow-3:before { content: "\f108"; }
+.pointer_flaticon-010-diagonal-arrow-9:before { content: "\f109"; }
+.pointer_flaticon-011-diagonal-arrow-8:before { content: "\f10a"; }
+.pointer_flaticon-012-diagonal-arrow-7:before { content: "\f10b"; }
+.pointer_flaticon-013-diagonal-arrow-6:before { content: "\f10c"; }
+.pointer_flaticon-014-diagonal-arrow-5:before { content: "\f10d"; }
+.pointer_flaticon-015-shuffle:before { content: "\f10e"; }
+.pointer_flaticon-016-rotate:before { content: "\f10f"; }
+.pointer_flaticon-017-right-arrow-2:before { content: "\f110"; }
+.pointer_flaticon-018-right-arrow-1:before { content: "\f111"; }
+.pointer_flaticon-019-right-arrow:before { content: "\f112"; }
+.pointer_flaticon-020-repeat:before { content: "\f113"; }
+.pointer_flaticon-021-refresh:before { content: "\f114"; }
+.pointer_flaticon-022-expand-1:before { content: "\f115"; }
+.pointer_flaticon-023-move-1:before { content: "\f116"; }
+.pointer_flaticon-024-double-arrow:before { content: "\f117"; }
+.pointer_flaticon-025-left-arrow-2:before { content: "\f118"; }
+.pointer_flaticon-026-left-arrow-1:before { content: "\f119"; }
+.pointer_flaticon-027-left-arrow:before { content: "\f11a"; }
+.pointer_flaticon-028-minimize-1:before { content: "\f11b"; }
+.pointer_flaticon-029-minimize:before { content: "\f11c"; }
+.pointer_flaticon-030-insert:before { content: "\f11d"; }
+.pointer_flaticon-031-extract:before { content: "\f11e"; }
+.pointer_flaticon-032-down-arrow-5:before { content: "\f11f"; }
+.pointer_flaticon-033-down-arrow-4:before { content: "\f120"; }
+.pointer_flaticon-034-down-arrow-3:before { content: "\f121"; }
+.pointer_flaticon-035-down-arrow-2:before { content: "\f122"; }
+.pointer_flaticon-036-down-arrow-1:before { content: "\f123"; }
+.pointer_flaticon-037-down-arrow:before { content: "\f124"; }
+.pointer_flaticon-038-delete:before { content: "\f125"; }
+.pointer_flaticon-039-confirm-1:before { content: "\f126"; }
+.pointer_flaticon-040-confirm:before { content: "\f127"; }
+.pointer_flaticon-041-cancel-1:before { content: "\f128"; }
+.pointer_flaticon-042-cancel:before { content: "\f129"; }
+.pointer_flaticon-043-diagonal-arrow-4:before { content: "\f12a"; }
+.pointer_flaticon-044-diagonal-arrow-3:before { content: "\f12b"; }
+.pointer_flaticon-045-diagonal-arrow-2:before { content: "\f12c"; }
+.pointer_flaticon-046-diagonal-arrow-1:before { content: "\f12d"; }
+.pointer_flaticon-047-diagonal-arrow:before { content: "\f12e"; }
+.pointer_flaticon-048-turn-left:before { content: "\f12f"; }
+.pointer_flaticon-049-expand:before { content: "\f130"; }
+.pointer_flaticon-050-move:before { content: "\f131"; }
+.pointer_flaticon-051-add:before { content: "\f132"; }

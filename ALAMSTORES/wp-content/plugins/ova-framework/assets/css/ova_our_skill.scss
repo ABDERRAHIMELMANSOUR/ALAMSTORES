@@ -1,0 +1,27 @@
+.ova-our-skill {
+	position: relative;
+	text-align: center;
+	h3 {
+		margin: 0px;
+	}
+	.content {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%,-50%);
+		text-align: center;
+		.title {
+			font-size: 16px;
+			line-height: 25px;
+			color: #333333;
+			font-weight: 700;
+			text-transform: uppercase;
+		}
+		strong {
+			font-size: 46px;
+			line-height: 1.2;
+			color: #888888;
+			font-weight: 600;
+		}
+	}
+}

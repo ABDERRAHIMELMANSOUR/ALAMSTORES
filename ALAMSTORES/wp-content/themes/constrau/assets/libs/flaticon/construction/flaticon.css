@@ -1,0 +1,47 @@
+	/*
+  	Flaticon icon font: Flaticon
+  	Creation date: 22/08/2018 08:32
+  	*/
+
+@font-face {
+  font-family: "Flaticon-contruc";
+  src: url("./Flaticon.eot");
+  src: url("./Flaticon.eot?#iefix") format("embedded-opentype"),
+       url("./Flaticon.woff") format("woff"),
+       url("./Flaticon.ttf") format("truetype"),
+       url("./Flaticon.svg#Flaticon") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: "Flaticon-contruc";
+    src: url("./Flaticon.svg#Flaticon") format("svg");
+  }
+}
+
+[class^="contruc_flaticon-"]:before, [class*=" contruc_flaticon-"]:before,
+[class^="contruc_flaticon-"]:after, [class*=" contruc_flaticon-"]:after {   
+  font-family: Flaticon-contruc;
+        font-size: 20px;
+font-style: normal;
+margin-left: 20px;
+}
+
+.contruc_flaticon-001-barrier:before { content: "\f100"; }
+.contruc_flaticon-002-brickwall:before { content: "\f101"; }
+.contruc_flaticon-003-building:before { content: "\f102"; }
+.contruc_flaticon-004-cone:before { content: "\f103"; }
+.contruc_flaticon-005-crane:before { content: "\f104"; }
+.contruc_flaticon-006-crane-1:before { content: "\f105"; }
+.contruc_flaticon-007-driller:before { content: "\f106"; }
+.contruc_flaticon-008-helmet:before { content: "\f107"; }
+.contruc_flaticon-009-loader:before { content: "\f108"; }
+.contruc_flaticon-010-paint-roller:before { content: "\f109"; }
+.contruc_flaticon-011-faucet:before { content: "\f10a"; }
+.contruc_flaticon-012-toolbox:before { content: "\f10b"; }
+.contruc_flaticon-013-tools:before { content: "\f10c"; }
+.contruc_flaticon-014-dump-truck:before { content: "\f10d"; }
+.contruc_flaticon-015-vest:before { content: "\f10e"; }
+.contruc_flaticon-016-wheelbarrow:before { content: "\f10f"; }

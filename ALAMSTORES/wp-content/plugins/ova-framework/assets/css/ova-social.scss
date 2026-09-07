@@ -1,0 +1,40 @@
+.ova_social {
+	.content {
+		a {
+			display: inline-flex;
+			justify-content: center;
+			align-items: center;
+			&:not(:last-child) {
+				margin-right: 0;
+			}
+			span {
+				position: absolute;
+				top: -10000em;
+				width: 1px;
+				height: 1px;
+				margin: -1px;
+				padding: 0;
+				overflow: hidden;
+				clip: rect(0,0,0,0);
+				border: 0;
+			}
+			i {
+				position: relative;
+				display: block;
+				font-size: 14px;
+				//width: 36px;
+				//height: 36px;
+				// &:before {
+				// 	position: absolute;
+				// 	left: 50%;
+				// 	top: 50%;
+				// 	transform: translate(-50%,-50%);
+				// }
+			}
+			&:hover {
+				transition: 0.5s all;
+				//background-color: #c1b696 !important;
+			}
+		}
+	}
+}

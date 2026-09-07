@@ -1,0 +1,106 @@
+.ova-position {
+	h3, p {
+		margin: 0px;
+	}
+	.item {
+		.ova-media {
+			overflow: hidden;
+			img {
+				transition: 1s;
+			}
+		}
+		.wp-content {
+			border-top: none;
+			.content {
+				padding: 34px 15px 13px 30px;
+				border-left: 1px solid #e5e5e5;
+				border-right: 1px solid #e5e5e5;
+				transition: 0.4s;
+				.title {
+					a {
+						font-size: 22px;
+						line-height: 26px;
+						color: #333333;
+						text-transform: uppercase;
+						transition: 0.4s;
+					}
+				}
+				.sub-title {
+					color: #888888;
+					padding-bottom: 10px;
+				}
+			}
+			.desc {
+				border: 1px solid #e5e5e5;
+				padding: 23px 15px 23px 30px;
+				transition: 0.4s;
+			}
+		}
+		&:hover {
+			.ova-media {
+				img {
+					transform: scale(1.1,1.1);
+				}
+			}
+		}
+	}
+
+	.owl-dots{
+		text-align: center;
+		margin-top: 17px;
+		.owl-dot{
+			outline: none;
+			&:not(:last-child) {
+				span {
+					margin-right: 10px;
+				}
+			}
+			span{
+				width: 30px;
+				height: 5px;
+				background: transparent;
+				display: block;
+				transition:.2s ;
+				border: 1px solid #fed501;
+
+			}
+			&.active{
+				span{
+					background: #fed501;
+				}
+			}
+		}
+	}
+	.owl-nav {
+		position: unset;
+		button {
+			position: absolute;
+			top: 50%;
+			cursor: pointer;
+			transition: 0.4s;
+			right: -30px;
+			transform: translateY(calc(-50% - 12.5px));
+			&:focus {
+				outline: none;
+			}
+			&:first-child {
+				left: -20px;
+			}
+			&:last-child {
+				right: -20px;
+			}
+			&:hover {
+				color: #333333;
+				border-color: #333333 !important;
+				i {
+					color: #333333;
+				}
+			}
+			i {
+				transition: 0.4s;
+				font-size: 27px;
+				color: #cacaca;
+			}
+		}
+	}
+}

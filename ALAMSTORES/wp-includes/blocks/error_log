@@ -1,0 +1,207 @@
+[21-Oct-2023 04:50:26 America/New_York] PHP Warning:  Use of undefined constant ABSPATH - assumed 'ABSPATH' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[21-Oct-2023 04:50:26 America/New_York] PHP Warning:  Use of undefined constant WPINC - assumed 'WPINC' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[21-Oct-2023 04:50:26 America/New_York] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[21-Oct-2023 04:50:26 America/New_York] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[21-Oct-2023 04:50:26 America/New_York] PHP Fatal error:  require(): Failed opening required 'ABSPATHWPINC/blocks/legacy-widget.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[21-Oct-2023 04:51:23 America/New_York] PHP Warning:  Use of undefined constant ABSPATH - assumed 'ABSPATH' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[21-Oct-2023 04:51:23 America/New_York] PHP Warning:  Use of undefined constant WPINC - assumed 'WPINC' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[21-Oct-2023 04:51:23 America/New_York] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[21-Oct-2023 04:51:23 America/New_York] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[21-Oct-2023 04:51:23 America/New_York] PHP Fatal error:  require(): Failed opening required 'ABSPATHWPINC/blocks/legacy-widget.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[25-Oct-2023 14:50:21 America/New_York] PHP Warning:  Use of undefined constant ABSPATH - assumed 'ABSPATH' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[25-Oct-2023 14:50:21 America/New_York] PHP Warning:  Use of undefined constant WPINC - assumed 'WPINC' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[25-Oct-2023 14:50:21 America/New_York] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[25-Oct-2023 14:50:21 America/New_York] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[25-Oct-2023 14:50:21 America/New_York] PHP Fatal error:  require(): Failed opening required 'ABSPATHWPINC/blocks/legacy-widget.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[25-Oct-2023 14:52:23 America/New_York] PHP Warning:  Use of undefined constant ABSPATH - assumed 'ABSPATH' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[25-Oct-2023 14:52:23 America/New_York] PHP Warning:  Use of undefined constant WPINC - assumed 'WPINC' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[25-Oct-2023 14:52:23 America/New_York] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[25-Oct-2023 14:52:23 America/New_York] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[25-Oct-2023 14:52:23 America/New_York] PHP Fatal error:  require(): Failed opening required 'ABSPATHWPINC/blocks/legacy-widget.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[06-Nov-2023 02:48:56 America/New_York] PHP Warning:  Use of undefined constant ABSPATH - assumed 'ABSPATH' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[06-Nov-2023 02:48:56 America/New_York] PHP Warning:  Use of undefined constant WPINC - assumed 'WPINC' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[06-Nov-2023 02:48:56 America/New_York] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[06-Nov-2023 02:48:56 America/New_York] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[06-Nov-2023 02:48:56 America/New_York] PHP Fatal error:  require(): Failed opening required 'ABSPATHWPINC/blocks/legacy-widget.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[06-Nov-2023 02:55:09 America/New_York] PHP Warning:  Use of undefined constant ABSPATH - assumed 'ABSPATH' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[06-Nov-2023 02:55:09 America/New_York] PHP Warning:  Use of undefined constant WPINC - assumed 'WPINC' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[06-Nov-2023 02:55:09 America/New_York] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[06-Nov-2023 02:55:09 America/New_York] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[06-Nov-2023 02:55:09 America/New_York] PHP Fatal error:  require(): Failed opening required 'ABSPATHWPINC/blocks/legacy-widget.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[06-Nov-2023 16:17:58 America/New_York] PHP Warning:  Use of undefined constant ABSPATH - assumed 'ABSPATH' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[06-Nov-2023 16:17:58 America/New_York] PHP Warning:  Use of undefined constant WPINC - assumed 'WPINC' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[06-Nov-2023 16:17:58 America/New_York] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[06-Nov-2023 16:17:58 America/New_York] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[06-Nov-2023 16:17:58 America/New_York] PHP Fatal error:  require(): Failed opening required 'ABSPATHWPINC/blocks/legacy-widget.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[06-Nov-2023 16:19:09 America/New_York] PHP Warning:  Use of undefined constant ABSPATH - assumed 'ABSPATH' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[06-Nov-2023 16:19:09 America/New_York] PHP Warning:  Use of undefined constant WPINC - assumed 'WPINC' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[06-Nov-2023 16:19:09 America/New_York] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[06-Nov-2023 16:19:09 America/New_York] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[06-Nov-2023 16:19:09 America/New_York] PHP Fatal error:  require(): Failed opening required 'ABSPATHWPINC/blocks/legacy-widget.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[10-Nov-2023 22:09:57 America/New_York] PHP Warning:  Use of undefined constant ABSPATH - assumed 'ABSPATH' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[10-Nov-2023 22:09:57 America/New_York] PHP Warning:  Use of undefined constant WPINC - assumed 'WPINC' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[10-Nov-2023 22:09:57 America/New_York] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[10-Nov-2023 22:09:57 America/New_York] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[10-Nov-2023 22:09:57 America/New_York] PHP Fatal error:  require(): Failed opening required 'ABSPATHWPINC/blocks/legacy-widget.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[10-Nov-2023 22:14:47 America/New_York] PHP Warning:  Use of undefined constant ABSPATH - assumed 'ABSPATH' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[10-Nov-2023 22:14:47 America/New_York] PHP Warning:  Use of undefined constant WPINC - assumed 'WPINC' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[10-Nov-2023 22:14:47 America/New_York] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[10-Nov-2023 22:14:47 America/New_York] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[10-Nov-2023 22:14:47 America/New_York] PHP Fatal error:  require(): Failed opening required 'ABSPATHWPINC/blocks/legacy-widget.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[11-Jan-2024 18:09:45 America/New_York] PHP Warning:  Use of undefined constant ABSPATH - assumed 'ABSPATH' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[11-Jan-2024 18:09:45 America/New_York] PHP Warning:  Use of undefined constant WPINC - assumed 'WPINC' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[11-Jan-2024 18:09:45 America/New_York] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[11-Jan-2024 18:09:45 America/New_York] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[11-Jan-2024 18:09:45 America/New_York] PHP Fatal error:  require(): Failed opening required 'ABSPATHWPINC/blocks/legacy-widget.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[11-Jan-2024 18:12:23 America/New_York] PHP Warning:  Use of undefined constant ABSPATH - assumed 'ABSPATH' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[11-Jan-2024 18:12:23 America/New_York] PHP Warning:  Use of undefined constant WPINC - assumed 'WPINC' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[11-Jan-2024 18:12:23 America/New_York] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[11-Jan-2024 18:12:23 America/New_York] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[11-Jan-2024 18:12:23 America/New_York] PHP Fatal error:  require(): Failed opening required 'ABSPATHWPINC/blocks/legacy-widget.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[07-Feb-2024 11:35:29 America/New_York] PHP Warning:  Use of undefined constant ABSPATH - assumed 'ABSPATH' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[07-Feb-2024 11:35:29 America/New_York] PHP Warning:  Use of undefined constant WPINC - assumed 'WPINC' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[07-Feb-2024 11:35:29 America/New_York] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[07-Feb-2024 11:35:29 America/New_York] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[07-Feb-2024 11:35:29 America/New_York] PHP Fatal error:  require(): Failed opening required 'ABSPATHWPINC/blocks/legacy-widget.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[17-May-2024 02:39:54 UTC] PHP Warning:  Use of undefined constant ABSPATH - assumed 'ABSPATH' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[17-May-2024 02:39:54 UTC] PHP Warning:  Use of undefined constant WPINC - assumed 'WPINC' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[17-May-2024 02:39:54 UTC] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[17-May-2024 02:39:54 UTC] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[17-May-2024 02:39:54 UTC] PHP Fatal error:  require(): Failed opening required 'ABSPATHWPINC/blocks/legacy-widget.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[17-May-2024 02:41:04 UTC] PHP Warning:  Use of undefined constant ABSPATH - assumed 'ABSPATH' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[17-May-2024 02:41:04 UTC] PHP Warning:  Use of undefined constant WPINC - assumed 'WPINC' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[17-May-2024 02:41:04 UTC] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[17-May-2024 02:41:04 UTC] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[17-May-2024 02:41:04 UTC] PHP Fatal error:  require(): Failed opening required 'ABSPATHWPINC/blocks/legacy-widget.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[24-May-2024 16:20:54 UTC] PHP Warning:  Use of undefined constant ABSPATH - assumed 'ABSPATH' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[24-May-2024 16:20:54 UTC] PHP Warning:  Use of undefined constant WPINC - assumed 'WPINC' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[24-May-2024 16:20:54 UTC] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[24-May-2024 16:20:54 UTC] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[24-May-2024 16:20:54 UTC] PHP Fatal error:  require(): Failed opening required 'ABSPATHWPINC/blocks/legacy-widget.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[24-May-2024 16:21:42 UTC] PHP Warning:  Use of undefined constant ABSPATH - assumed 'ABSPATH' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[24-May-2024 16:21:42 UTC] PHP Warning:  Use of undefined constant WPINC - assumed 'WPINC' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[24-May-2024 16:21:42 UTC] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[24-May-2024 16:21:42 UTC] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[24-May-2024 16:21:42 UTC] PHP Fatal error:  require(): Failed opening required 'ABSPATHWPINC/blocks/legacy-widget.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[29-May-2024 18:08:32 UTC] PHP Warning:  Use of undefined constant ABSPATH - assumed 'ABSPATH' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[29-May-2024 18:08:32 UTC] PHP Warning:  Use of undefined constant WPINC - assumed 'WPINC' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[29-May-2024 18:08:32 UTC] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[29-May-2024 18:08:32 UTC] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[29-May-2024 18:08:32 UTC] PHP Fatal error:  require(): Failed opening required 'ABSPATHWPINC/blocks/legacy-widget.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[29-May-2024 18:09:19 UTC] PHP Warning:  Use of undefined constant ABSPATH - assumed 'ABSPATH' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[29-May-2024 18:09:19 UTC] PHP Warning:  Use of undefined constant WPINC - assumed 'WPINC' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[29-May-2024 18:09:19 UTC] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[29-May-2024 18:09:19 UTC] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[29-May-2024 18:09:19 UTC] PHP Fatal error:  require(): Failed opening required 'ABSPATHWPINC/blocks/legacy-widget.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[09-Jun-2024 11:18:11 UTC] PHP Warning:  Use of undefined constant ABSPATH - assumed 'ABSPATH' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[09-Jun-2024 11:18:11 UTC] PHP Warning:  Use of undefined constant WPINC - assumed 'WPINC' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[09-Jun-2024 11:18:11 UTC] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[09-Jun-2024 11:18:11 UTC] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[09-Jun-2024 11:18:11 UTC] PHP Fatal error:  require(): Failed opening required 'ABSPATHWPINC/blocks/legacy-widget.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[17-Jun-2024 23:36:04 UTC] PHP Warning:  Use of undefined constant ABSPATH - assumed 'ABSPATH' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[17-Jun-2024 23:36:04 UTC] PHP Warning:  Use of undefined constant WPINC - assumed 'WPINC' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[17-Jun-2024 23:36:04 UTC] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[17-Jun-2024 23:36:04 UTC] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[17-Jun-2024 23:36:04 UTC] PHP Fatal error:  require(): Failed opening required 'ABSPATHWPINC/blocks/legacy-widget.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[01-Jul-2024 05:38:43 UTC] PHP Warning:  Use of undefined constant ABSPATH - assumed 'ABSPATH' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[01-Jul-2024 05:38:43 UTC] PHP Warning:  Use of undefined constant WPINC - assumed 'WPINC' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[01-Jul-2024 05:38:43 UTC] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[01-Jul-2024 05:38:43 UTC] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[01-Jul-2024 05:38:43 UTC] PHP Fatal error:  require(): Failed opening required 'ABSPATHWPINC/blocks/legacy-widget.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[03-Jul-2024 03:32:17 UTC] PHP Warning:  Use of undefined constant ABSPATH - assumed 'ABSPATH' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[03-Jul-2024 03:32:17 UTC] PHP Warning:  Use of undefined constant WPINC - assumed 'WPINC' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[03-Jul-2024 03:32:17 UTC] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[03-Jul-2024 03:32:17 UTC] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[03-Jul-2024 03:32:17 UTC] PHP Fatal error:  require(): Failed opening required 'ABSPATHWPINC/blocks/legacy-widget.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[08-Jul-2024 12:31:08 UTC] PHP Warning:  Use of undefined constant ABSPATH - assumed 'ABSPATH' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[08-Jul-2024 12:31:08 UTC] PHP Warning:  Use of undefined constant WPINC - assumed 'WPINC' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[08-Jul-2024 12:31:08 UTC] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[08-Jul-2024 12:31:08 UTC] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[08-Jul-2024 12:31:08 UTC] PHP Fatal error:  require(): Failed opening required 'ABSPATHWPINC/blocks/legacy-widget.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[08-Jul-2024 15:17:25 UTC] PHP Warning:  Use of undefined constant ABSPATH - assumed 'ABSPATH' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[08-Jul-2024 15:17:25 UTC] PHP Warning:  Use of undefined constant WPINC - assumed 'WPINC' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[08-Jul-2024 15:17:25 UTC] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[08-Jul-2024 15:17:25 UTC] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[08-Jul-2024 15:17:25 UTC] PHP Fatal error:  require(): Failed opening required 'ABSPATHWPINC/blocks/legacy-widget.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[02-Oct-2024 01:59:56 UTC] PHP Warning:  Use of undefined constant ABSPATH - assumed 'ABSPATH' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[02-Oct-2024 01:59:56 UTC] PHP Warning:  Use of undefined constant WPINC - assumed 'WPINC' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[02-Oct-2024 01:59:56 UTC] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[02-Oct-2024 01:59:56 UTC] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[02-Oct-2024 01:59:56 UTC] PHP Fatal error:  require(): Failed opening required 'ABSPATHWPINC/blocks/legacy-widget.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[14-Oct-2024 08:05:51 UTC] PHP Warning:  Use of undefined constant ABSPATH - assumed 'ABSPATH' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[14-Oct-2024 08:05:51 UTC] PHP Warning:  Use of undefined constant WPINC - assumed 'WPINC' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[14-Oct-2024 08:05:51 UTC] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[14-Oct-2024 08:05:51 UTC] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[14-Oct-2024 08:05:51 UTC] PHP Fatal error:  require(): Failed opening required 'ABSPATHWPINC/blocks/legacy-widget.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[26-Oct-2024 12:05:32 UTC] PHP Warning:  Use of undefined constant ABSPATH - assumed 'ABSPATH' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[26-Oct-2024 12:05:32 UTC] PHP Warning:  Use of undefined constant WPINC - assumed 'WPINC' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[26-Oct-2024 12:05:32 UTC] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[26-Oct-2024 12:05:32 UTC] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[26-Oct-2024 12:05:32 UTC] PHP Fatal error:  require(): Failed opening required 'ABSPATHWPINC/blocks/legacy-widget.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[28-Oct-2024 08:44:50 UTC] PHP Warning:  Use of undefined constant ABSPATH - assumed 'ABSPATH' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[28-Oct-2024 08:44:50 UTC] PHP Warning:  Use of undefined constant WPINC - assumed 'WPINC' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[28-Oct-2024 08:44:50 UTC] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[28-Oct-2024 08:44:50 UTC] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[28-Oct-2024 08:44:50 UTC] PHP Fatal error:  require(): Failed opening required 'ABSPATHWPINC/blocks/legacy-widget.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[02-Nov-2024 23:48:38 UTC] PHP Warning:  Use of undefined constant ABSPATH - assumed 'ABSPATH' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[02-Nov-2024 23:48:38 UTC] PHP Warning:  Use of undefined constant WPINC - assumed 'WPINC' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[02-Nov-2024 23:48:38 UTC] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[02-Nov-2024 23:48:38 UTC] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[02-Nov-2024 23:48:38 UTC] PHP Fatal error:  require(): Failed opening required 'ABSPATHWPINC/blocks/legacy-widget.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[11-Nov-2024 21:50:38 UTC] PHP Warning:  Use of undefined constant ABSPATH - assumed 'ABSPATH' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[11-Nov-2024 21:50:38 UTC] PHP Warning:  Use of undefined constant WPINC - assumed 'WPINC' (this will throw an Error in a future version of PHP) in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 8
+[11-Nov-2024 21:50:38 UTC] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[11-Nov-2024 21:50:38 UTC] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[11-Nov-2024 21:50:38 UTC] PHP Fatal error:  require(): Failed opening required 'ABSPATHWPINC/blocks/legacy-widget.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/compcfgz/alamstores.ma/wp-includes/blocks/index.php on line 11
+[07-Aug-2025 01:23:17 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function add_action() in /home/compcfgz/alamstores.ma/wp-includes/blocks/post-title.php:74
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/blocks/post-title.php on line 74
+[15-Mar-2026 03:10:49 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function add_action() in /home/compcfgz/alamstores.ma/wp-includes/blocks/latest-posts.php:240
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/blocks/latest-posts.php on line 240
+[15-Mar-2026 03:10:49 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function add_action() in /home/compcfgz/alamstores.ma/wp-includes/blocks/rss.php:145
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/blocks/rss.php on line 145
+[15-Mar-2026 03:10:49 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function add_action() in /home/compcfgz/alamstores.ma/wp-includes/blocks/search.php:213
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/blocks/search.php on line 213
+[16-Mar-2026 21:56:05 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function add_action() in /home/compcfgz/alamstores.ma/wp-includes/blocks/latest-posts.php:240
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/blocks/latest-posts.php on line 240
+[16-Mar-2026 21:56:05 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function add_action() in /home/compcfgz/alamstores.ma/wp-includes/blocks/rss.php:145
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/blocks/rss.php on line 145
+[16-Mar-2026 21:56:05 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function add_action() in /home/compcfgz/alamstores.ma/wp-includes/blocks/search.php:213
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/blocks/search.php on line 213
+[18-Mar-2026 22:26:57 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function add_action() in /home/compcfgz/alamstores.ma/wp-includes/blocks/latest-posts.php:240
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/blocks/latest-posts.php on line 240
+[18-Mar-2026 22:26:57 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function add_action() in /home/compcfgz/alamstores.ma/wp-includes/blocks/rss.php:145
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/blocks/rss.php on line 145
+[18-Mar-2026 22:26:58 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function add_action() in /home/compcfgz/alamstores.ma/wp-includes/blocks/search.php:213
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/blocks/search.php on line 213
+[29-Mar-2026 21:02:08 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function add_action() in /home/compcfgz/alamstores.ma/wp-includes/blocks/latest-posts.php:240
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/blocks/latest-posts.php on line 240
+[29-Mar-2026 21:02:08 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function add_action() in /home/compcfgz/alamstores.ma/wp-includes/blocks/rss.php:145
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/blocks/rss.php on line 145
+[29-Mar-2026 21:02:08 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function add_action() in /home/compcfgz/alamstores.ma/wp-includes/blocks/search.php:213
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/blocks/search.php on line 213

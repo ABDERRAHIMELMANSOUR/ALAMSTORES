@@ -1,0 +1,216 @@
+[23-Dec-2025 12:26:02 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Image_Control" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-background-image-control.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-background-image-control.php on line 17
+[23-Dec-2025 12:26:02 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Setting" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-background-image-setting.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-background-image-setting.php on line 17
+[23-Dec-2025 12:26:02 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Control" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-background-position-control.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-background-position-control.php on line 17
+[23-Dec-2025 12:26:03 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Control" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-code-editor-control.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-code-editor-control.php on line 17
+[23-Dec-2025 12:26:03 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Control" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-color-control.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-color-control.php on line 17
+[23-Dec-2025 12:26:03 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Image_Control" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-cropped-image-control.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-cropped-image-control.php on line 17
+[23-Dec-2025 12:26:03 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Setting" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-custom-css-setting.php:19
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-custom-css-setting.php on line 19
+[23-Dec-2025 12:26:04 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Control" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-date-time-control.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-date-time-control.php on line 17
+[23-Dec-2025 12:26:04 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Setting" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-filter-setting.php:19
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-filter-setting.php on line 19
+[23-Dec-2025 12:26:04 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Image_Control" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-header-image-control.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-header-image-control.php on line 17
+[23-Dec-2025 12:26:05 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Setting" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-header-image-setting.php:19
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-header-image-setting.php on line 19
+[23-Dec-2025 12:26:05 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Upload_Control" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-image-control.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-image-control.php on line 17
+[23-Dec-2025 12:26:06 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Control" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-media-control.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-media-control.php on line 17
+[23-Dec-2025 12:26:06 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Control" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-nav-menu-auto-add-control.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-nav-menu-auto-add-control.php on line 17
+[23-Dec-2025 12:26:06 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Control" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-nav-menu-control.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-nav-menu-control.php on line 17
+[23-Dec-2025 12:26:06 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Control" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-nav-menu-item-control.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-nav-menu-item-control.php on line 17
+[23-Dec-2025 12:26:07 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Setting" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-nav-menu-item-setting.php:20
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-nav-menu-item-setting.php on line 20
+[23-Dec-2025 12:26:07 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Control" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-nav-menu-location-control.php:19
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-nav-menu-location-control.php on line 19
+[23-Dec-2025 12:26:07 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Control" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-nav-menu-locations-control.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-nav-menu-locations-control.php on line 17
+[23-Dec-2025 12:26:07 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Control" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-nav-menu-name-control.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-nav-menu-name-control.php on line 17
+[23-Dec-2025 12:26:08 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Section" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-nav-menu-section.php:19
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-nav-menu-section.php on line 19
+[23-Dec-2025 12:26:08 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Setting" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-nav-menu-setting.php:21
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-nav-menu-setting.php on line 21
+[23-Dec-2025 12:26:08 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Panel" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-nav-menus-panel.php:19
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-nav-menus-panel.php on line 19
+[23-Dec-2025 12:26:09 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function _deprecated_file() in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-new-menu-control.php:11
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-new-menu-control.php on line 11
+[23-Dec-2025 12:26:09 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function _deprecated_file() in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-new-menu-section.php:11
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-new-menu-section.php on line 11
+[23-Dec-2025 12:26:10 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Section" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-sidebar-section.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-sidebar-section.php on line 17
+[23-Dec-2025 12:26:10 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Cropped_Image_Control" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-site-icon-control.php:19
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-site-icon-control.php on line 19
+[23-Dec-2025 12:26:10 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Control" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-theme-control.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-theme-control.php on line 17
+[23-Dec-2025 12:26:10 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Panel" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-themes-panel.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-themes-panel.php on line 17
+[23-Dec-2025 12:26:10 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Section" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-themes-section.php:19
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-themes-section.php on line 19
+[23-Dec-2025 12:26:11 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Media_Control" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-upload-control.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-upload-control.php on line 17
+[23-Dec-2025 12:26:11 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Control" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-sidebar-block-editor-control.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-sidebar-block-editor-control.php on line 18
+[23-Dec-2025 12:26:11 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Control" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-widget-area-customize-control.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-widget-area-customize-control.php on line 17
+[23-Dec-2025 12:26:11 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Control" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-widget-form-customize-control.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-widget-form-customize-control.php on line 17
+[05-Jan-2026 08:19:41 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Image_Control" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-cropped-image-control.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-cropped-image-control.php on line 17
+[05-Jan-2026 17:11:50 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Image_Control" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-cropped-image-control.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-cropped-image-control.php on line 17
+[05-Jan-2026 22:18:48 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Image_Control" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-cropped-image-control.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-cropped-image-control.php on line 17
+[06-Jan-2026 13:41:12 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Image_Control" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-cropped-image-control.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-cropped-image-control.php on line 17
+[11-Jan-2026 22:35:39 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Image_Control" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-cropped-image-control.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-cropped-image-control.php on line 17
+[12-Jan-2026 05:11:49 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Image_Control" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-cropped-image-control.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-cropped-image-control.php on line 17
+[13-Jan-2026 00:44:03 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Image_Control" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-cropped-image-control.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-cropped-image-control.php on line 17
+[02-Feb-2026 21:19:18 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Image_Control" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-cropped-image-control.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-cropped-image-control.php on line 17
+[05-Mar-2026 12:04:54 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Image_Control" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-cropped-image-control.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-cropped-image-control.php on line 17
+[06-Mar-2026 13:23:17 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Image_Control" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-cropped-image-control.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-cropped-image-control.php on line 17
+[07-Mar-2026 10:09:39 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Image_Control" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-cropped-image-control.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-cropped-image-control.php on line 17
+[08-Mar-2026 11:10:55 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Image_Control" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-cropped-image-control.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-cropped-image-control.php on line 17
+[13-Mar-2026 08:24:00 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Image_Control" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-cropped-image-control.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-cropped-image-control.php on line 17
+[13-Mar-2026 11:38:49 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Image_Control" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-cropped-image-control.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-cropped-image-control.php on line 17
+[15-Mar-2026 11:29:01 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Image_Control" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-cropped-image-control.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-cropped-image-control.php on line 17
+[17-Mar-2026 07:55:00 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Image_Control" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-cropped-image-control.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-cropped-image-control.php on line 17
+[20-Mar-2026 14:16:08 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Image_Control" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-cropped-image-control.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-cropped-image-control.php on line 17
+[23-Mar-2026 02:17:15 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Image_Control" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-cropped-image-control.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-cropped-image-control.php on line 17
+[08-May-2026 07:48:25 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Image_Control" not found in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-cropped-image-control.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/customize/class-wp-customize-cropped-image-control.php on line 17
+[24-Jul-2026 17:17:25 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Customize_Image_Control" not found in /home/alamstor/public_html/wp-includes/customize/class-wp-customize-cropped-image-control.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/alamstor/public_html/wp-includes/customize/class-wp-customize-cropped-image-control.php on line 17

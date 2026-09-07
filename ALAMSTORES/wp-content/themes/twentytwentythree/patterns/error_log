@@ -1,0 +1,24 @@
+[08-Nov-2024 13:58:02 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function esc_html_x() in /home/compcfgz/alamstores.ma/wp-content/themes/twentytwentythree/patterns/hidden-404.php:13
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-content/themes/twentytwentythree/patterns/hidden-404.php on line 13
+[29-Jun-2025 16:44:43 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function esc_html_x() in /home/compcfgz/alamstores.ma/wp-content/themes/twentytwentythree/patterns/hidden-404.php:13
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-content/themes/twentytwentythree/patterns/hidden-404.php on line 13
+[01-Jul-2025 02:29:16 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function esc_html_x() in /home/compcfgz/alamstores.ma/wp-content/themes/twentytwentythree/patterns/hidden-404.php:13
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-content/themes/twentytwentythree/patterns/hidden-404.php on line 13
+[29-Jul-2025 12:11:31 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function esc_html_x() in /home/compcfgz/alamstores.ma/wp-content/themes/twentytwentythree/patterns/hidden-404.php:13
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-content/themes/twentytwentythree/patterns/hidden-404.php on line 13
+[03-Aug-2025 01:30:27 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function esc_html_x() in /home/compcfgz/alamstores.ma/wp-content/themes/twentytwentythree/patterns/hidden-404.php:13
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-content/themes/twentytwentythree/patterns/hidden-404.php on line 13
+[19-Aug-2025 16:36:01 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function esc_html_x() in /home/compcfgz/alamstores.ma/wp-content/themes/twentytwentythree/patterns/hidden-404.php:13
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-content/themes/twentytwentythree/patterns/hidden-404.php on line 13

@@ -1,0 +1,56 @@
+[20-Dec-2024 08:35:47 UTC] PHP Fatal error:  Uncaught Error: Class 'Elementor\Core\Schemes\Typography' not found in /home/compcfgz/alamstores.ma/wp-content/plugins/ova-framework/ova-elementor/widgets/ova_heading.php:215
+Stack trace:
+#0 /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/includes/base/controls-stack.php(2427): ova_framework\Widgets\ova_heading->register_controls()
+#1 /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/includes/base/widget-base.php(1050): Elementor\Controls_Stack->init_controls()
+#2 /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/includes/base/controls-stack.php(569): Elementor\Widget_Base->init_controls()
+#3 /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/includes/base/widget-base.php(184): Elementor\Controls_Stack->get_stack()
+#4 /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/includes/base/controls-stack.php(314): Elementor\Widget_Base->get_stack()
+#5 /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/core/files/css/post.php(332): Elementor\Controls_Stack->get_controls() in /home/compcfgz/alamstores.ma/wp-content/plugins/ova-framework/ova-elementor/widgets/ova_heading.php on line 215
+[20-Dec-2024 08:36:16 UTC] PHP Notice:  Undefined index: menu_type in /home/compcfgz/alamstores.ma/wp-content/plugins/ova-framework/ova-elementor/widgets/ova-menu.php on line 688
+[20-Dec-2024 08:36:16 UTC] PHP Notice:  Undefined index: align in /home/compcfgz/alamstores.ma/wp-content/plugins/ova-framework/ova-elementor/widgets/ova-header.php on line 319
+[20-Dec-2024 08:36:16 UTC] PHP Notice:  Undefined index: menu_type in /home/compcfgz/alamstores.ma/wp-content/plugins/ova-framework/ova-elementor/widgets/ova-menu.php on line 688
+[20-Dec-2024 08:36:16 UTC] PHP Notice:  Undefined index: align in /home/compcfgz/alamstores.ma/wp-content/plugins/ova-framework/ova-elementor/widgets/ova-header.php on line 319
+[20-Dec-2024 08:36:28 UTC] PHP Fatal error:  Uncaught Error: Class 'Elementor\Core\Schemes\Typography' not found in /home/compcfgz/alamstores.ma/wp-content/plugins/ova-framework/ova-elementor/widgets/ova_heading.php:215
+Stack trace:
+#0 /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/includes/base/controls-stack.php(2427): ova_framework\Widgets\ova_heading->register_controls()
+#1 /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/includes/base/widget-base.php(1050): Elementor\Controls_Stack->init_controls()
+#2 /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/includes/base/controls-stack.php(569): Elementor\Widget_Base->init_controls()
+#3 /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/includes/base/widget-base.php(184): Elementor\Controls_Stack->get_stack()
+#4 /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/includes/base/controls-stack.php(314): Elementor\Widget_Base->get_stack()
+#5 /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/core/files/css/post.php(332): Elementor\Controls_Stack->get_controls() in /home/compcfgz/alamstores.ma/wp-content/plugins/ova-framework/ova-elementor/widgets/ova_heading.php on line 215
+[20-Dec-2024 08:36:47 UTC] PHP Fatal error:  Uncaught Error: Class 'Elementor\Core\Schemes\Typography' not found in /home/compcfgz/alamstores.ma/wp-content/plugins/ova-framework/ova-elementor/widgets/ova_heading.php:215
+Stack trace:
+#0 /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/includes/base/controls-stack.php(2427): ova_framework\Widgets\ova_heading->register_controls()
+#1 /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/includes/base/widget-base.php(1050): Elementor\Controls_Stack->init_controls()
+#2 /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/includes/base/controls-stack.php(569): Elementor\Widget_Base->init_controls()
+#3 /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/includes/base/widget-base.php(184): Elementor\Controls_Stack->get_stack()
+#4 /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/includes/base/controls-stack.php(314): Elementor\Widget_Base->get_stack()
+#5 /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/core/files/css/post.php(332): Elementor\Controls_Stack->get_controls() in /home/compcfgz/alamstores.ma/wp-content/plugins/ova-framework/ova-elementor/widgets/ova_heading.php on line 215
+[20-Dec-2024 08:36:54 UTC] PHP Notice:  Undefined index: menu_type in /home/compcfgz/alamstores.ma/wp-content/plugins/ova-framework/ova-elementor/widgets/ova-menu.php on line 688
+[20-Dec-2024 08:36:54 UTC] PHP Notice:  Undefined index: align in /home/compcfgz/alamstores.ma/wp-content/plugins/ova-framework/ova-elementor/widgets/ova-header.php on line 319
+[20-Dec-2024 08:36:54 UTC] PHP Notice:  Undefined index: menu_type in /home/compcfgz/alamstores.ma/wp-content/plugins/ova-framework/ova-elementor/widgets/ova-menu.php on line 688
+[20-Dec-2024 08:36:54 UTC] PHP Notice:  Undefined index: align in /home/compcfgz/alamstores.ma/wp-content/plugins/ova-framework/ova-elementor/widgets/ova-header.php on line 319
+[20-Dec-2024 08:37:13 UTC] PHP Notice:  Undefined index: src in /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/core/page-assets/loader.php on line 97
+[20-Dec-2024 08:37:13 UTC] PHP Notice:  Undefined index: dependencies in /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/core/page-assets/loader.php on line 97
+[20-Dec-2024 08:37:13 UTC] PHP Notice:  Undefined index: version in /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/core/page-assets/loader.php on line 97
+[20-Dec-2024 08:37:13 UTC] PHP Notice:  Undefined index: src in /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/core/page-assets/loader.php on line 97
+[20-Dec-2024 08:37:13 UTC] PHP Notice:  Undefined index: dependencies in /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/core/page-assets/loader.php on line 97
+[20-Dec-2024 08:37:13 UTC] PHP Notice:  Undefined index: version in /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/core/page-assets/loader.php on line 97
+[20-Dec-2024 08:37:28 UTC] PHP Notice:  Undefined index: src in /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/core/page-assets/loader.php on line 97
+[20-Dec-2024 08:37:28 UTC] PHP Notice:  Undefined index: dependencies in /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/core/page-assets/loader.php on line 97
+[20-Dec-2024 08:37:28 UTC] PHP Notice:  Undefined index: version in /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/core/page-assets/loader.php on line 97
+[20-Dec-2024 08:37:28 UTC] PHP Notice:  Undefined index: src in /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/core/page-assets/loader.php on line 97
+[20-Dec-2024 08:37:28 UTC] PHP Notice:  Undefined index: dependencies in /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/core/page-assets/loader.php on line 97
+[20-Dec-2024 08:37:28 UTC] PHP Notice:  Undefined index: version in /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/core/page-assets/loader.php on line 97
+[20-Dec-2024 08:37:28 UTC] PHP Notice:  Undefined index: src in /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/core/page-assets/loader.php on line 95
+[20-Dec-2024 08:37:28 UTC] PHP Notice:  Undefined index: dependencies in /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/core/page-assets/loader.php on line 95
+[20-Dec-2024 08:37:28 UTC] PHP Notice:  Undefined index: version in /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/core/page-assets/loader.php on line 95
+[20-Dec-2024 08:37:28 UTC] PHP Notice:  Undefined index: src in /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/core/page-assets/loader.php on line 97
+[20-Dec-2024 08:37:28 UTC] PHP Notice:  Undefined index: dependencies in /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/core/page-assets/loader.php on line 97
+[20-Dec-2024 08:37:28 UTC] PHP Notice:  Undefined index: version in /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/core/page-assets/loader.php on line 97
+[20-Dec-2024 08:37:28 UTC] PHP Notice:  Undefined index: src in /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/core/page-assets/loader.php on line 97
+[20-Dec-2024 08:37:28 UTC] PHP Notice:  Undefined index: dependencies in /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/core/page-assets/loader.php on line 97
+[20-Dec-2024 08:37:28 UTC] PHP Notice:  Undefined index: version in /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/core/page-assets/loader.php on line 97
+[20-Dec-2024 08:37:28 UTC] PHP Notice:  Undefined index: src in /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/core/page-assets/loader.php on line 95
+[20-Dec-2024 08:37:28 UTC] PHP Notice:  Undefined index: dependencies in /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/core/page-assets/loader.php on line 95
+[20-Dec-2024 08:37:28 UTC] PHP Notice:  Undefined index: version in /home/compcfgz/alamstores.ma/wp-content/plugins/elementor/core/page-assets/loader.php on line 95

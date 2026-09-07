@@ -1,0 +1,4 @@
+[24-Jul-2026 17:08:36 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function add_action() in /home/alamstor/public_html/wp-content/themes/twentytwentyfour/functions.php:147
+Stack trace:
+#0 {main}
+  thrown in /home/alamstor/public_html/wp-content/themes/twentytwentyfour/functions.php on line 147

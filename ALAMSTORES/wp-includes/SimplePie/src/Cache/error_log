@@ -1,0 +1,36 @@
+[23-Dec-2025 12:23:43 UTC] PHP Fatal error:  Uncaught Error: Interface "SimplePie\Cache\DataCache" not found in /home/compcfgz/alamstores.ma/wp-includes/SimplePie/src/Cache/BaseDataCache.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/SimplePie/src/Cache/BaseDataCache.php on line 17
+[23-Dec-2025 12:23:43 UTC] PHP Fatal error:  Uncaught Error: Interface "SimplePie\Cache\NameFilter" not found in /home/compcfgz/alamstores.ma/wp-includes/SimplePie/src/Cache/CallableNameFilter.php:13
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/SimplePie/src/Cache/CallableNameFilter.php on line 13
+[23-Dec-2025 12:23:44 UTC] PHP Fatal error:  Uncaught Error: Interface "SimplePie\Cache\Base" not found in /home/compcfgz/alamstores.ma/wp-includes/SimplePie/src/Cache/DB.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/SimplePie/src/Cache/DB.php on line 17
+[23-Dec-2025 12:23:44 UTC] PHP Fatal error:  Uncaught Error: Interface "SimplePie\Cache\Base" not found in /home/compcfgz/alamstores.ma/wp-includes/SimplePie/src/Cache/File.php:15
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/SimplePie/src/Cache/File.php on line 15
+[23-Dec-2025 12:23:45 UTC] PHP Fatal error:  Uncaught Error: Interface "SimplePie\Cache\Base" not found in /home/compcfgz/alamstores.ma/wp-includes/SimplePie/src/Cache/Memcache.php:24
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/SimplePie/src/Cache/Memcache.php on line 24
+[23-Dec-2025 12:23:45 UTC] PHP Fatal error:  Uncaught Error: Interface "SimplePie\Cache\Base" not found in /home/compcfgz/alamstores.ma/wp-includes/SimplePie/src/Cache/Memcached.php:25
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/SimplePie/src/Cache/Memcached.php on line 25
+[23-Dec-2025 12:23:45 UTC] PHP Fatal error:  Uncaught Error: Class "SimplePie\Cache\DB" not found in /home/compcfgz/alamstores.ma/wp-includes/SimplePie/src/Cache/MySQL.php:21
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/SimplePie/src/Cache/MySQL.php on line 21
+[23-Dec-2025 12:23:46 UTC] PHP Fatal error:  Uncaught Error: Interface "SimplePie\Cache\DataCache" not found in /home/compcfgz/alamstores.ma/wp-includes/SimplePie/src/Cache/Psr16.php:19
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/SimplePie/src/Cache/Psr16.php on line 19
+[23-Dec-2025 12:23:46 UTC] PHP Fatal error:  Uncaught Error: Interface "SimplePie\Cache\Base" not found in /home/compcfgz/alamstores.ma/wp-includes/SimplePie/src/Cache/Redis.php:25
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/SimplePie/src/Cache/Redis.php on line 25

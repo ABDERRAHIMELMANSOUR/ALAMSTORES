@@ -1,0 +1,508 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Simple Slider Addon For Elementor\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-03-05 09:39+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: \n"
+"Language: \n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.3.1; wp-5.3.2"
+
+#: widgets/widget-simple-slide.php:120
+msgid "50"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:573
+msgid "After"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:485
+msgid "After Title"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:776
+msgid "Alignment"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:407
+msgid "Animation Heading"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:168
+msgid "Arrow Anchor"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:178
+msgid "Arrow Style"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:699 widgets/widget-simple-slide.php:736
+msgid "Background Color"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:572
+msgid "Before"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:481
+msgid "Before Title"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:75
+msgid "Blur"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:76
+msgid "Blur2"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:245
+msgid "Border"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:709 widgets/widget-simple-slide.php:746
+msgid "Border Color"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:255 widgets/widget-simple-slide.php:660
+msgid "Border Radius"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:73
+msgid "Burn"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:74
+msgid "Burn2"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:524
+msgid "Button URL"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:504
+msgid "Buttons"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:784
+msgid "Center"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:341 widgets/widget-simple-slide.php:688
+msgid "Color"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:977
+msgid "Color Desciption"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:358
+msgid "Color Hover"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:110
+msgid "Color Overlay"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:804
+msgid "Color Prefix"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:896
+msgid "Color Sub Title"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:818
+msgid "Color Suffix"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:840
+msgid "Color Title"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:511
+msgid "Content"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:126
+msgid "Content Area Into Grid?"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:117
+msgid "Content: Top Margin"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:758
+msgid "Create buttons"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:185
+msgid "Custom"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:36 widgets/widget-simple-slide.php:42
+msgid "Custom Height"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:182
+msgid "Default"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:494 widgets/widget-simple-slide.php:971
+msgid "Desciption"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:84
+msgid "Duration (ms)"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:375
+msgid "Effect"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:52
+msgid "Effects"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:121
+msgid "Ex: 50. In case you want to set a spacing above the content area."
+msgstr ""
+
+#: widgets/widget-simple-slide.php:56
+msgid "Fade"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:57
+msgid "Fade2"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:77
+msgid "Flash"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:78
+msgid "Flash2"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:726
+msgid "Font Color"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:35
+msgid "Full Height"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:25 widgets/widget-simple-slide.php:770
+msgid "General"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:31
+msgid "Height"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:219
+msgid "Heigth"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:721
+msgid "Hover"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://codecanyon.net/user/themesflat"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:269 widgets/widget-simple-slide.php:278
+#: widgets/widget-simple-slide.php:533
+msgid "Icon"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:568
+msgid "Icon Position"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:317
+msgid "Icon Size"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:582
+msgid "Icon Spacing Left"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:603
+msgid "Icon Spacing Right"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:137
+msgid "Image"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:149
+msgid "Image Slides"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:792
+msgid "Justified"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:780
+msgid "Left"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:670
+msgid "Margin"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:95
+msgid "No Parttern"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:411
+msgid "None"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:683
+msgid "Normal"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:129 widgets/widget-simple-slide.php:171
+#: widgets/widget-simple-slide.php:378
+msgid "Off"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:128 widgets/widget-simple-slide.php:170
+#: widgets/widget-simple-slide.php:377
+msgid "On"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:183
+msgid "Outline Circle"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:184
+msgid "Outline Square"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:650
+msgid "Padding"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:91
+msgid "Pattern Overlay"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:476
+msgid "Position Sub Title"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:419
+msgid "Prefix Title"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:788
+msgid "Right"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:163
+msgid "Scroll Anchor"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:388
+msgid "Scroll to Row (ID)"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:413
+msgid "Scrolling"
+msgstr ""
+
+#. Name of the plugin
+msgid "Simple Slider Addon For Elementor"
+msgstr ""
+
+#. Description of the plugin
+msgid "Simple Slider Addon For Elementor."
+msgstr ""
+
+#: widgets/widget-simple-slide.php:402
+msgid "Slide Content"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:63
+msgid "Slide Down"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:64
+msgid "Slide Down2"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:58
+msgid "Slide Left"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:59
+msgid "Slide Left2"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:60
+msgid "Slide Right"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:61
+msgid "Slide Right2"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:62
+msgid "Slide Up"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:1025
+msgid "Spacing Desciption"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:944
+msgid "Spacing Sub Title"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:863
+msgid "Spacing Title"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:626
+msgid "Style"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:96
+msgid "Style 1"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:97
+msgid "Style 2"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:98
+msgid "Style 3"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:99
+msgid "Style 4"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:100
+msgid "Style 5"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:101
+msgid "Style 6"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:102
+msgid "Style 7"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:103
+msgid "Style 8"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:104
+msgid "Style 9"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:469 widgets/widget-simple-slide.php:890
+msgid "Sub Title"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:427
+msgid "Suffix Title"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:69
+msgid "Swirl Left"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:70
+msgid "Swirl Left2"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:71
+msgid "Swirl Right"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:72
+msgid "Swirl Right2"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:436 widgets/widget-simple-slide.php:516
+msgid "Text"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:10
+msgid "TF Simple Slider"
+msgstr ""
+
+#. Author of the plugin
+msgid "Themesflat"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:444 widgets/widget-simple-slide.php:459
+#: widgets/widget-simple-slide.php:834
+msgid "Title"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:412
+msgid "Typing"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:638
+msgid "Typography"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:993
+msgid "Typography Desciption"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:912
+msgid "Typography Sub Title"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:856
+msgid "Typography Title"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:194
+msgid "Width"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:1000
+msgid "Width Desciption"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:287 widgets/widget-simple-slide.php:539
+msgid "Width Icon SVG"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:919
+msgid "Width Sub Title"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:65
+msgid "Zoom In"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:66
+msgid "Zoom In2"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:67
+msgid "Zoom Out"
+msgstr ""
+
+#: widgets/widget-simple-slide.php:68
+msgid "Zoom Out2"
+msgstr ""

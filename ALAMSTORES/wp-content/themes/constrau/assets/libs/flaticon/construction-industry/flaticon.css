@@ -1,0 +1,81 @@
+	/*
+  	Flaticon icon font: Flaticon
+  	Creation date: 06/07/2017 08:34
+  	*/
+
+@font-face {
+  font-family: "Flaticon-contruc_indus";
+  src: url("./Flaticon.eot");
+  src: url("./Flaticon.eot?#iefix") format("embedded-opentype"),
+       url("./Flaticon.woff") format("woff"),
+       url("./Flaticon.ttf") format("truetype"),
+       url("./Flaticon.svg#Flaticon") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: "Flaticon-contruc_indus";
+    src: url("./Flaticon.svg#Flaticon") format("svg");
+  }
+}
+
+[class^="contruc_indus_flaticon-"]:before, [class*=" contruc_indus_flaticon-"]:before,
+[class^="contruc_indus_flaticon-"]:after, [class*=" contruc_indus_flaticon-"]:after {   
+  font-family: Flaticon-contruc_indus;
+        font-size: 20px;
+font-style: normal;
+margin-left: 20px;
+}
+
+.contruc_indus_flaticon-001-train-cargo-2:before { content: "\f100"; }
+.contruc_indus_flaticon-002-train-cargo-1:before { content: "\f101"; }
+.contruc_indus_flaticon-003-train-cargo:before { content: "\f102"; }
+.contruc_indus_flaticon-004-stapler:before { content: "\f103"; }
+.contruc_indus_flaticon-005-square:before { content: "\f104"; }
+.contruc_indus_flaticon-006-silo:before { content: "\f105"; }
+.contruc_indus_flaticon-007-shovel-1:before { content: "\f106"; }
+.contruc_indus_flaticon-008-saw-1:before { content: "\f107"; }
+.contruc_indus_flaticon-009-cone:before { content: "\f108"; }
+.contruc_indus_flaticon-010-barrier:before { content: "\f109"; }
+.contruc_indus_flaticon-011-helmet-1:before { content: "\f10a"; }
+.contruc_indus_flaticon-012-plier-2:before { content: "\f10b"; }
+.contruc_indus_flaticon-013-plier-1:before { content: "\f10c"; }
+.contruc_indus_flaticon-014-plier:before { content: "\f10d"; }
+.contruc_indus_flaticon-015-pipe-2:before { content: "\f10e"; }
+.contruc_indus_flaticon-016-pipe-1:before { content: "\f10f"; }
+.contruc_indus_flaticon-017-pipe:before { content: "\f110"; }
+.contruc_indus_flaticon-018-pick:before { content: "\f111"; }
+.contruc_indus_flaticon-019-paper-cutter:before { content: "\f112"; }
+.contruc_indus_flaticon-020-oil-tower:before { content: "\f113"; }
+.contruc_indus_flaticon-021-oil-pump:before { content: "\f114"; }
+.contruc_indus_flaticon-022-nuclear:before { content: "\f115"; }
+.contruc_indus_flaticon-023-helmet:before { content: "\f116"; }
+.contruc_indus_flaticon-024-mining-cart:before { content: "\f117"; }
+.contruc_indus_flaticon-025-digger:before { content: "\f118"; }
+.contruc_indus_flaticon-026-jigsaw:before { content: "\f119"; }
+.contruc_indus_flaticon-027-high-voltage:before { content: "\f11a"; }
+.contruc_indus_flaticon-028-drill-1:before { content: "\f11b"; }
+.contruc_indus_flaticon-029-hammer:before { content: "\f11c"; }
+.contruc_indus_flaticon-030-circular-saw:before { content: "\f11d"; }
+.contruc_indus_flaticon-031-gas-station-1:before { content: "\f11e"; }
+.contruc_indus_flaticon-032-gas-station:before { content: "\f11f"; }
+.contruc_indus_flaticon-033-gas-can:before { content: "\f120"; }
+.contruc_indus_flaticon-034-shovel:before { content: "\f121"; }
+.contruc_indus_flaticon-035-factory:before { content: "\f122"; }
+.contruc_indus_flaticon-036-drill:before { content: "\f123"; }
+.contruc_indus_flaticon-037-cutter:before { content: "\f124"; }
+.contruc_indus_flaticon-038-saw:before { content: "\f125"; }
+.contruc_indus_flaticon-039-crane:before { content: "\f126"; }
+.contruc_indus_flaticon-040-concrete-1:before { content: "\f127"; }
+.contruc_indus_flaticon-041-concrete:before { content: "\f128"; }
+.contruc_indus_flaticon-042-clamp-1:before { content: "\f129"; }
+.contruc_indus_flaticon-043-clamp:before { content: "\f12a"; }
+.contruc_indus_flaticon-044-chisel:before { content: "\f12b"; }
+.contruc_indus_flaticon-045-wheelbarrow:before { content: "\f12c"; }
+.contruc_indus_flaticon-046-wrench:before { content: "\f12d"; }
+.contruc_indus_flaticon-047-electric-saw:before { content: "\f12e"; }
+.contruc_indus_flaticon-048-barrel:before { content: "\f12f"; }
+.contruc_indus_flaticon-049-axe:before { content: "\f130"; }
+.contruc_indus_flaticon-050-protractor:before { content: "\f131"; }

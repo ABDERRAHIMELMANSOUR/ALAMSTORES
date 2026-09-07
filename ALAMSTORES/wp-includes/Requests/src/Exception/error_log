@@ -1,0 +1,12 @@
+[23-Dec-2025 12:22:43 UTC] PHP Fatal error:  Uncaught Error: Class "WpOrg\Requests\Exception" not found in /home/compcfgz/alamstores.ma/wp-includes/Requests/src/Exception/ArgumentCount.php:20
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/Requests/src/Exception/ArgumentCount.php on line 20
+[23-Dec-2025 12:22:44 UTC] PHP Fatal error:  Uncaught Error: Class "WpOrg\Requests\Exception" not found in /home/compcfgz/alamstores.ma/wp-includes/Requests/src/Exception/Http.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/Requests/src/Exception/Http.php on line 18
+[23-Dec-2025 12:22:44 UTC] PHP Fatal error:  Uncaught Error: Class "WpOrg\Requests\Exception" not found in /home/compcfgz/alamstores.ma/wp-includes/Requests/src/Exception/Transport.php:17
+Stack trace:
+#0 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-includes/Requests/src/Exception/Transport.php on line 17

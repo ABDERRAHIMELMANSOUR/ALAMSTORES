@@ -1,0 +1,16 @@
+[21-Apr-2026 22:06:30 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function plugin_dir_path() in /home/compcfgz/alamstores.ma/wp-content/plugins/ova-framework/ova-framework.php:44
+Stack trace:
+#0 /home/compcfgz/alamstores.ma/wp-content/plugins/ova-framework/ova-framework.php(22): OvaFramework->setup_cons()
+#1 /home/compcfgz/alamstores.ma/wp-content/plugins/ova-framework/ova-framework.php(33): OvaFramework->__construct()
+#2 /home/compcfgz/alamstores.ma/wp-content/plugins/ova-framework/ova-framework.php(145): OvaFramework::getInstance()
+#3 /home/compcfgz/alamstores.ma/wp-content/plugins/ova-framework/ova-framework.php(148): Ova()
+#4 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-content/plugins/ova-framework/ova-framework.php on line 44
+[29-Apr-2026 06:12:31 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function plugin_dir_path() in /home/compcfgz/alamstores.ma/wp-content/plugins/ova-framework/ova-framework.php:44
+Stack trace:
+#0 /home/compcfgz/alamstores.ma/wp-content/plugins/ova-framework/ova-framework.php(22): OvaFramework->setup_cons()
+#1 /home/compcfgz/alamstores.ma/wp-content/plugins/ova-framework/ova-framework.php(33): OvaFramework->__construct()
+#2 /home/compcfgz/alamstores.ma/wp-content/plugins/ova-framework/ova-framework.php(145): OvaFramework::getInstance()
+#3 /home/compcfgz/alamstores.ma/wp-content/plugins/ova-framework/ova-framework.php(148): Ova()
+#4 {main}
+  thrown in /home/compcfgz/alamstores.ma/wp-content/plugins/ova-framework/ova-framework.php on line 44
