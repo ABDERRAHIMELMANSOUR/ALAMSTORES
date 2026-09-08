@@ -11,25 +11,60 @@ societe.html               … 24 further pages, one per original URL
 sitemap.xml  robots.txt  .htaccess
 
 assets/
-  css/main.min.css         one stylesheet  (202 KB → 37 KB gzip)
-  js/main.min.js           one script      (6.3 KB → 2.5 KB gzip)
+  css/main.min.css         one stylesheet  (37 KB → 7.9 KB gzip)
+  js/main.min.js           one script      (10.5 KB → 3.8 KB gzip)
   images/                  871 files, organised as YYYY/MM/ like the originals
-  fonts/                   56 self-hosted font files
+  fonts/                   4 files, Plus Jakarta Sans (84 KB total)
 
-tools/                     build + restore scripts (not web content)
+tools/                     build scripts + page copy (not web content)
 SECURITY-AUDIT.md          malware findings from the WordPress export
 ```
+
+## Design system
+
+The front end is a purpose-built design system, not the old WordPress theme.
+`tools/data/design-system.css` holds the whole thing: colour and spacing
+tokens, typography, and every component. Icons are inline SVG
+(`tools/icons.py`), so no icon font is loaded.
+
+| | |
+|---|---|
+| Brand | `#7d0e7c` refined into a 50→800 scale, paired with deep slate neutrals and soft off-whites |
+| Type | Plus Jakarta Sans, self-hosted, fluid `clamp()` scale |
+| Shape | 6→28px radius scale, layered soft shadows, generous whitespace |
+| Motion | Hover lifts, image zoom, scroll reveal — all disabled under `prefers-reduced-motion` |
+
+What that replaced: the `constrau` theme stylesheet, Bootstrap 4, Font Awesome,
+ten Flaticon sets, Elegant Icons and Material Design Iconic — **525 KB of CSS
+and 1.9 MB of font files, now 37 KB and 84 KB.**
+
+### Layout and UX
+
+- **Sticky header** that turns to frosted glass on scroll, over a dark top bar
+  carrying the phone number and a WhatsApp button.
+- **Slide-out drawer** on mobile with accordion submenus, focus trapping,
+  Escape to close, and contact details plus both CTAs pinned to its foot.
+- **Home hero** with a cross-fading photo slider, trust badges
+  (Devis gratuit / Installation rapide / Fabrication sur mesure) and dual CTAs.
+- **Category cards** with hover zoom, a category tag and a per-product
+  "Demander" button that opens WhatsApp pre-filled with that product name.
+- **Partner logos** as a snap-scrolling slider with prev/next controls.
+- **Quote form** in three steps with a progress indicator, inline validation
+  and a review summary before sending.
+- **Floating WhatsApp button** and scroll-to-top on every page.
 
 ## What carried over from WordPress
 
 | Original | Where it went |
 |---|---|
-| Theme `constrau` stylesheets | concatenated into `assets/css/main.min.css` in the theme's own enqueue order |
-| Theme customizer CSS | rendered by `tools/render_customizer.php` and appended, so the cascade matches |
 | `wp-content/uploads` media | `assets/images/` |
 | Page list + per-page images | recovered from the Rank Math sitemap cache |
+| URL structure | unchanged — one `.html` per original URL |
 | Logo, brand colour `#7d0e7c` | `assets/images/2019/05/Logo-stores-rideaux-maroc.png`, sampled from it |
-| Fonts Lato + Rajdhani | self-hosted in `assets/fonts/` |
+| Partner logos | `PARTNER_LOGOS` in `tools/build_pages.py` |
+
+The theme's own stylesheets were used for the first conversion and have since
+been replaced by the design system above.
 
 ### What did not
 
@@ -65,19 +100,24 @@ all 26 pages.
 
 ## How the quote form works
 
-The site is static, so there is no server and no database. The form on
-`devis.html` validates in the browser, then composes the request and hands it
-off — nothing is stored or transmitted by the page itself:
+The site is static, so there is no server and no database. `devis.html` walks
+the visitor through three steps — Projet, Détails, Coordonnées — validating as
+it goes and showing a summary before sending. Nothing is stored or transmitted
+by the page itself:
 
-- **Envoyer par WhatsApp** opens `https://wa.me/<number>` with the message
+- **Envoyer sur WhatsApp** opens `https://wa.me/<number>` with the message
   pre-filled, in a new tab.
-- **Envoyer par e-mail** opens the visitor's mail client via `mailto:` with the
-  subject and body pre-filled.
+- **Par e-mail** opens the visitor's mail client via `mailto:` with the subject
+  and body pre-filled.
 
-Both buttons build the same message from the form fields (name, e-mail, phone,
-city, product, number of openings, project description). If you would rather
-post to a form service such as Formspree or Netlify Forms, add an `action` to
-the `<form>` and drop the `data-whatsapp` / `data-mailto` attributes.
+Both build the same message from the form fields (name, e-mail, phone, city,
+product, number of openings, room, orientation, command type, deadline and the
+project description). Product cards across the site also carry a "Demander"
+button that opens WhatsApp pre-filled with that product's name.
+
+To post to a form service such as Formspree or Netlify Forms instead, add an
+`action` to the `<form>` and drop the `data-whatsapp` / `data-mailto`
+attributes.
 
 ## Restoring the original page text
 
@@ -119,29 +159,39 @@ npm install clean-css purgecss terser
 NODE_TOOLS="$PWD" python3 tools/build_css.py
 ```
 
-Editing navigation, page titles or the page tree is done in the `PAGES`,
-`NAV_TOP` and `NAV_LABELS` tables at the top of `tools/build_pages.py`, then
-re-running it. Page copy lives in `tools/content_fr.py`, partner logos in
-`PARTNER_LOGOS`, and component styles in `tools/data/site-extra.css`.
+Where to edit what:
+
+| Change | File |
+|---|---|
+| Navigation, page tree, page titles | `PAGES`, `NAV_TOP`, `NAV_LABELS` in `tools/build_pages.py` |
+| Contact details | `CONTACT` in `tools/build_pages.py` |
+| Page copy | `tools/content_fr.py` |
+| Partner logos | `PARTNER_LOGOS` in `tools/build_pages.py` |
+| Colours, type, components | `tools/data/design-system.css` |
+| Icons | `tools/icons.py` |
+
+Re-run `build_pages.py` after any of the first four, and `build_css.py` after
+touching the stylesheet.
 
 ## Front-end notes
 
-The theme used to load jQuery, Bootstrap JS, select2, prettyPhoto, owl-carousel
-and the theme script — roughly 300 KB. All of it is replaced by
-`assets/js/main.js` (6.3 KB minified), which implements the same front-end
-behaviour with no dependencies:
+`assets/js/main.js` (10.5 KB minified, 3.8 KB gzip) is the only script and has
+no dependencies. It replaces the jQuery + Bootstrap + select2 + prettyPhoto +
+owl-carousel stack the theme used to load (~300 KB) and handles: sticky/glass
+header, drawer menu, hero slider, partner slider, lightbox, scroll reveal,
+scroll-to-top and the three-step quote form.
 
-- collapsible mobile navigation and dropdown submenus
-- hero slider with autoplay, dots, arrows and touch swipe
-- image lightbox with keyboard and swipe navigation
-- scroll-to-top, smooth in-page anchors, form validation
+Accessibility: skip link, `aria-current` on the active nav item, focus trapping
+in the drawer and lightbox, Escape to close both, keyboard and swipe navigation
+in the gallery, visible focus rings, and `prefers-reduced-motion` honoured
+throughout.
 
-Bootstrap's **CSS** is kept, because the theme's stylesheet is built on its grid.
+Performance: no external requests at runtime, lazy-loaded images below the fold,
+`fetchpriority="high"` on the first hero slide, and self-hosted fonts with
+`font-display: swap`.
 
-Accessibility and performance: skip link, `aria-current` on the active nav item,
-focus management in the lightbox, `prefers-reduced-motion` honoured, lazy-loaded
-images below the fold, `fetchpriority="high"` on the first hero slide, and no
-external requests at runtime.
+Responsive: mobile-first, verified with no horizontal overflow from 320px to
+1920px.
 
 ## Local preview
 

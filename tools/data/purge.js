@@ -4,16 +4,16 @@ const fs = require('fs');
   const res = await new PurgeCSS().purge({
     content: ['*.html', 'assets/js/main.js'],
     css: [process.argv[2]],
+    // Classes toggled by JavaScript at runtime never appear in the HTML.
     safelist: {
       standard: [
-        /^fa$/, /^fas$/, /^far$/, /^fab$/, /^fa-/,
-        /flaticon/, /^icon_/, /^arrow_/, /^social_/,
-        /^zmdi/,
-        /^is-/, /^has-/, /^active_sub$/, /^show$/, /^collapsing$/,
-        /^lightbox/, /^slider/, /^slide$/, /^form-status$/,
+        /^is-/, /^has-/, 'reveal',
+        /^lightbox/, /^drawer/, /^hero__/, /^partners/, /^steps/,
+        /^field/, /^form-/, /^summary/, /^to-top$/, /^fab/,
+        /^nav__/, /^card__/, /^gallery/, /^badge/, /^btn/,
       ],
-      deep: [/lightbox/, /slider/, /dropdown/, /navbar/, /breadcrumb/, /collapse/],
-      greedy: [/dropdown/, /navbar/, /collapse/],
+      deep: [/lightbox/, /drawer/, /hero/, /partners/, /steps/],
+      greedy: [/^\.lightbox/, /^\.drawer/],
     },
     fontFace: true, keyframes: true, variables: true,
   });
