@@ -1,0 +1,25 @@
+{
+  "$comment": "Product catalogue. Edit with admin.html (Exporter le JSON) or by hand, then run: python3 tools/build_pages.py",
+  "version": 1,
+  "products": [
+    {
+      "id": "exemple-store-enrouleur-screen",
+      "title": "Store enrouleur screen 5 %",
+      "category": "store-enrouleur-screen",
+      "description": "Exemple de fiche produit. Ouvrez admin.html pour modifier ou supprimer cette entrée, puis exportez le JSON et relancez le générateur.",
+      "photos": [
+        "2022/04/store-screen1.jpg"
+      ],
+      "video": "",
+      "datasheet": {
+        "file": "",
+        "label": "Fiche technique (PDF)"
+      },
+      "specs": [
+        { "label": "Facteur d'ouverture", "value": "5 %" },
+        { "label": "Largeur maximale", "value": "3,00 m" },
+        { "label": "Commande", "value": "Chaînette ou motorisation" }
+      ]
+    }
+  ]
+}

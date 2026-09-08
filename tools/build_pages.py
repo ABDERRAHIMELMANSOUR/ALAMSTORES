@@ -35,6 +35,7 @@ from icons import icon  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITEMAP = os.path.join(ROOT, "tools", "data", "page-sitemap.xml")
+PRODUCTS_JSON = os.path.join(ROOT, "tools", "data", "products.json")
 
 SITE_NAME = "Alam Stores"
 SITE_TAGLINE = "Le Spécialiste de l'Aménagement et de la Décoration"
@@ -252,6 +253,86 @@ def thumb_for(slug, sitemap):
         if found:
             return found
     return None
+
+
+def load_products():
+    """Product catalogue maintained through admin.html. Grouped by category."""
+    if not os.path.exists(PRODUCTS_JSON):
+        return {}
+    try:
+        data = json.load(open(PRODUCTS_JSON, encoding="utf-8"))
+    except (ValueError, OSError) as e:
+        print("  ! products.json ignored (%s)" % e)
+        return {}
+    grouped = {}
+    for prod in data.get("products", []):
+        cat = prod.get("category")
+        if not cat or not prod.get("title"):
+            continue
+        grouped.setdefault(cat, []).append(prod)
+    return grouped
+
+
+def products_section(slug, products):
+    """Product cards with photo, specs, datasheet download and a video link.
+
+    Video URLs are rendered as plain outbound links, never embedded — the site
+    carries no <video> or <iframe> anywhere.
+    """
+    items = products.get(slug)
+    if not items:
+        return ""
+
+    cards = []
+    for prod in items:
+        photo = next((p for p in prod.get("photos", [])
+                      if os.path.exists(os.path.join(ROOT, "assets", "images", p))), None)
+        media = ('<div class="product__media">'
+                 '<img src="assets/images/%s" alt="%s" loading="lazy" decoding="async"></div>'
+                 % (photo, esc(prod["title"]))) if photo else ""
+
+        specs = ""
+        rows = [sp for sp in prod.get("specs", []) if sp.get("label") or sp.get("value")]
+        if rows:
+            specs = ('<dl class="product__specs">%s</dl>' % "".join(
+                "<div><dt>%s</dt><dd>%s</dd></div>"
+                % (esc(sp.get("label", "")), esc(sp.get("value", ""))) for sp in rows))
+
+        actions = []
+        sheet = prod.get("datasheet") or {}
+        if sheet.get("file") and os.path.exists(os.path.join(ROOT, sheet["file"])):
+            actions.append('<a class="btn btn--ghost btn--sm" href="%s" download>%s<span>%s</span></a>'
+                           % (esc(sheet["file"]), icon("download"),
+                              esc(sheet.get("label") or "Fiche technique (PDF)")))
+        if prod.get("video"):
+            actions.append('<a class="btn btn--ghost btn--sm" href="%s" target="_blank" rel="noopener">'
+                           '%s<span>Voir la vidéo</span></a>' % (esc(prod["video"]), icon("play")))
+        actions.append('<a class="btn btn--wa btn--sm" href="%s" target="_blank" rel="noopener">'
+                       '%s<span>Demander un prix</span></a>'
+                       % (esc(wa_link("Bonjour, je souhaite un prix pour : %s." % prod["title"])),
+                          icon("whatsapp")))
+
+        cards.append(
+            '<li><article class="product">{media}<div class="product__body">'
+            '<h3>{title}</h3>{desc}{specs}'
+            '<div class="product__actions">{actions}</div>'
+            '</div></article></li>'.format(
+                media=media, title=esc(prod["title"]),
+                desc=('<p>%s</p>' % esc(prod["description"])) if prod.get("description") else "",
+                specs=specs, actions="".join(actions)))
+
+    return """  <section class="section reveal" id="produits">
+    <div class="shell">
+      <div class="section-head">
+        <span class="eyebrow">Catalogue</span>
+        <h2>Nos modèles</h2>
+      </div>
+      <ul class="product-grid">
+        {cards}
+      </ul>
+    </div>
+  </section>
+""".format(cards="\n        ".join(cards))
 
 
 # --------------------------------------------------------------------------
@@ -579,17 +660,38 @@ def prose_section(slug, with_aside=True, skip_lead=False, center=False):
 """.format(copy=copy, aside=contact_card_html())
 
 
+def _aspect(rel):
+    """Aspect ratio of an image, or None when it cannot be read."""
+    path = os.path.join(ROOT, "assets", "images", rel)
+    try:
+        from PIL import Image
+        with Image.open(path) as im:
+            w, h = im.size
+        return (w / h) if h else None
+    except Exception:
+        return None
+
+
+# Photos outside this band (logos, banners, portraits) are letterboxed instead
+# of being cropped to the grid's 4:3 tile.
+CROP_SAFE = (1.15, 1.85)
+
+
 def gallery_html(slug, images):
     if not images:
         return ""
     items = []
     for n, rel in enumerate(images, 1):
         cap = "%s — photo %d" % (TITLES[slug], n)
+        ar = _aspect(rel)
+        contain = ar is not None and not (CROP_SAFE[0] <= ar <= CROP_SAFE[1])
         items.append(
-            '<li><a href="assets/images/{rel}" data-lightbox="{slug}" data-caption="{cap}">'
+            '<li class="gallery__item{mod}">'
+            '<a href="assets/images/{rel}" data-lightbox="{slug}" data-caption="{cap}">'
             '<img src="assets/images/{rel}" alt="{cap}" loading="lazy" decoding="async">'
             '<span class="gallery__zoom">{zoom}</span></a></li>'.format(
-                rel=rel, slug=slug, cap=esc(cap), zoom=icon("zoom")))
+                rel=rel, slug=slug, cap=esc(cap), zoom=icon("zoom"),
+                mod=" gallery__item--contain" if contain else ""))
     return """  <section class="section section--alt reveal" id="galerie">
     <div class="shell">
       <div class="section-head">
@@ -605,14 +707,22 @@ def gallery_html(slug, images):
 
 
 def partners_html(alt=False):
-    items = []
-    for rel, name in PARTNER_LOGOS:
-        if not os.path.exists(os.path.join(ROOT, "assets", "images", rel)):
-            continue
-        items.append('<li><div><img src="assets/images/%s" alt="%s" loading="lazy" decoding="async"></div></li>'
-                     % (rel, esc(name)))
-    if not items:
+    """Infinite, continuously scrolling logo marquee.
+
+    The track is rendered twice; the CSS animation translates by exactly -50%,
+    so the second copy lands where the first began and the loop is seamless.
+    """
+    logos = [(rel, name) for rel, name in PARTNER_LOGOS
+             if os.path.exists(os.path.join(ROOT, "assets", "images", rel))]
+    if not logos:
         return ""
+
+    def run(hidden):
+        return "".join(
+            '<li%s><div><img src="assets/images/%s" alt="%s" loading="lazy" decoding="async"></div></li>'
+            % (' aria-hidden="true"' if hidden else "", rel, esc(name))
+            for rel, name in logos)
+
     return """  <section class="section{alt} reveal">
     <div class="shell">
       <div class="section-head">
@@ -621,19 +731,14 @@ def partners_html(alt=False):
         <p class="lede">Hôtels, groupes industriels, restaurants et enseignes commerciales
            équipés en stores et aménagements sur mesure.</p>
       </div>
-      <div class="partners" data-partners>
-        <ul class="partners__track" data-partners-track>
-          {items}
-        </ul>
-        <div class="partners__nav">
-          <button class="partners__btn" type="button" data-partners-prev aria-label="Logos précédents">{prev}</button>
-          <button class="partners__btn" type="button" data-partners-next aria-label="Logos suivants">{next}</button>
-        </div>
-      </div>
+    </div>
+    <div class="marquee" data-marquee>
+      <ul class="marquee__track" style="--marquee-count:{count}">
+        {a}{b}
+      </ul>
     </div>
   </section>
-""".format(alt=" section--alt" if alt else "", items="\n          ".join(items),
-           prev=icon("chevron-left"), next=icon("chevron-right"))
+""".format(alt=" section--alt" if alt else "", count=len(logos), a=run(False), b=run(True))
 
 
 def why_html():
@@ -989,6 +1094,7 @@ def jsonld_for(slug):
 
 def build():
     sitemap = load_sitemap()
+    products = load_products()
     header = header_html()
     footer = footer_html()
     written = []
@@ -1022,6 +1128,7 @@ def build():
             body.append(page_hero_html(slug))
             body.append(prose_section(slug, skip_lead=True))
             body.append(category_section(slug, sitemap, alt=True, blurb=False))
+            body.append(products_section(slug, products))
             body.append(gallery_html(slug, images))
             body.append(cta_band())
 

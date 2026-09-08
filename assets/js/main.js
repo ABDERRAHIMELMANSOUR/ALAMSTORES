@@ -1,8 +1,9 @@
 /*!
  * Alam Stores — front-end behaviour
- * Dependency-free. Sticky/glass header, slide-out drawer, hero slider,
- * partner slider, lightbox, scroll reveal, scroll-to-top and the B2B quote
- * form that hands off to WhatsApp or e-mail.
+ * Dependency-free. Sticky/glass header, slide-out drawer, hero slider
+ * (5 s auto-advance), lightbox, scroll reveal, scroll-to-top and the B2B
+ * quote form that hands off to WhatsApp or e-mail.
+ * The partner logo marquee is pure CSS — no JavaScript involved.
  */
 (function () {
   'use strict';
@@ -122,7 +123,9 @@
       });
       dots.forEach(function (d, n) { if (d) d.classList.toggle('is-active', n === index); });
     }
-    function start() { if (!reduced) timer = window.setInterval(function () { go(index + 1); }, 6500); }
+    /* Auto-advance every 5 s. */
+    var INTERVAL = 5000;
+    function start() { if (!reduced) timer = window.setInterval(function () { go(index + 1); }, INTERVAL); }
     function stop() { if (timer) { window.clearInterval(timer); timer = null; } }
     function restart() { stop(); start(); }
 
@@ -141,36 +144,6 @@
     });
 
     start();
-  }
-
-  /* --------------------------------------------------- partner slider --- */
-  function initPartners() {
-    $$('[data-partners]').forEach(function (root) {
-      var track = $('[data-partners-track]', root);
-      var prev = $('[data-partners-prev]', root);
-      var next = $('[data-partners-next]', root);
-      if (!track) return;
-
-      function step() {
-        var first = track.querySelector('li');
-        var w = first ? first.getBoundingClientRect().width + 14 : 180;
-        return Math.max(w, Math.round(track.clientWidth * 0.8));
-      }
-      on(next, 'click', function () { track.scrollBy({ left: step(), behavior: reduced ? 'auto' : 'smooth' }); });
-      on(prev, 'click', function () { track.scrollBy({ left: -step(), behavior: reduced ? 'auto' : 'smooth' }); });
-
-      function sync() {
-        var max = track.scrollWidth - track.clientWidth - 2;
-        if (prev) prev.disabled = track.scrollLeft <= 2;
-        if (next) next.disabled = track.scrollLeft >= max;
-        [prev, next].forEach(function (b) {
-          if (b) b.style.opacity = b.disabled ? '.4' : '';
-        });
-      }
-      on(track, 'scroll', sync, { passive: true });
-      on(window, 'resize', sync);
-      sync();
-    });
   }
 
   /* -------------------------------------------------------- lightbox --- */
@@ -440,7 +413,6 @@
     initHeader();
     initDrawer();
     initHero();
-    initPartners();
     initLightbox();
     initToTop();
     initReveal();

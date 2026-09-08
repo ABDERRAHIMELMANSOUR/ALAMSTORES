@@ -8,12 +8,14 @@ document root.
 index.html                 Accueil
 societe.html               … 24 further pages, one per original URL
 404.html
+admin.html                 product / datasheet dashboard (not indexed)
 sitemap.xml  robots.txt  .htaccess
 
 assets/
   css/main.min.css         one stylesheet  (37 KB → 7.9 KB gzip)
   js/main.min.js           one script      (10.5 KB → 3.8 KB gzip)
   images/                  871 files as YYYY/MM/ + hero/ carousel photos
+  docs/                    fiches techniques (PDF)
   fonts/                   4 files, Plus Jakarta Sans (84 KB total)
 
 tools/                     build scripts + page copy (not web content)
@@ -44,11 +46,15 @@ and 1.9 MB of font files, now 37 KB and 84 KB.**
   carrying the phone number and a WhatsApp button.
 - **Slide-out drawer** on mobile with accordion submenus, focus trapping,
   Escape to close, and contact details plus both CTAs pinned to its foot.
-- **Home hero** with a cross-fading photo slider, trust badges
-  (Devis gratuit / Installation rapide / Fabrication sur mesure) and dual CTAs.
+- **Home hero** with a cross-fading photo slider on a 5-second auto-advance,
+  trust badges and dual CTAs.
 - **Category cards** with hover zoom, a category tag and a per-product
   "Demander" button that opens WhatsApp pre-filled with that product name.
-- **Partner logos** as a snap-scrolling slider with prev/next controls.
+- **Gallery tiles** on a 4:3 grid: photos fill the tile, while logos, banners
+  and portraits are letterboxed on a padded card instead of being cropped.
+- **Partner logos** as an infinite, continuously scrolling marquee (pure CSS,
+  pauses on hover, falls back to a plain scroll strip under
+  `prefers-reduced-motion`).
 - **B2B quote form** with a showroom info card, conditional company field and
   inline validation, sending to WhatsApp or e-mail.
 - **Floating WhatsApp button** and scroll-to-top on every page.
@@ -140,6 +146,43 @@ To post to a form service such as Formspree or Netlify Forms instead, add an
 `action` to the `<form>` and drop the `data-whatsapp` / `data-mailto`
 attributes.
 
+## Product dashboard (`admin.html`)
+
+A dependency-free browser tool for maintaining the product catalogue —
+title, category, description, photos, video link, fiche technique (PDF) and a
+free-form specs table.
+
+```bash
+python3 -m http.server 8000     # then open http://127.0.0.1:8000/admin.html
+```
+
+Because the site is static, the page cannot write to the server. It edits in
+memory, keeps an unexported draft in `localStorage`, and publishes like this:
+
+1. Add or edit fiches, then **Exporter products.json**.
+2. Replace `tools/data/products.json` with the downloaded file.
+3. Run `python3 tools/build_pages.py` and publish.
+
+Products appear as a **Nos modèles** section on their category page, with the
+photo, description, specs table, a **Fiche technique** download button and a
+WhatsApp "Demander un prix" button.
+
+Put PDFs in `assets/docs/` and reference them as
+`assets/docs/<file>.pdf`; the download button only renders when the file
+actually exists, so a typo fails visibly at build time rather than shipping a
+dead link.
+
+> **Video links, not embeds.** The dashboard stores a video URL per product and
+> the page renders it as a plain outbound "Voir la vidéo" link. Nothing is
+> embedded — the site still contains no `<video>`, `<iframe>`, `<embed>` or
+> `<object>` anywhere, per the earlier brief. Say the word if you would rather
+> have real embedded players.
+
+`admin.html` is `noindex` and disallowed in `robots.txt`. It has **no access
+control** — it is an authoring tool, not a protected admin area. It cannot
+change anything server-side, but if you would rather it were not reachable at
+all, delete it from the deployed copy and run it locally.
+
 ## Home carousel
 
 The hero is a pure image carousel — **there is no video anywhere on the site**,
@@ -198,6 +241,7 @@ Where to edit what:
 | Page copy | `tools/content_fr.py` |
 | Partner logos | `PARTNER_LOGOS` in `tools/build_pages.py` |
 | Hero carousel photos | `SOURCES` in `tools/build_hero.py`, then `HERO_IMAGES` |
+| Products / fiches techniques | `admin.html`, saved to `tools/data/products.json` |
 | Quote form statuses / categories | `STATUTS`, `FORM_CATEGORIES` in `tools/build_pages.py` |
 | Colours, type, components | `tools/data/design-system.css` |
 | Icons | `tools/icons.py` |
@@ -211,7 +255,7 @@ touching the stylesheet.
 no dependencies. It replaces the jQuery + Bootstrap + select2 + prettyPhoto +
 owl-carousel stack the theme used to load (~300 KB) and handles: sticky/glass
 header, drawer menu, hero slider, partner slider, lightbox, scroll reveal,
-scroll-to-top and the B2B quote form.
+scroll-to-top and the B2B quote form. The partner marquee is pure CSS.
 
 Accessibility: skip link, `aria-current` on the active nav item, focus trapping
 in the drawer and lightbox, Escape to close both, keyboard and swipe navigation

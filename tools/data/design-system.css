@@ -990,6 +990,17 @@ small { font-size: .85rem; }
 }
 .gallery img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s var(--ease); }
 .gallery a:hover img, .gallery a:focus-visible img { transform: scale(1.09); }
+
+/* Logos, banners and portraits are shown whole on a soft padded card rather
+   than being cropped to the 4:3 tile. */
+.gallery__item--contain a { background: var(--surface); border: 1px solid var(--line-soft); }
+.gallery__item--contain img {
+  object-fit: contain;
+  padding: clamp(10px, 1.6vw, 18px);
+  background: var(--surface);
+}
+.gallery__item--contain a:hover img,
+.gallery__item--contain a:focus-visible img { transform: scale(1.03); }
 .gallery a::after {
   content: "";
   position: absolute;
@@ -1013,68 +1024,67 @@ small { font-size: .85rem; }
 .gallery__zoom svg { width: 26px; height: 26px; }
 .gallery a:hover .gallery__zoom, .gallery a:focus-visible .gallery__zoom { opacity: 1; transform: scale(1); }
 
-/* -------------------------------------------------------------- partners -- */
-.partners { position: relative; }
-.partners__track {
+/* ------------------------------------------------------------- marquee -- */
+/* Infinite logo ticker. The track holds two identical runs; the animation
+   shifts it by exactly one run (half the width, plus half a gap for the seam),
+   so the loop is continuous with no visible jump. */
+.marquee {
+  --marquee-gap: 14px;
+  position: relative;
+  overflow: hidden;
+  padding-block: 4px;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+}
+.marquee__track {
   display: flex;
-  gap: 14px;
+  gap: var(--marquee-gap);
+  width: max-content;
   margin: 0;
-  padding: 4px;
+  padding: 0;
   list-style: none;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
-  scroll-behavior: smooth;
+  animation: marquee-run linear infinite;
+  /* ~4s per logo keeps it slow and readable whatever the count. */
+  animation-duration: calc(var(--marquee-count, 10) * 4s);
+  will-change: transform;
 }
-.partners__track::-webkit-scrollbar { display: none; }
-.partners__track li {
-  flex: 0 0 auto;
-  width: clamp(148px, 20vw, 192px);
-  scroll-snap-align: start;
+@keyframes marquee-run {
+  from { transform: translateX(0); }
+  to   { transform: translateX(calc(-50% - var(--marquee-gap) / 2)); }
 }
-.partners__track li > div {
+.marquee:hover .marquee__track,
+.marquee:focus-within .marquee__track { animation-play-state: paused; }
+
+.marquee__track li { flex: 0 0 auto; width: clamp(150px, 19vw, 196px); }
+.marquee__track li > div {
   display: grid;
   place-items: center;
-  height: 116px;
-  padding: 20px;
+  height: 118px;
+  padding: 22px;
   background: var(--surface);
   border: 1px solid var(--line-soft);
   border-radius: var(--r-md);
   box-shadow: var(--sh-xs);
-  transition: box-shadow .3s var(--ease), transform .3s var(--ease), border-color .3s var(--ease);
+  transition: box-shadow .3s var(--ease), border-color .3s var(--ease);
 }
-.partners__track li:hover > div { box-shadow: var(--sh-md); transform: translateY(-4px); border-color: var(--brand-100); }
-.partners__track img {
-  max-height: 62px;
+.marquee__track li:hover > div { box-shadow: var(--sh-md); border-color: var(--brand-100); }
+.marquee__track img {
+  max-width: 100%;
+  max-height: 60px;
   width: auto;
   object-fit: contain;
   filter: grayscale(100%);
-  opacity: .62;
+  opacity: .6;
   transition: filter .35s var(--ease), opacity .35s var(--ease);
 }
-.partners__track li:hover img { filter: none; opacity: 1; }
+.marquee__track li:hover img { filter: none; opacity: 1; }
 
-.partners__nav {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-end;
-  margin-top: 18px;
+@media (prefers-reduced-motion: reduce) {
+  /* No motion: fall back to a normal scrollable strip showing one run. */
+  .marquee { overflow-x: auto; -webkit-mask-image: none; mask-image: none; }
+  .marquee__track { animation: none; }
+  .marquee__track li[aria-hidden="true"] { display: none; }
 }
-.partners__btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  border: 1px solid var(--line);
-  border-radius: 50%;
-  background: var(--surface);
-  color: var(--slate-700);
-  cursor: pointer;
-  transition: background-color .2s var(--ease), color .2s var(--ease), border-color .2s var(--ease);
-}
-.partners__btn:hover { background: var(--brand-500); border-color: var(--brand-500); color: #fff; }
-.partners__btn svg { width: 17px; height: 17px; }
 
 /* ------------------------------------------------------------------ CTA -- */
 .cta-band {
@@ -1505,3 +1515,52 @@ main { flex: 1; }
   padding-top: clamp(24px, 3vw, 32px);
   border-top: 1px solid var(--line-soft);
 }
+
+/* -------------------------------------------------------------- products -- */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+  gap: var(--gap);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.product {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--surface);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  box-shadow: var(--sh-sm);
+  transition: box-shadow .3s var(--ease), border-color .3s var(--ease);
+}
+.product:hover { box-shadow: var(--sh-md); border-color: var(--brand-100); }
+.product__media { aspect-ratio: 16 / 10; overflow: hidden; background: var(--surface-muted); }
+.product__media img { width: 100%; height: 100%; object-fit: cover; }
+.product__body { display: flex; flex-direction: column; gap: 12px; padding: 20px 22px 22px; flex: 1; }
+.product__body h3 { margin: 0; font-size: 1.08rem; }
+.product__body > p { margin: 0; font-size: .9rem; color: var(--text-soft); line-height: 1.6; }
+
+.product__specs { display: grid; gap: 6px; margin: 2px 0 0; }
+.product__specs > div {
+  display: grid;
+  grid-template-columns: minmax(110px, 42%) 1fr;
+  gap: 10px;
+  padding: 8px 12px;
+  background: var(--surface-alt);
+  border-radius: var(--r-sm);
+  font-size: .84rem;
+}
+.product__specs dt { margin: 0; color: var(--text-mute); font-weight: 700; }
+.product__specs dd { margin: 0; color: var(--slate-800); font-weight: 600; }
+
+.product__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 6px;
+}
+.product__actions .btn { flex: 1 1 auto; }
