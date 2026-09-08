@@ -1,8 +1,8 @@
 /*!
  * Alam Stores — front-end behaviour
  * Dependency-free. Sticky/glass header, slide-out drawer, hero slider,
- * partner slider, lightbox, scroll reveal, scroll-to-top and the three-step
- * quote form that hands off to WhatsApp or e-mail.
+ * partner slider, lightbox, scroll reveal, scroll-to-top and the B2B quote
+ * form that hands off to WhatsApp or e-mail.
  */
 (function () {
   'use strict';
@@ -284,50 +284,73 @@
     items.forEach(function (el) { io.observe(el); });
   }
 
-  /* -------------------------------------------------- step quote form --- */
-  function initStepForm() {
-    var form = $('[data-step-form]');
+  /* ------------------------------------------------------- B2B quote form --- */
+  function initQuoteForm() {
+    var form = $('[data-quote-form]');
     if (!form) return;
 
-    var steps = $$('.fieldset', form);
-    var indicators = $$('[data-steps] li', form);
-    var prevBtn = $('[data-prev]', form);
-    var nextBtn = $('[data-next]', form);
-    var sendWa = $('[data-send="whatsapp"]', form);
-    var sendMail = $('[data-send="mailto"]', form);
+    var statut = $('[data-statut]', form);
+    var companyWrap = $('[data-b2b-field]', form);
+    var company = companyWrap ? $('input', companyWrap) : null;
     var status = $('.form-status', form);
-    var summary = $('[data-summary]', form);
-    var at = 0;
     var channel = 'whatsapp';
 
-    var LABELS = {
-      product: 'Produit', quantity: "Nombre d'ouvertures", message: 'Projet',
-      room: 'Pièce', orientation: 'Orientation', command: 'Commande',
-      deadline: 'Échéance', name: 'Nom', email: 'E-mail',
-      phone: 'Téléphone', city: 'Ville'
-    };
-    var ORDER = ['name', 'email', 'phone', 'city', 'product', 'quantity',
-                 'room', 'orientation', 'command', 'deadline', 'message'];
+    /* Order and labels of everything sent in the payload. */
+    var FIELDS = [
+      ['statut', 'Statut'],
+      ['company', 'Entreprise'],
+      ['category', 'Catégorie'],
+      ['firstname', 'Prénom'],
+      ['lastname', 'Nom'],
+      ['email', 'E-mail'],
+      ['phone', 'Téléphone'],
+      ['address', 'Adresse'],
+      ['zip', 'Code postal'],
+      ['city', 'Ville'],
+      ['country', 'Pays']
+    ];
 
     function val(name) {
       var el = form.elements[name];
       return el && el.value ? el.value.trim() : '';
     }
 
+    /* The company name is required only for the two professional statuses. */
+    function isB2B() {
+      if (!statut) return false;
+      var opt = statut.options[statut.selectedIndex];
+      return !!(opt && opt.getAttribute('data-b2b'));
+    }
+
+    function syncB2B() {
+      if (!companyWrap || !company) return;
+      var on = isB2B();
+      companyWrap.hidden = !on;
+      company.required = on;
+      if (!on) {
+        company.value = '';
+        showError(company, '');
+      }
+    }
+
     function showError(field, msg) {
+      if (!field) return;
       field.classList.toggle('is-invalid', !!msg);
       field.setAttribute('aria-invalid', msg ? 'true' : 'false');
       var slot = form.querySelector('[data-error-for="' + field.name + '"]');
       if (slot) slot.textContent = msg || '';
     }
 
-    function validate(stepIndex) {
+    function validate() {
       var first = null;
-      $$('[required]', steps[stepIndex]).forEach(function (f) {
+      $$('[required]', form).forEach(function (f) {
+        if (f.closest('[hidden]')) return;
         var msg = '';
         if (!f.value.trim()) msg = 'Ce champ est obligatoire.';
         else if (f.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.value)) {
           msg = 'Adresse e-mail invalide.';
+        } else if (f.type === 'tel' && f.value.replace(/[^0-9]/g, '').length < 8) {
+          msg = 'Numéro de téléphone incomplet.';
         }
         showError(f, msg);
         if (msg && !first) first = f;
@@ -344,80 +367,34 @@
       return true;
     }
 
-    function buildSummary() {
-      if (!summary) return;
-      summary.innerHTML = '';
-      ORDER.forEach(function (name) {
-        var v = val(name);
-        if (!v) return;
-        var row = document.createElement('div');
-        var dt = document.createElement('dt');
-        var dd = document.createElement('dd');
-        dt.textContent = LABELS[name] || name;
-        dd.textContent = v;
-        row.appendChild(dt);
-        row.appendChild(dd);
-        summary.appendChild(row);
-      });
-    }
-
-    function render() {
-      steps.forEach(function (s, i) { s.hidden = i !== at; });
-      indicators.forEach(function (li, i) {
-        li.classList.toggle('is-active', i === at);
-        li.classList.toggle('is-done', i < at);
-      });
-      var last = at === steps.length - 1;
-      if (prevBtn) prevBtn.hidden = at === 0;
-      if (nextBtn) nextBtn.hidden = last;
-      if (sendWa) sendWa.hidden = !last;
-      if (sendMail) sendMail.hidden = !last;
-      if (last) buildSummary();
-      var focusable = steps[at].querySelector('input, select, textarea');
-      if (focusable) focusable.focus({ preventScroll: true });
-    }
-
-    on(nextBtn, 'click', function () {
-      if (!validate(at)) return;
-      at = Math.min(at + 1, steps.length - 1);
-      render();
-    });
-    on(prevBtn, 'click', function () {
-      at = Math.max(at - 1, 0);
-      render();
-    });
-    /* Enter advances rather than submitting from an early step. */
-    on(form, 'keydown', function (e) {
-      if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA' && at < steps.length - 1) {
-        e.preventDefault();
-        if (nextBtn) nextBtn.click();
-      }
-    });
-
-    [sendWa, sendMail].forEach(function (b) {
-      on(b, 'click', function () { channel = b.getAttribute('data-send'); });
-    });
-
     function compose() {
-      var lines = ['Demande de devis - alamstores.ma', ''];
-      ORDER.forEach(function (name) {
-        var v = val(name);
-        if (!v) return;
-        if (name === 'message') { lines.push('', 'Projet :', v); }
-        else { lines.push((LABELS[name] || name) + ' : ' + v); }
+      var lines = ['*Demande de devis — alamstores.ma*', ''];
+      FIELDS.forEach(function (pair) {
+        var v = val(pair[0]);
+        if (v) lines.push(pair[1] + ' : ' + v);
       });
+      var msg = val('message');
+      if (msg) lines.push('', 'Message :', msg);
       return lines.join('\n');
     }
 
+    if (statut) { on(statut, 'change', syncB2B); syncB2B(); }
+    $$('[data-send]', form).forEach(function (b) {
+      on(b, 'click', function () { channel = b.getAttribute('data-send'); });
+    });
+    /* Clear an error as soon as the visitor fixes the field. */
+    $$('input, select, textarea', form).forEach(function (f) {
+      on(f, 'input', function () { if (f.classList.contains('is-invalid')) showError(f, ''); });
+    });
+
     on(form, 'submit', function (e) {
       e.preventDefault();
-      /* Validate every step, not just the visible one. */
-      for (var i = 0; i < steps.length; i++) {
-        if (!validate(i)) { at = i; render(); return; }
-      }
+      if (!validate()) return;
 
       var body = compose();
-      var subject = 'Demande de devis' + (val('product') ? ' - ' + val('product') : '');
+      var who = val('company') || (val('firstname') + ' ' + val('lastname')).trim();
+      var subject = 'Demande de devis — ' + (val('category') || 'projet')
+        + (who ? ' — ' + who : '');
 
       if (channel === 'mailto') {
         var to = form.getAttribute('data-mailto');
@@ -428,7 +405,8 @@
       } else {
         var num = (form.getAttribute('data-whatsapp') || '').replace(/[^0-9]/g, '');
         if (!num) return;
-        window.open('https://wa.me/' + num + '?text=' + encodeURIComponent(body), '_blank', 'noopener');
+        window.open('https://wa.me/' + num + '?text=' + encodeURIComponent(body),
+                    '_blank', 'noopener');
       }
 
       if (status) {
@@ -438,8 +416,6 @@
         status.className = 'form-status is-ok';
       }
     });
-
-    render();
   }
 
   /* ------------------------------------------------------------ misc --- */
@@ -468,7 +444,7 @@
     initLightbox();
     initToTop();
     initReveal();
-    initStepForm();
+    initQuoteForm();
     initMisc();
   }
 

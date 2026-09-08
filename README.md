@@ -13,7 +13,7 @@ sitemap.xml  robots.txt  .htaccess
 assets/
   css/main.min.css         one stylesheet  (37 KB → 7.9 KB gzip)
   js/main.min.js           one script      (10.5 KB → 3.8 KB gzip)
-  images/                  871 files, organised as YYYY/MM/ like the originals
+  images/                  871 files as YYYY/MM/ + hero/ carousel photos
   fonts/                   4 files, Plus Jakarta Sans (84 KB total)
 
 tools/                     build scripts + page copy (not web content)
@@ -49,8 +49,8 @@ and 1.9 MB of font files, now 37 KB and 84 KB.**
 - **Category cards** with hover zoom, a category tag and a per-product
   "Demander" button that opens WhatsApp pre-filled with that product name.
 - **Partner logos** as a snap-scrolling slider with prev/next controls.
-- **Quote form** in three steps with a progress indicator, inline validation
-  and a review summary before sending.
+- **B2B quote form** with a showroom info card, conditional company field and
+  inline validation, sending to WhatsApp or e-mail.
 - **Floating WhatsApp button** and scroll-to-top on every page.
 
 ## What carried over from WordPress
@@ -81,43 +81,73 @@ now carries **newly written French copy** held in `tools/content_fr.py`.
 **Server-side features.** WooCommerce, Contact Form 7 / WPForms, Jetpack,
 Elementor's runtime and the login system are gone by design.
 
-## Contact details — replace these
+## Showroom contact details
 
-Four placeholder values feed the footer, the quote form buttons and the contact
-card. They live in one place, `CONTACT` at the top of `tools/build_pages.py`:
+All contact data lives in `CONTACT` at the top of `tools/build_pages.py` and
+feeds the top bar, drawer, footer, showroom card and every WhatsApp / e-mail
+payload:
 
-| Key | Placeholder | Notes |
-|---|---|---|
-| `phone_display` | `+212 6 00 00 00 00` | as shown on the page |
-| `phone_tel` | `+212600000000` | used in `tel:` links |
-| `whatsapp` | `212600000000` | **digits only**, no `+`, no spaces |
-| `email` | `contact@alamstores.ma` | used in `mailto:` links |
-| `address` | `Casablanca, Maroc` | city / full address |
-| `hours` | `Lundi – Samedi, 9h – 19h` | opening hours |
+| Key | Value |
+|---|---|
+| `address` | Hay Nahda 1 Grp. AlAhd N° 1042 Rabat, Maroc |
+| `address_short` | Hay Nahda 1, Rabat *(top bar only)* |
+| `phone_display` | 05 37 75 97 72 |
+| `phone_tel` | `+212537759772` *(used in `tel:` links)* |
+| `whatsapp` | `212537759772` *(digits only, no `+`, no spaces)* |
+| `email` | contact@alamstores.ma |
+| `hours_week` | Lun - Ven : 8:30 - 12:30 et 14:30 - 18:30 |
+| `hours_sat` | Sam : 8:30 - 13:00 |
 
 Edit them, then re-run `python3 tools/build_pages.py` to push the change through
 all 26 pages.
 
-## How the quote form works
+> **WhatsApp on a landline.** `212537759772` is the showroom's fixed line.
+> WhatsApp normally requires a mobile number; a landline only works if the
+> number is registered with **WhatsApp Business** and verified by voice call.
+> If that has not been set up, put your mobile in `whatsapp` — it is a separate
+> key from `phone_tel`, so the displayed phone number does not change.
 
-The site is static, so there is no server and no database. `devis.html` walks
-the visitor through three steps — Projet, Détails, Coordonnées — validating as
-it goes and showing a summary before sending. Nothing is stored or transmitted
-by the page itself:
+## The B2B quote form
 
-- **Envoyer sur WhatsApp** opens `https://wa.me/<number>` with the message
+`devis.html` opens with a showroom card (address, phone + WhatsApp, opening
+hours) and then a single clean form aimed at both retail and trade buyers.
+
+**Votre projet** — Statut professionnel (Particulier / Entreprise ·
+Professionnel (B2B) / Architecte · Revendeur), Catégorie, Message.
+Choosing either professional status reveals a **Nom de l'entreprise** field and
+makes it required; switching back to Particulier hides and clears it.
+
+**Vos coordonnées** — Prénom, Nom, E-mail, Téléphone, Pays (defaults to Maroc),
+Ville, Adresse, Code postal.
+
+The site is static, so nothing is stored or transmitted by the page. Both
+buttons build the same structured payload — statut, entreprise, catégorie,
+name, e-mail, phone, full postal address and the message — and hand it off:
+
+- **Envoyer sur WhatsApp** opens `https://wa.me/212537759772` with the message
   pre-filled, in a new tab.
-- **Par e-mail** opens the visitor's mail client via `mailto:` with the subject
-  and body pre-filled.
+- **Envoyer par e-mail** opens the visitor's mail client via `mailto:`, with
+  the subject line carrying the category and the company (or contact) name.
 
-Both build the same message from the form fields (name, e-mail, phone, city,
-product, number of openings, room, orientation, command type, deadline and the
-project description). Product cards across the site also carry a "Demander"
-button that opens WhatsApp pre-filled with that product's name.
+Categories in the form are wider than the page tree on purpose — `Rideaux` and
+`Autre / Projet mixte` are offered without having a dedicated page. Edit
+`FORM_CATEGORIES` and `STATUTS` in `tools/build_pages.py`.
+
+Product cards across the site also carry a "Demander" button that opens
+WhatsApp pre-filled with that product's name.
 
 To post to a form service such as Formspree or Netlify Forms instead, add an
 `action` to the `<form>` and drop the `data-whatsapp` / `data-mailto`
 attributes.
+
+## Home carousel
+
+The hero is a pure image carousel — **there is no video anywhere on the site**,
+by design. `tools/build_hero.py` re-encodes five hand-picked, high-resolution
+Alam Stores product photos to 1920x1080 WebP in `assets/images/hero/`
+(904 KB total; only the first slide loads eagerly, at 156 KB). Swap the
+`SOURCES` list in that script and re-run it, then update `HERO_IMAGES` in
+`tools/build_pages.py` with the new filenames and alt text.
 
 ## Restoring the original page text
 
@@ -167,6 +197,8 @@ Where to edit what:
 | Contact details | `CONTACT` in `tools/build_pages.py` |
 | Page copy | `tools/content_fr.py` |
 | Partner logos | `PARTNER_LOGOS` in `tools/build_pages.py` |
+| Hero carousel photos | `SOURCES` in `tools/build_hero.py`, then `HERO_IMAGES` |
+| Quote form statuses / categories | `STATUTS`, `FORM_CATEGORIES` in `tools/build_pages.py` |
 | Colours, type, components | `tools/data/design-system.css` |
 | Icons | `tools/icons.py` |
 
@@ -179,7 +211,7 @@ touching the stylesheet.
 no dependencies. It replaces the jQuery + Bootstrap + select2 + prettyPhoto +
 owl-carousel stack the theme used to load (~300 KB) and handles: sticky/glass
 header, drawer menu, hero slider, partner slider, lightbox, scroll reveal,
-scroll-to-top and the three-step quote form.
+scroll-to-top and the B2B quote form.
 
 Accessibility: skip link, `aria-current` on the active nav item, focus trapping
 in the drawer and lightbox, Escape to close both, keyboard and swipe navigation
@@ -208,8 +240,9 @@ preview uses the `.html` filenames, which is what every internal link points at.
 1. Work through §4 of `SECURITY-AUDIT.md` — the live server still needs cleaning.
 2. Rotate the credentials named in §3; `wp-config.php` was committed in plaintext
    and remains in git history.
-3. Replace the `CONTACT` placeholders (above) with your real phone, WhatsApp
-   number, e-mail and address.
+3. Confirm the WhatsApp number: `212537759772` is the showroom landline, which
+   only works on WhatsApp Business with voice verification (see above). Put a
+   mobile in `CONTACT["whatsapp"]` if that is not set up.
 4. Read through the copy in `tools/content_fr.py` and adjust it to how you
    actually describe your work — or restore the originals with
    `tools/fetch_content.py`.

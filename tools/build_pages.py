@@ -18,7 +18,7 @@ NOT the original wording, which was in the WordPress database and not part of
 the export — review it before publishing. tools/fetch_content.py replaces it
 with the originals if the live site becomes reachable.
 
-Contact details are placeholders; see CONTACT below.
+Showroom contact details live in CONTACT below.
 
 Usage:  python3 tools/build_pages.py
 """
@@ -42,18 +42,21 @@ SITE_URL = "https://alamstores.ma"
 LOGO = "assets/images/2019/05/Logo-stores-rideaux-maroc.png"
 
 # ---------------------------------------------------------------------------
-# CONTACT DETAILS — PLACEHOLDERS. Replace every value with the real one, then
-# re-run `python3 tools/build_pages.py`. These feed the top bar, the drawer,
-# the footer, the contact cards and the WhatsApp/e-mail buttons.
+# SHOWROOM CONTACT DETAILS
+# These feed the top bar, the drawer, the footer, every contact card and the
+# WhatsApp / e-mail payloads. Edit here, then re-run this script.
 #   whatsapp: international format, digits only, no "+" and no spaces.
 # ---------------------------------------------------------------------------
 CONTACT = {
-    "phone_display": "+212 6 00 00 00 00",
-    "phone_tel": "+212600000000",
-    "whatsapp": "212600000000",
+    "phone_display": "05 37 75 97 72",
+    "phone_tel": "+212537759772",
+    "whatsapp": "212537759772",
     "email": "contact@alamstores.ma",
-    "address": "Casablanca, Maroc",
-    "hours": "Lundi – Samedi, 9h – 19h",
+    "address": "Hay Nahda 1 Grp. AlAhd N° 1042 Rabat, Maroc",
+    "address_short": "Hay Nahda 1, Rabat",
+    "hours": "Lun - Ven: 8:30 - 12:30 et 14:30 - 18:30 | Sam: 8:30 - 13:00",
+    "hours_week": "Lun - Ven : 8:30 - 12:30 et 14:30 - 18:30",
+    "hours_sat": "Sam : 8:30 - 13:00",
 }
 
 # Images referenced by the sitemap that no longer exist on disk, mapped to the
@@ -126,6 +129,16 @@ PARTNER_LOGOS = [
     ("2022/04/PomDePain_Logo.png", "Pomme de Pain"),
     ("2022/04/logo_venezia_ice1.png", "Venezia Ice"),
     ("2022/04/logo_somfy_2.png", "Somfy"),
+]
+
+# Home hero carousel — genuine Alam Stores product photography, re-encoded to
+# 1920x1080 WebP by tools/build_hero.py. Images only; the site has no video.
+HERO_IMAGES = [
+    ("hero/hero-pergola-piscine.webp", "Pergola bioclimatique installée en bord de piscine"),
+    ("hero/hero-store-banne-terrasse.webp", "Store banne déployé au-dessus d'une terrasse"),
+    ("hero/hero-venitiens-bois-bureau.webp", "Stores vénitiens en bois dans une salle de réunion"),
+    ("hero/hero-stores-interieurs-salon.webp", "Stores intérieurs dans un salon"),
+    ("hero/hero-stores-exterieurs-facade.webp", "Stores extérieurs sur une façade"),
 ]
 
 # Trust signals on the home hero. Each is stated in the page copy.
@@ -249,9 +262,9 @@ def topbar_html():
     return """  <div class="topbar">
     <div class="shell topbar__inner">
       <ul class="topbar__list">
-        <li class="is-optional">{pin}<span>{address}</span></li>
+        <li class="is-optional">{pin}<span>{address_short}</span></li>
         <li>{phone}<a href="tel:{tel}">{phone_display}</a></li>
-        <li class="is-optional">{clock}<span>{hours}</span></li>
+        <li class="is-wide">{clock}<span>{hours}</span></li>
       </ul>
       <a class="topbar__cta" href="{wa}" target="_blank" rel="noopener">
         {wapp}<span>WhatsApp direct</span>
@@ -259,7 +272,7 @@ def topbar_html():
     </div>
   </div>
 """.format(pin=icon("pin"), phone=icon("phone"), clock=icon("clock"), wapp=icon("whatsapp"),
-           address=esc(CONTACT["address"]), tel=esc(CONTACT["phone_tel"]),
+           address_short=esc(CONTACT["address_short"]), tel=esc(CONTACT["phone_tel"]),
            phone_display=esc(CONTACT["phone_display"]), hours=esc(CONTACT["hours"]),
            wa=esc(wa_link("Bonjour Alam Stores, je souhaite des informations.")))
 
@@ -396,21 +409,26 @@ def page_hero_html(slug):
 """.format(crumbs=crumbs_html(slug), title=esc(TITLES[slug]), lead=esc(lead))
 
 
-def hero_html(images):
+def hero_html(_images=None):
+    """Pure image carousel. High-resolution product photography, no video."""
     slides = []
-    for n, rel in enumerate(images[:5]):
+    for n, (rel, alt) in enumerate(HERO_IMAGES):
         slides.append(
             '<div class="hero__slide{active}" aria-hidden="{hidden}">'
-            '<img src="assets/images/{rel}" alt="" {loading} decoding="async"></div>'.format(
-                rel=rel, active=" is-active" if n == 0 else "",
+            '<img src="assets/images/{rel}" alt="{alt}" width="1920" height="1080" {loading}>'
+            "</div>".format(
+                rel=rel, alt=esc(alt),
+                active=" is-active" if n == 0 else "",
                 hidden="false" if n == 0 else "true",
-                loading='fetchpriority="high"' if n == 0 else 'loading="lazy"'))
+                loading=('fetchpriority="high" decoding="async"' if n == 0
+                         else 'loading="lazy" decoding="async"')))
 
     trust = "".join(
         '<div class="hero__trust-item">{i}<div><strong>{t}</strong><span>{s}</span></div></div>'.format(
             i=icon(ic), t=esc(t), s=esc(s)) for ic, t, s in HERO_TRUST)
 
-    return """  <section class="hero" data-hero aria-roledescription="carrousel" aria-label="Réalisations">
+    return """  <section class="hero" data-hero aria-roledescription="carrousel"
+           aria-label="Réalisations Alam Stores">
     <div class="hero__media">
       {slides}
     </div>
@@ -524,7 +542,8 @@ def contact_card_html(compact=False):
         ("phone", "Téléphone", esc(CONTACT["phone_display"]), "tel:" + esc(CONTACT["phone_tel"])),
         ("whatsapp", "WhatsApp", "Écrire sur WhatsApp", esc(wa_link())),
         ("mail", "E-mail", esc(CONTACT["email"]), "mailto:" + esc(CONTACT["email"])),
-        ("clock", "Horaires", esc(CONTACT["hours"]), None),
+        ("clock", "Horaires",
+         esc(CONTACT["hours_week"]) + "<br>" + esc(CONTACT["hours_sat"]), None),
     ]
     lis = []
     for ic, label, value, link in rows:
@@ -663,129 +682,170 @@ def cta_band():
 # Quote form
 # --------------------------------------------------------------------------
 
-def quote_form():
-    options = "".join('<option value="%s">%s</option>' % (esc(TITLES[s]), esc(TITLES[s]))
-                      for s in ["stores-interieurs", "stores-exterieurs", "pergolas", "parasols",
-                                "moustiquaires", "toiles-tendues", "abris-de-voiture",
-                                "motorisations-automatismes"])
-    return """  <section class="section">
-    <div class="shell split">
-      <div>
-        <form class="form-card" id="devis-form" data-step-form novalidate
-              data-whatsapp="{whatsapp}" data-mailto="{email}">
-          <div class="form-card__head">
-            <h2>Demande de devis</h2>
-            <p>Trois étapes rapides, puis vous choisissez d'envoyer par WhatsApp ou par
-               e-mail. Rien n'est enregistré sur ce site.</p>
-            <ol class="steps" data-steps>
-              <li class="is-active"><span class="steps__num">1</span><span class="steps__label">Projet</span></li>
-              <li><span class="steps__num">2</span><span class="steps__label">Détails</span></li>
-              <li><span class="steps__num">3</span><span class="steps__label">Coordonnées</span></li>
-            </ol>
+# Professional status. The value marked B2B reveals the company-name field.
+STATUTS = [
+    ("Particulier", False),
+    ("Entreprise / Professionnel (B2B)", True),
+    ("Architecte / Revendeur", True),
+]
+
+# Categories offered in the quote form. Wider than the page tree on purpose —
+# "Rideaux" and "Autre" are sold but have no dedicated page.
+FORM_CATEGORIES = [
+    "Stores Extérieurs", "Stores Intérieurs", "Pergolas", "Moustiquaires",
+    "Rideaux", "Stores Enrouleurs", "Stores Vénitiens", "Stores Californiens",
+    "Stores Bateaux", "Panneaux Japonais", "Toiles Tendues", "Parasols",
+    "Abris de Voiture", "Motorisations & Automatismes", "Autre / Projet mixte",
+]
+
+
+def showroom_card():
+    """Address, phone and opening hours, shown above the quote form."""
+    return """  <section class="section section--tight">
+    <div class="shell">
+      <div class="showroom">
+        <div class="showroom__item">
+          <span class="showroom__icon">{pin}</span>
+          <div>
+            <strong>Showroom</strong>
+            <p>{address}</p>
           </div>
-
-          <div class="form-card__body">
-            <fieldset class="fieldset" data-step="0">
-              <legend class="fieldset__title">Votre projet</legend>
-              <p class="fieldset__hint">Dites-nous ce que vous cherchez à équiper.</p>
-              <div class="field-grid">
-                <div class="field">
-                  <label for="f-product">Produit souhaité</label>
-                  <select id="f-product" name="product">{options}</select>
-                </div>
-                <div class="field">
-                  <label for="f-quantity">Nombre d'ouvertures</label>
-                  <input id="f-quantity" name="quantity" type="number" min="1" step="1" placeholder="ex. 4">
-                </div>
-                <div class="field field--full">
-                  <label for="f-message">Décrivez votre projet <span class="req" aria-hidden="true">*</span></label>
-                  <textarea id="f-message" name="message" rows="5" required
-                    placeholder="Pièce concernée, orientation, dimensions approximatives, commande manuelle ou motorisée…"></textarea>
-                  <span class="field__error" data-error-for="message"></span>
-                </div>
-              </div>
-            </fieldset>
-
-            <fieldset class="fieldset" data-step="1" hidden>
-              <legend class="fieldset__title">Quelques détails</legend>
-              <p class="fieldset__hint">Facultatif, mais cela nous aide à répondre plus précisément.</p>
-              <div class="field-grid">
-                <div class="field">
-                  <label for="f-room">Pièce / emplacement</label>
-                  <input id="f-room" name="room" type="text" placeholder="Salon, chambre, terrasse…">
-                </div>
-                <div class="field">
-                  <label for="f-orientation">Orientation</label>
-                  <select id="f-orientation" name="orientation">
-                    <option value="">Je ne sais pas</option>
-                    <option>Nord</option><option>Sud</option><option>Est</option><option>Ouest</option>
-                  </select>
-                </div>
-                <div class="field">
-                  <label for="f-command">Commande</label>
-                  <select id="f-command" name="command">
-                    <option value="">À déterminer</option>
-                    <option>Manuelle</option>
-                    <option>Motorisée</option>
-                  </select>
-                </div>
-                <div class="field">
-                  <label for="f-deadline">Échéance souhaitée</label>
-                  <input id="f-deadline" name="deadline" type="text" placeholder="ex. sous 1 mois">
-                </div>
-              </div>
-            </fieldset>
-
-            <fieldset class="fieldset" data-step="2" hidden>
-              <legend class="fieldset__title">Vos coordonnées</legend>
-              <p class="fieldset__hint">Pour que nous puissions vous recontacter.</p>
-              <div class="field-grid">
-                <div class="field">
-                  <label for="f-name">Nom et prénom <span class="req" aria-hidden="true">*</span></label>
-                  <input id="f-name" name="name" type="text" required autocomplete="name">
-                  <span class="field__error" data-error-for="name"></span>
-                </div>
-                <div class="field">
-                  <label for="f-email">E-mail <span class="req" aria-hidden="true">*</span></label>
-                  <input id="f-email" name="email" type="email" required autocomplete="email">
-                  <span class="field__error" data-error-for="email"></span>
-                </div>
-                <div class="field">
-                  <label for="f-phone">Téléphone</label>
-                  <input id="f-phone" name="phone" type="tel" autocomplete="tel">
-                </div>
-                <div class="field">
-                  <label for="f-city">Ville</label>
-                  <input id="f-city" name="city" type="text" autocomplete="address-level2">
-                </div>
-                <div class="field field--full">
-                  <span class="field__error" data-summary-label>Récapitulatif</span>
-                  <dl class="summary" data-summary></dl>
-                </div>
-              </div>
-            </fieldset>
-
-            <div class="form-nav">
-              <button class="btn btn--ghost" type="button" data-prev hidden>{left}<span>Retour</span></button>
-              <span class="spacer"></span>
-              <button class="btn btn--primary" type="button" data-next><span>Continuer</span>{right}</button>
-              <button class="btn btn--wa" type="submit" data-send="whatsapp" hidden>
-                {wapp}<span>Envoyer sur WhatsApp</span></button>
-              <button class="btn btn--ghost" type="submit" data-send="mailto" hidden>
-                {mail}<span>Par e-mail</span></button>
-            </div>
-            <p class="form-status" role="status" aria-live="polite"></p>
-            <p class="form-note">Le message est composé dans votre application WhatsApp ou
-               votre messagerie&nbsp;: vous gardez la main sur l'envoi.</p>
+        </div>
+        <div class="showroom__item">
+          <span class="showroom__icon">{phone}</span>
+          <div>
+            <strong>Téléphone</strong>
+            <p><a href="tel:{tel}">{phone_display}</a><br>
+               <a href="{wa}" target="_blank" rel="noopener">WhatsApp&nbsp;: {phone_display}</a></p>
           </div>
-        </form>
+        </div>
+        <div class="showroom__item">
+          <span class="showroom__icon">{clock}</span>
+          <div>
+            <strong>Horaires d'ouverture</strong>
+            <p>{hours_week}<br>{hours_sat}</p>
+          </div>
+        </div>
       </div>
-      <div>{aside}</div>
     </div>
   </section>
-""".format(options=options, whatsapp=esc(CONTACT["whatsapp"]), email=esc(CONTACT["email"]),
-           left=icon("chevron-left"), right=icon("arrow-right"),
-           wapp=icon("whatsapp"), mail=icon("mail"), aside=contact_card_html())
+""".format(pin=icon("pin"), phone=icon("phone"), clock=icon("clock"),
+           address=esc(CONTACT["address"]),
+           tel=esc(CONTACT["phone_tel"]),
+           phone_display=esc(CONTACT["phone_display"]),
+           wa=esc(wa_link()),
+           hours_week=esc(CONTACT["hours_week"]),
+           hours_sat=esc(CONTACT["hours_sat"]))
+
+
+def quote_form():
+    statuts = "".join(
+        '<option value="%s"%s>%s</option>'
+        % (esc(label), ' data-b2b="1"' if is_b2b else "", esc(label))
+        for label, is_b2b in STATUTS)
+    cats = "".join('<option value="%s">%s</option>' % (esc(c), esc(c))
+                   for c in FORM_CATEGORIES)
+
+    return """  <section class="section" style="padding-top:clamp(24px,3vw,36px)">
+    <div class="shell">
+      <form class="form-card" id="devis-form" data-quote-form novalidate
+            data-whatsapp="{whatsapp}" data-mailto="{email}">
+        <div class="form-card__head">
+          <h2>Demande de devis</h2>
+          <p>Particuliers, entreprises, architectes et revendeurs : décrivez votre
+             projet et nous revenons vers vous avec une proposition chiffrée.
+             Rien n'est enregistré sur ce site — votre demande part par WhatsApp
+             ou par e-mail, depuis votre propre application.</p>
+        </div>
+
+        <div class="form-card__body">
+          <fieldset class="fieldset">
+            <legend class="fieldset__title">Votre projet</legend>
+            <p class="fieldset__hint">Ces trois champs nous suffisent pour vous orienter.</p>
+            <div class="field-grid">
+              <div class="field">
+                <label for="f-statut">Statut professionnel <span class="req" aria-hidden="true">*</span></label>
+                <select id="f-statut" name="statut" required data-statut>{statuts}</select>
+                <span class="field__error" data-error-for="statut"></span>
+              </div>
+              <div class="field">
+                <label for="f-category">Catégorie <span class="req" aria-hidden="true">*</span></label>
+                <select id="f-category" name="category" required>{cats}</select>
+                <span class="field__error" data-error-for="category"></span>
+              </div>
+              <div class="field field--full" data-b2b-field hidden>
+                <label for="f-company">Nom de l'entreprise <span class="req" aria-hidden="true">*</span></label>
+                <input id="f-company" name="company" type="text" autocomplete="organization"
+                       placeholder="Raison sociale, cabinet ou enseigne">
+                <span class="field__error" data-error-for="company"></span>
+              </div>
+              <div class="field field--full">
+                <label for="f-message">Message <span class="req" aria-hidden="true">*</span></label>
+                <textarea id="f-message" name="message" rows="5" required
+                  placeholder="Nombre d'ouvertures, dimensions approximatives, pièce concernée, orientation, commande manuelle ou motorisée, délai souhaité…"></textarea>
+                <span class="field__error" data-error-for="message"></span>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset class="fieldset">
+            <legend class="fieldset__title">Vos coordonnées</legend>
+            <p class="fieldset__hint">Pour vous recontacter et, si besoin, planifier la prise de mesures.</p>
+            <div class="field-grid">
+              <div class="field">
+                <label for="f-firstname">Prénom <span class="req" aria-hidden="true">*</span></label>
+                <input id="f-firstname" name="firstname" type="text" required autocomplete="given-name">
+                <span class="field__error" data-error-for="firstname"></span>
+              </div>
+              <div class="field">
+                <label for="f-lastname">Nom <span class="req" aria-hidden="true">*</span></label>
+                <input id="f-lastname" name="lastname" type="text" required autocomplete="family-name">
+                <span class="field__error" data-error-for="lastname"></span>
+              </div>
+              <div class="field">
+                <label for="f-email">E-mail <span class="req" aria-hidden="true">*</span></label>
+                <input id="f-email" name="email" type="email" required autocomplete="email">
+                <span class="field__error" data-error-for="email"></span>
+              </div>
+              <div class="field">
+                <label for="f-phone">Téléphone <span class="req" aria-hidden="true">*</span></label>
+                <input id="f-phone" name="phone" type="tel" required autocomplete="tel">
+                <span class="field__error" data-error-for="phone"></span>
+              </div>
+              <div class="field">
+                <label for="f-country">Pays</label>
+                <input id="f-country" name="country" type="text" value="Maroc" autocomplete="country-name">
+              </div>
+              <div class="field">
+                <label for="f-city">Ville</label>
+                <input id="f-city" name="city" type="text" autocomplete="address-level2">
+              </div>
+              <div class="field">
+                <label for="f-address">Adresse</label>
+                <input id="f-address" name="address" type="text" autocomplete="street-address">
+              </div>
+              <div class="field">
+                <label for="f-zip">Code postal</label>
+                <input id="f-zip" name="zip" type="text" autocomplete="postal-code" inputmode="numeric">
+              </div>
+            </div>
+          </fieldset>
+
+          <div class="form-nav">
+            <button class="btn btn--wa btn--lg" type="submit" data-send="whatsapp">
+              {wapp}<span>Envoyer sur WhatsApp</span></button>
+            <button class="btn btn--ghost btn--lg" type="submit" data-send="mailto">
+              {mail}<span>Envoyer par e-mail</span></button>
+          </div>
+          <p class="form-status" role="status" aria-live="polite"></p>
+          <p class="form-note">Votre demande est mise en forme dans WhatsApp ou dans votre
+             messagerie&nbsp;: vous relisez et vous gardez la main sur l'envoi.</p>
+        </div>
+      </form>
+    </div>
+  </section>
+""".format(whatsapp=esc(CONTACT["whatsapp"]), email=esc(CONTACT["email"]),
+           statuts=statuts, cats=cats, wapp=icon("whatsapp"), mail=icon("mail"))
 
 
 # --------------------------------------------------------------------------
@@ -949,8 +1009,9 @@ def build():
             body.append(cta_band())
         elif slug == "devis":
             body.append(page_hero_html(slug))
-            body.append(prose_section(slug, with_aside=False, skip_lead=True, center=True))
+            body.append(showroom_card())
             body.append(quote_form())
+            body.append(prose_section(slug, with_aside=False, skip_lead=True, center=True))
         elif slug == "partenaires":
             body.append(page_hero_html(slug))
             body.append(prose_section(slug, skip_lead=True))
