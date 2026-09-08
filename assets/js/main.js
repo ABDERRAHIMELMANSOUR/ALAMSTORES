@@ -241,24 +241,53 @@
   }
 
   /* ------------------------------------------------------------------ *
-   * Quote form - client-side validation only.
-   * The static site has no backend, so the form posts to whatever endpoint
-   * is configured in its `action` attribute (a mail service, Formspree,
-   * etc.). Until one is set the form reports that it is not connected
-   * rather than silently losing the message.
+   * Quote form.
+   * The site is static, so there is no server to post to. Instead the form
+   * composes the request and hands it to WhatsApp or to the visitor's mail
+   * client, depending on which button was used. Nothing is stored or sent
+   * anywhere by the page itself.
    * ------------------------------------------------------------------ */
   function initForms() {
     $$('form[data-validate]').forEach(function (form) {
       var status = $('.form-status', form);
+      var channel = 'whatsapp';
+
+      /* Remember which button started the submit. */
+      $$('[data-send]', form).forEach(function (btn) {
+        on(btn, 'click', function () { channel = btn.getAttribute('data-send'); });
+      });
+
+      function field(name) {
+        var el = form.elements[name];
+        return el && el.value ? el.value.trim() : '';
+      }
+
+      function compose() {
+        var lines = [
+          'Demande de devis - alamstores.ma',
+          '',
+          'Nom : ' + field('name'),
+          'E-mail : ' + field('email'),
+        ];
+        if (field('phone')) lines.push('Téléphone : ' + field('phone'));
+        if (field('city')) lines.push('Ville : ' + field('city'));
+        if (field('product')) lines.push('Produit : ' + field('product'));
+        if (field('quantity')) lines.push("Nombre d'ouvertures : " + field('quantity'));
+        lines.push('', 'Projet :', field('message'));
+        return lines.join('\n');
+      }
+
       on(form, 'submit', function (e) {
+        e.preventDefault();
+
         var invalid = null;
-        $$('[required]', form).forEach(function (field) {
-          var bad = !field.value.trim() || (field.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(field.value));
-          field.classList.toggle('is-invalid', bad);
-          if (bad && !invalid) invalid = field;
+        $$('[required]', form).forEach(function (f) {
+          var bad = !f.value.trim() ||
+            (f.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.value));
+          f.classList.toggle('is-invalid', bad);
+          if (bad && !invalid) invalid = f;
         });
         if (invalid) {
-          e.preventDefault();
           invalid.focus();
           if (status) {
             status.textContent = 'Merci de compléter les champs obligatoires.';
@@ -266,13 +295,32 @@
           }
           return;
         }
-        if (!form.getAttribute('action')) {
-          e.preventDefault();
-          if (status) {
-            status.textContent = "Ce formulaire n'est pas encore relié à un service d'envoi. "
-              + 'Renseignez l\'attribut action du formulaire dans devis.html.';
-            status.className = 'form-status is-error';
-          }
+
+        var body = compose();
+        var subject = 'Demande de devis' + (field('product') ? ' - ' + field('product') : '');
+        var target;
+
+        if (channel === 'mailto') {
+          var to = form.getAttribute('data-mailto');
+          if (!to) return;
+          target = 'mailto:' + to
+            + '?subject=' + encodeURIComponent(subject)
+            + '&body=' + encodeURIComponent(body);
+          window.location.href = target;
+        } else {
+          var number = (form.getAttribute('data-whatsapp') || '').replace(/[^0-9]/g, '');
+          if (!number) return;
+          target = 'https://wa.me/' + number + '?text=' + encodeURIComponent(body);
+          window.open(target, '_blank', 'noopener');
+        }
+
+        if (status) {
+          status.textContent = channel === 'mailto'
+            ? 'Votre messagerie va s’ouvrir avec la demande pré-remplie. '
+              + 'Il ne reste qu’à l’envoyer.'
+            : 'WhatsApp va s’ouvrir avec la demande pré-remplie. '
+              + 'Il ne reste qu’à l’envoyer.';
+          status.className = 'form-status is-ok';
         }
       });
     });

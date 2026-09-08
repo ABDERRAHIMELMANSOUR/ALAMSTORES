@@ -34,14 +34,50 @@ SECURITY-AUDIT.md          malware findings from the WordPress export
 ### What did not
 
 **Page body copy.** It lived in the WordPress MySQL database, which was not
-part of the export, so it could not be recovered. Every page therefore carries
-a `.content-pending` block instead of invented text — nothing on this site is
-fabricated. Restore it with one command (below).
+part of the export, so the original wording could not be recovered. Every page
+now carries **newly written French copy** held in `tools/content_fr.py`.
+
+> ⚠️ That text is not your original wording. It describes each product category
+> generically and deliberately avoids any claim that could not be verified —
+> no founding year, project counts, certifications, guarantees or prices.
+> **Review it before publishing.** If the live site ever becomes reachable,
+> `tools/fetch_content.py` replaces it with the real copy in one command.
 
 **Server-side features.** WooCommerce, Contact Form 7 / WPForms, Jetpack,
-Elementor's runtime and the login system are gone by design. The quote form on
-`devis.html` validates in the browser and needs an `action` pointing at a mail
-service (Formspree, Netlify Forms, your own endpoint) before it can send.
+Elementor's runtime and the login system are gone by design.
+
+## Contact details — replace these
+
+Four placeholder values feed the footer, the quote form buttons and the contact
+card. They live in one place, `CONTACT` at the top of `tools/build_pages.py`:
+
+| Key | Placeholder | Notes |
+|---|---|---|
+| `phone_display` | `+212 6 00 00 00 00` | as shown on the page |
+| `phone_tel` | `+212600000000` | used in `tel:` links |
+| `whatsapp` | `212600000000` | **digits only**, no `+`, no spaces |
+| `email` | `contact@alamstores.ma` | used in `mailto:` links |
+| `address` | `Casablanca, Maroc` | city / full address |
+| `hours` | `Lundi – Samedi, 9h – 19h` | opening hours |
+
+Edit them, then re-run `python3 tools/build_pages.py` to push the change through
+all 26 pages.
+
+## How the quote form works
+
+The site is static, so there is no server and no database. The form on
+`devis.html` validates in the browser, then composes the request and hands it
+off — nothing is stored or transmitted by the page itself:
+
+- **Envoyer par WhatsApp** opens `https://wa.me/<number>` with the message
+  pre-filled, in a new tab.
+- **Envoyer par e-mail** opens the visitor's mail client via `mailto:` with the
+  subject and body pre-filled.
+
+Both buttons build the same message from the form fields (name, e-mail, phone,
+city, product, number of openings, project description). If you would rather
+post to a form service such as Formspree or Netlify Forms, add an `action` to
+the `<form>` and drop the `data-whatsapp` / `data-mailto` attributes.
 
 ## Restoring the original page text
 
@@ -58,7 +94,8 @@ For each page it fetches the live URL, extracts the main content region, strips
 scripts / iframes / inline event handlers / the injected SEO-spam block
 (see `SECURITY-AUDIT.md`), downloads any image not already present, rewrites
 `wp-content/uploads` paths to `assets/images` and internal links to the local
-`.html` files, then replaces the placeholder. Standard library only.
+`.html` files, then **replaces the written copy** with the original.
+Standard library only.
 
 Afterwards re-run `python3 tools/build_css.py` so the CSS purge accounts for
 the restored markup.
@@ -84,7 +121,8 @@ NODE_TOOLS="$PWD" python3 tools/build_css.py
 
 Editing navigation, page titles or the page tree is done in the `PAGES`,
 `NAV_TOP` and `NAV_LABELS` tables at the top of `tools/build_pages.py`, then
-re-running it. Component styles live in `tools/data/site-extra.css`.
+re-running it. Page copy lives in `tools/content_fr.py`, partner logos in
+`PARTNER_LOGOS`, and component styles in `tools/data/site-extra.css`.
 
 ## Front-end notes
 
@@ -120,7 +158,10 @@ preview uses the `.html` filenames, which is what every internal link points at.
 1. Work through §4 of `SECURITY-AUDIT.md` — the live server still needs cleaning.
 2. Rotate the credentials named in §3; `wp-config.php` was committed in plaintext
    and remains in git history.
-3. Restore the page copy (above).
-4. Set the `action` on the quote form in `devis.html`.
-5. Add real contact details (address, phone, e-mail) to the footer in
-   `tools/build_pages.py` — the original values were in the database.
+3. Replace the `CONTACT` placeholders (above) with your real phone, WhatsApp
+   number, e-mail and address.
+4. Read through the copy in `tools/content_fr.py` and adjust it to how you
+   actually describe your work — or restore the originals with
+   `tools/fetch_content.py`.
+5. Check the partner logos on `partenaires.html`: they come from your own media
+   library, but confirm you still have permission to display each one.

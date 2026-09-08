@@ -265,8 +265,14 @@ def tidy(fragment):
     return fragment.strip()
 
 
+# The slot to overwrite. Matches both the original "content-pending" notice and
+# the "page-copy" block that build_pages.py now emits, so real copy pulled from
+# the live site replaces whatever is currently in the page.
+# The wrapper's closing tag is the one indented by exactly six spaces; nested
+# copy blocks close at eight, which is what keeps this non-greedy match honest.
 PLACEHOLDER = re.compile(
-    r'<div class="content-pending" data-content-slot="[^"]*">.*?</div>\s*',
+    r'<div class="(?:content-pending|page-copy)" data-content-slot="[^"]*">'
+    r'.*?\n      </div>\n',
     re.S,
 )
 

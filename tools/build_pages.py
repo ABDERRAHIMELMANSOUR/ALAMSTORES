@@ -9,9 +9,13 @@ Every fact this script emits is derived from the original WordPress install:
   * markup classes and layout          -> the `constrau` theme templates
   * logo and media                     -> wp-content/uploads
 
-Page body copy lived in the WordPress database, which was not part of the
-export. Those slots are marked with a `.content-pending` notice and are
-filled in by tools/fetch_content.py once the live site is reachable.
+The one exception is the page copy. It lived in the WordPress database, which
+was not part of the export, so tools/content_fr.py holds newly written French
+text describing each product category. That text is NOT the original wording —
+review it before publishing. tools/fetch_content.py replaces it with the real
+copy if the live site ever becomes reachable.
+
+Contact details are placeholders; see CONTACT below.
 
 Usage:  python3 tools/build_pages.py
 """
@@ -22,6 +26,9 @@ import os
 import re
 import sys
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from content_fr import CONTENT  # noqa: E402
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITEMAP_CANDIDATES = [
     os.path.join(ROOT, "tools", "data", "page-sitemap.xml"),
@@ -31,6 +38,21 @@ SITE_NAME = "Alam Stores"
 SITE_TAGLINE = "Le Spécialiste de l'Aménagement et de la Décoration"
 SITE_URL = "https://alamstores.ma"
 LOGO = "assets/images/2019/05/Logo-stores-rideaux-maroc.png"
+
+# ---------------------------------------------------------------------------
+# CONTACT DETAILS — PLACEHOLDERS. Replace all four values with the real ones,
+# then re-run `python3 tools/build_pages.py`. They feed the footer, the
+# WhatsApp/e-mail buttons on devis.html and the structured data.
+#   whatsapp: international format, digits only, no "+" and no spaces.
+# ---------------------------------------------------------------------------
+CONTACT = {
+    "phone_display": "+212 6 00 00 00 00",
+    "phone_tel": "+212600000000",
+    "whatsapp": "212600000000",
+    "email": "contact@alamstores.ma",
+    "address": "Casablanca, Maroc",
+    "hours": "Lundi – Samedi, 9h – 19h",
+}
 
 # Images referenced by the sitemap that no longer exist on disk, mapped to the
 # closest surviving file in the same upload batch.
@@ -297,14 +319,62 @@ def children_cards_html(slug, sitemap):
 """.format(cards="\n        ".join(cards))
 
 
-CONTENT_PENDING = """      <div class="content-pending" data-content-slot="{slug}">
-        <strong>Contenu à restaurer</strong>
-        <p>Le texte original de cette page se trouvait dans la base de données WordPress,
-           qui ne faisait pas partie de l'export. Lancez
-           <code>python3 tools/fetch_content.py</code> depuis une machine ayant accès à
-           alamstores.ma pour réinjecter automatiquement le contenu d'origine.</p>
-      </div>
-"""
+def page_copy_html(slug):
+    """Render the French copy held in tools/content_fr.py for this page."""
+    data = CONTENT.get(slug)
+    if not data:
+        return ""
+
+    out = []
+    if data.get("lead"):
+        out.append('        <p class="section-lead">%s</p>' % esc(data["lead"]))
+
+    for sec in data.get("sections", []):
+        out.append('        <div class="copy-block">')
+        out.append("          <h2>%s</h2>" % esc(sec["h"]))
+        for para in sec.get("p", []):
+            out.append("          <p>%s</p>" % esc(para))
+        if sec.get("ul"):
+            out.append('          <ul class="copy-list">')
+            for item in sec["ul"]:
+                out.append("            <li>%s</li>" % esc(item))
+            out.append("          </ul>")
+        out.append("        </div>")
+
+    return ('      <div class="page-copy" data-content-slot="%s">\n%s\n      </div>\n'
+            % (slug, "\n".join(out)))
+
+
+def meta_description(slug, title):
+    data = CONTENT.get(slug) or {}
+    if data.get("meta"):
+        return data["meta"]
+    return "%s - %s, %s." % (title, SITE_NAME, SITE_TAGLINE)
+
+
+def breadcrumb_jsonld(slug):
+    """BreadcrumbList structured data - reflects the real page hierarchy."""
+    trail, cur = [], slug
+    while cur:
+        trail.append(cur)
+        cur = PARENTS.get(cur)
+    trail.reverse()
+    if trail and trail[0] != "home":
+        trail.insert(0, "home")
+    if len(trail) < 2:
+        return ""
+
+    items = [{
+        "@type": "ListItem",
+        "position": i + 1,
+        "name": TITLES[s],
+        "item": "%s/%s" % (SITE_URL, "" if s == "home" else s + "/"),
+    } for i, s in enumerate(trail)]
+    payload = {"@context": "https://schema.org",
+               "@type": "BreadcrumbList",
+               "itemListElement": items}
+    return ('<script type="application/ld+json">%s</script>\n'
+            % json.dumps(payload, ensure_ascii=False, separators=(",", ":")))
 
 
 def contact_strip():
@@ -337,7 +407,7 @@ def footer_html():
     return """  <footer class="footer">
     <div class="container">
       <div class="row">
-        <div class="col-md-3 col-sm-6 mb-4">
+        <div class="col-lg-3 col-md-6 mb-4">
           <div class="footer-brand mb-3">
             <img src="{logo}" alt="{name}" width="594" height="260">
           </div>
@@ -345,12 +415,44 @@ def footer_html():
         </div>
         {c1}
         {c2}
-        {c3}
+        <!-- Contact details come from CONTACT in tools/build_pages.py -->
+        <div class="col-lg-3 col-md-6 mb-4">
+          <h3>Contact</h3>
+          <ul class="footer-contact">
+            <li>
+              <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+              <span>{address}</span>
+            </li>
+            <li>
+              <i class="fas fa-phone" aria-hidden="true"></i>
+              <a href="tel:{phone_tel}">{phone_display}</a>
+            </li>
+            <li>
+              <i class="fab fa-whatsapp" aria-hidden="true"></i>
+              <a href="https://wa.me/{whatsapp}" target="_blank" rel="noopener">WhatsApp</a>
+            </li>
+            <li>
+              <i class="fas fa-envelope" aria-hidden="true"></i>
+              <a href="mailto:{email}">{email}</a>
+            </li>
+            <li>
+              <i class="far fa-clock" aria-hidden="true"></i>
+              <span>{hours}</span>
+            </li>
+          </ul>
+          <a class="btn-primary-as btn-sm-as mt-2" href="devis.html">Devis gratuit</a>
+        </div>
       </div>
       <div class="footer-bottom">
         <div class="row">
-          <div class="col-md-6">&copy; <span id="year">2026</span> {name}. Tous droits réservés.</div>
-          <div class="col-md-6 text-md-right"><a href="devis.html">Demander un devis</a></div>
+          <div class="col-md-7">&copy; <span id="year">2026</span> {name}. Tous droits réservés.</div>
+          <div class="col-md-5 text-md-right">
+            <a href="{c3_first}">Société</a> &middot;
+            <a href="service.html">Service</a> &middot;
+            <a href="motorisations-automatismes.html">Motorisations</a> &middot;
+            <a href="partenaires.html">Partenaires</a> &middot;
+            <a href="devis.html">Devis</a>
+          </div>
         </div>
       </div>
     </div>
@@ -364,9 +466,58 @@ def footer_html():
                                     "store-duo-jour-nuit", "panneaux-japonais"]),
         c2=col("Stores Extérieurs", ["pergolas", "parasols", "toiles-tendues",
                                     "abris-de-voiture", "moustiquaires"]),
-        c3=col("Société", ["societe", "service", "motorisations-automatismes",
-                           "partenaires", "devis"]),
+        c3_first=href("societe"),
+        address=esc(CONTACT["address"]),
+        phone_tel=esc(CONTACT["phone_tel"]),
+        phone_display=esc(CONTACT["phone_display"]),
+        whatsapp=esc(CONTACT["whatsapp"]),
+        email=esc(CONTACT["email"]),
+        hours=esc(CONTACT["hours"]),
     )
+
+
+# Client and supplier logos taken from the site's own media library
+# (wp-content/uploads/2022/04). Only files that exist locally are rendered.
+PARTNER_LOGOS = [
+    ("2022/04/safran-logo.png", "Safran"),
+    ("2022/04/Coca-Cola-Logo.png", "Coca-Cola"),
+    ("2022/04/Colas_logo.png", "Colas"),
+    ("2022/04/Afriquialogo.png", "Afriquia"),
+    ("2022/04/winxo-logo.png", "Winxo"),
+    ("2022/04/petromin-logo.png", "Petromin Oils"),
+    ("2022/04/logo-movenpick.png", "Mövenpick Hotels & Resorts"),
+    ("2022/04/sofitel-logo.png", "Sofitel"),
+    ("2022/04/barcelologo.png", "Barceló Hotel Group"),
+    ("2022/04/mazagan-logo.jpg", "Mazagan"),
+    ("2022/04/hayattlogo.jpg", "Hyatt"),
+    ("2022/04/la_grillardlogo.jpg", "La Grillardière"),
+    ("2022/04/les-maitres-de-pain-logo.png", "Les Maîtres de Pain"),
+    ("2022/04/PomDePain_Logo.png", "Pomme de Pain"),
+    ("2022/04/logo_venezia_ice1.png", "Venezia Ice"),
+    ("2022/04/logo_somfy_2.png", "Somfy"),
+]
+
+
+def partners_html():
+    items = []
+    for rel, name in PARTNER_LOGOS:
+        if not os.path.exists(os.path.join(ROOT, "assets", "images", rel)):
+            continue
+        items.append(
+            '<li><img src="assets/images/%s" alt="%s" loading="lazy" decoding="async"></li>'
+            % (rel, esc(name))
+        )
+    if not items:
+        return ""
+    return """  <section class="section" id="references">
+    <div class="container">
+      <h2 class="section-title">Ils nous ont fait confiance</h2>
+      <ul class="partner-grid">
+        {items}
+      </ul>
+    </div>
+  </section>
+""".format(items="\n        ".join(items))
 
 
 def hero_html(images):
@@ -400,8 +551,10 @@ def quote_form():
       <div class="row">
         <div class="col-lg-8">
           <h2 class="section-title">Demande de devis</h2>
-          <p class="section-lead">Décrivez votre projet et nous vous recontactons avec une proposition.</p>
-          <form data-validate novalidate>
+          <p class="section-lead">Remplissez le formulaire, puis choisissez d'envoyer votre
+             demande par WhatsApp ou par e-mail. Aucune donnée n'est stockée sur ce site&nbsp;:
+             le message est composé dans votre application et vous gardez la main sur l'envoi.</p>
+          <form data-validate data-whatsapp="{whatsapp}" data-mailto="{email}" novalidate>
             <div class="row">
               <div class="col-md-6"><div class="form-field">
                 <label for="f-name">Nom et prénom <span aria-hidden="true">*</span></label>
@@ -416,22 +569,60 @@ def quote_form():
                 <input id="f-phone" name="phone" type="tel" autocomplete="tel">
               </div></div>
               <div class="col-md-6"><div class="form-field">
+                <label for="f-city">Ville</label>
+                <input id="f-city" name="city" type="text" autocomplete="address-level2">
+              </div></div>
+              <div class="col-md-6"><div class="form-field">
                 <label for="f-product">Produit souhaité</label>
                 <select id="f-product" name="product">{options}</select>
               </div></div>
+              <div class="col-md-6"><div class="form-field">
+                <label for="f-quantity">Nombre d'ouvertures</label>
+                <input id="f-quantity" name="quantity" type="number" min="1" step="1">
+              </div></div>
               <div class="col-12"><div class="form-field">
                 <label for="f-message">Votre projet <span aria-hidden="true">*</span></label>
-                <textarea id="f-message" name="message" rows="6" required></textarea>
+                <textarea id="f-message" name="message" rows="6" required
+                  placeholder="Dimensions approximatives, pièce concernée, orientation, commande manuelle ou motorisée…"></textarea>
               </div></div>
             </div>
-            <button class="btn-primary-as" type="submit">Envoyer la demande</button>
+            <div class="form-actions">
+              <button class="btn-primary-as btn-whatsapp" type="submit" data-send="whatsapp">
+                <i class="fab fa-whatsapp" aria-hidden="true"></i> Envoyer par WhatsApp
+              </button>
+              <button class="btn-outline-as" type="submit" data-send="mailto">
+                <i class="fas fa-envelope" aria-hidden="true"></i> Envoyer par e-mail
+              </button>
+            </div>
             <p class="form-status" role="status" aria-live="polite"></p>
           </form>
+        </div>
+
+        <div class="col-lg-4">
+          <aside class="contact-card">
+            <h2>Nous joindre directement</h2>
+            <ul class="footer-contact">
+              <li><i class="fas fa-map-marker-alt" aria-hidden="true"></i><span>{address}</span></li>
+              <li><i class="fas fa-phone" aria-hidden="true"></i>
+                  <a href="tel:{phone_tel}">{phone_display}</a></li>
+              <li><i class="fab fa-whatsapp" aria-hidden="true"></i>
+                  <a href="https://wa.me/{whatsapp}" target="_blank" rel="noopener">WhatsApp</a></li>
+              <li><i class="fas fa-envelope" aria-hidden="true"></i>
+                  <a href="mailto:{email}">{email}</a></li>
+              <li><i class="far fa-clock" aria-hidden="true"></i><span>{hours}</span></li>
+            </ul>
+          </aside>
         </div>
       </div>
     </div>
   </section>
-""".format(options=options)
+""".format(options=options,
+           whatsapp=esc(CONTACT["whatsapp"]),
+           email=esc(CONTACT["email"]),
+           address=esc(CONTACT["address"]),
+           phone_tel=esc(CONTACT["phone_tel"]),
+           phone_display=esc(CONTACT["phone_display"]),
+           hours=esc(CONTACT["hours"]))
 
 
 # --------------------------------------------------------------------------
@@ -455,7 +646,7 @@ PAGE = """<!DOCTYPE html>
 <link rel="icon" href="assets/images/2019/05/Logo-stores-rideaux-maroc.png" type="image/png">
 <link rel="preload" as="style" href="assets/css/main.min.css">
 <link rel="stylesheet" href="assets/css/main.min.css">
-</head>
+{jsonld}</head>
 <body class="{body_class}">
 <a id="top"></a>
 {header}
@@ -478,27 +669,32 @@ def build():
         images = sitemap.get(slug, [])
         body = []
 
+        copy = page_copy_html(slug)
+        copy_section = ("  <section class=\"section pb-0\">\n    <div class=\"container\">\n%s"
+                        "    </div>\n  </section>\n" % copy) if copy else ""
+
         if slug == "home":
             if images:
                 body.append(hero_html(images))
             body.append("  <section class=\"section\">\n    <div class=\"container\">\n"
-                        "      <h2 class=\"section-title\">%s</h2>\n"
-                        "      <p class=\"section-lead\">%s</p>\n%s"
+                        "      <h1 class=\"section-title\">%s &ndash; %s</h1>\n%s"
                         "    </div>\n  </section>\n"
-                        % (esc(SITE_NAME), esc(SITE_TAGLINE),
-                           CONTENT_PENDING.format(slug=slug)))
+                        % (esc(SITE_NAME), esc(SITE_TAGLINE), copy))
             body.append(children_cards_html("stores-interieurs", sitemap)
                         .replace("Notre gamme", "Stores Intérieurs"))
             body.append(children_cards_html("stores-exterieurs", sitemap)
                         .replace("Notre gamme", "Stores Extérieurs"))
             body.append(contact_strip())
         elif slug == "devis":
-            body.append("  <section class=\"section pb-0\">\n    <div class=\"container\">\n%s"
-                        "    </div>\n  </section>\n" % CONTENT_PENDING.format(slug=slug))
+            body.append(copy_section)
             body.append(quote_form())
+        elif slug == "partenaires":
+            body.append(copy_section)
+            body.append(partners_html())
+            body.append(gallery_html(slug, images))
+            body.append(contact_strip())
         else:
-            body.append("  <section class=\"section pb-0\">\n    <div class=\"container\">\n%s"
-                        "    </div>\n  </section>\n" % CONTENT_PENDING.format(slug=slug))
+            body.append(copy_section)
             body.append(children_cards_html(slug, sitemap))
             body.append(gallery_html(slug, images))
             body.append(contact_strip())
@@ -508,10 +704,11 @@ def build():
                      ("%s | %s" % (SITE_NAME, SITE_TAGLINE))
         out = PAGE.format(
             title=esc(page_title),
-            description=esc("%s - %s, %s." % (title, SITE_NAME, SITE_TAGLINE)),
+            description=esc(meta_description(slug, title)),
             canonical="%s/%s" % (SITE_URL, "" if slug == "home" else slug + "/"),
             og_image="%s/assets/images/%s" % (SITE_URL, og if og.startswith("2") else og),
             body_class="page-%s%s" % (slug, " home" if slug == "home" else ""),
+            jsonld=breadcrumb_jsonld(slug),
             header=header,
             content=page_header_html(slug) + "".join(x for x in body if x),
             footer=footer,
@@ -528,6 +725,7 @@ def build():
         canonical=SITE_URL + "/404.html",
         og_image="%s/%s" % (SITE_URL, LOGO),
         body_class="page-404",
+        jsonld="",
         header=header,
         content="""  <div class="ovatheme_breadcrumbs">
     <div class="container"><div class="row"><div class="col-md-12">
