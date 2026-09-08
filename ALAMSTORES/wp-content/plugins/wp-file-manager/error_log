@@ -1,8 +1,0 @@
-[23-Aug-2026 23:33:52 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function plugin_basename() in /home/alamstor/public_html/wp-content/plugins/wp-file-manager/file_folder_manager.php:12
-Stack trace:
-#0 {main}
-  thrown in /home/alamstor/public_html/wp-content/plugins/wp-file-manager/file_folder_manager.php on line 12
-[24-Aug-2026 12:29:39 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function plugin_basename() in /home/alamstor/public_html/wp-content/plugins/wp-file-manager/file_folder_manager.php:12
-Stack trace:
-#0 {main}
-  thrown in /home/alamstor/public_html/wp-content/plugins/wp-file-manager/file_folder_manager.php on line 12

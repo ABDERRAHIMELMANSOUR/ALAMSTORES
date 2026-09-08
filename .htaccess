@@ -1,0 +1,102 @@
+# Alam Stores — static site
+# No PHP, no database, no rewrite rules needed. This file only sets caching,
+# compression and security headers, and restores the hardening that was
+# stripped from the WordPress .htaccess during the compromise (see
+# SECURITY-AUDIT.md §1.5).
+
+# ---------------------------------------------------------------- routing --
+DirectoryIndex index.html
+ErrorDocument 404 /404.html
+
+# Never serve a directory listing.
+Options -Indexes
+
+# Extensionless URLs: /pergolas -> /pergolas.html, so links that were indexed
+# under the old WordPress permalinks keep working.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Strip a trailing slash from what used to be a WordPress permalink.
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteRule ^(.+)/$ /$1 [R=301,L]
+
+  # Serve the matching .html file.
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME}\.html -f
+  RewriteRule ^(.+)$ $1.html [L]
+</IfModule>
+
+# --------------------------------------------------------------- security --
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "geolocation=(), microphone=(), camera=(), interest-cohort=()"
+
+  # The site loads nothing from third parties, so the policy can be strict.
+  Header always set Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; font-src 'self'; form-action 'self'; frame-ancestors 'self'; base-uri 'self'; object-src 'none'"
+
+  Header always unset X-Powered-By
+  Header unset X-Powered-By
+</IfModule>
+
+# Nothing here is executable. Refuse to serve or run server-side sources.
+<FilesMatch "\.(php|php[0-9]?|phtml|phps|pl|py|cgi|sh|bash|sql|log|bak|inc|ini|env)$">
+  Require all denied
+</FilesMatch>
+
+# Hide dotfiles (.git, .htaccess itself, editor leftovers).
+<FilesMatch "^\.">
+  Require all denied
+</FilesMatch>
+
+# The build tooling is source, not web content.
+RedirectMatch 404 ^/tools/.*$
+
+# ------------------------------------------------------------ compression --
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css
+  AddOutputFilterByType DEFLATE application/javascript application/x-javascript
+  AddOutputFilterByType DEFLATE application/json application/xml image/svg+xml
+</IfModule>
+
+<IfModule mod_brotli.c>
+  AddOutputFilterByType BROTLI_COMPRESS text/html text/css application/javascript image/svg+xml
+</IfModule>
+
+# ----------------------------------------------------------------- caching --
+<IfModule mod_expires.c>
+  ExpiresActive On
+
+  # Fingerprint-free filenames, so keep HTML uncached and assets long-lived.
+  ExpiresByType text/html                 "access plus 0 seconds"
+  ExpiresByType text/css                  "access plus 1 year"
+  ExpiresByType application/javascript    "access plus 1 year"
+  ExpiresByType image/jpeg                "access plus 1 year"
+  ExpiresByType image/png                 "access plus 1 year"
+  ExpiresByType image/webp                "access plus 1 year"
+  ExpiresByType image/gif                 "access plus 1 year"
+  ExpiresByType image/svg+xml             "access plus 1 year"
+  ExpiresByType font/woff2                "access plus 1 year"
+  ExpiresByType font/woff                 "access plus 1 year"
+  ExpiresByType font/ttf                  "access plus 1 year"
+</IfModule>
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(css|js|jpg|jpeg|png|gif|webp|svg|woff2?|ttf)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\.html$">
+    Header set Cache-Control "public, max-age=0, must-revalidate"
+  </FilesMatch>
+</IfModule>
+
+# --------------------------------------------------------------- mimetypes --
+<IfModule mod_mime.c>
+  AddType font/woff2 .woff2
+  AddType font/woff  .woff
+  AddType image/webp .webp
+  AddType image/svg+xml .svg
+</IfModule>

@@ -1,4 +1,0 @@
-[24-Jul-2026 17:14:53 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function get_locale() in /home/alamstor/public_html/wp-admin/includes/admin.php:16
-Stack trace:
-#0 {main}
-  thrown in /home/alamstor/public_html/wp-admin/includes/admin.php on line 16
