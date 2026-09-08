@@ -1,8 +1,0 @@
-[23-Dec-2025 12:22:53 UTC] PHP Fatal error:  Uncaught Error: Interface "WpOrg\Requests\Transport" not found in /home/compcfgz/alamstores.ma/wp-includes/Requests/src/Transport/Curl.php:25
-Stack trace:
-#0 {main}
-  thrown in /home/compcfgz/alamstores.ma/wp-includes/Requests/src/Transport/Curl.php on line 25
-[23-Dec-2025 12:22:53 UTC] PHP Fatal error:  Uncaught Error: Interface "WpOrg\Requests\Transport" not found in /home/compcfgz/alamstores.ma/wp-includes/Requests/src/Transport/Fsockopen.php:25
-Stack trace:
-#0 {main}
-  thrown in /home/compcfgz/alamstores.ma/wp-includes/Requests/src/Transport/Fsockopen.php on line 25

@@ -1,8 +1,0 @@
-[21-Apr-2026 22:06:30 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Widget" not found in /home/compcfgz/alamstores.ma/wp-content/plugins/recent-posts-widget-with-thumbnails/recent-posts-widget-with-thumbnails.php:21
-Stack trace:
-#0 {main}
-  thrown in /home/compcfgz/alamstores.ma/wp-content/plugins/recent-posts-widget-with-thumbnails/recent-posts-widget-with-thumbnails.php on line 21
-[29-Apr-2026 06:12:27 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Widget" not found in /home/compcfgz/alamstores.ma/wp-content/plugins/recent-posts-widget-with-thumbnails/recent-posts-widget-with-thumbnails.php:21
-Stack trace:
-#0 {main}
-  thrown in /home/compcfgz/alamstores.ma/wp-content/plugins/recent-posts-widget-with-thumbnails/recent-posts-widget-with-thumbnails.php on line 21

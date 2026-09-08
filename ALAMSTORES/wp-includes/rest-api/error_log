@@ -1,4 +1,0 @@
-[23-Dec-2025 12:28:26 UTC] PHP Fatal error:  Uncaught Error: Class "WP_HTTP_Response" not found in /home/compcfgz/alamstores.ma/wp-includes/rest-api/class-wp-rest-response.php:17
-Stack trace:
-#0 {main}
-  thrown in /home/compcfgz/alamstores.ma/wp-includes/rest-api/class-wp-rest-response.php on line 17

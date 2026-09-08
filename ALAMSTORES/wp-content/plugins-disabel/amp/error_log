@@ -1,8 +1,0 @@
-[21-Apr-2026 22:06:31 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Error" not found in /home/compcfgz/alamstores.ma/wp-content/plugins/amp/amp.php:31
-Stack trace:
-#0 {main}
-  thrown in /home/compcfgz/alamstores.ma/wp-content/plugins/amp/amp.php on line 31
-[29-Apr-2026 06:12:33 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Error" not found in /home/compcfgz/alamstores.ma/wp-content/plugins/amp/amp.php:31
-Stack trace:
-#0 {main}
-  thrown in /home/compcfgz/alamstores.ma/wp-content/plugins/amp/amp.php on line 31

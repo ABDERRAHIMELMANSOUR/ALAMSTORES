@@ -1,8 +1,0 @@
-[23-Dec-2025 12:26:26 UTC] PHP Fatal error:  Uncaught Error: Class "WP_HTML_Tag_Processor" not found in /home/compcfgz/alamstores.ma/wp-includes/html-api/class-wp-html-processor.php:143
-Stack trace:
-#0 {main}
-  thrown in /home/compcfgz/alamstores.ma/wp-includes/html-api/class-wp-html-processor.php on line 143
-[23-Dec-2025 12:26:28 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Token_Map" not found in /home/compcfgz/alamstores.ma/wp-includes/html-api/html5-named-character-references.php:38
-Stack trace:
-#0 {main}
-  thrown in /home/compcfgz/alamstores.ma/wp-includes/html-api/html5-named-character-references.php on line 38
