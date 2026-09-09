@@ -97,8 +97,11 @@ $id = (int) $pdo->lastInsertId();
 
 // Notification, en meilleur effort : un e-mail qui ne part pas ne doit jamais
 // faire échouer l'enregistrement du lead.
-$to = (string) cfg('notify_email', '');
-if ($to !== '' && filter_var($to, FILTER_VALIDATE_EMAIL)) {
+$recipients = array_values(array_filter(
+    array_map('trim', (array) cfg('notify_email', [])),
+    static function ($address) { return filter_var($address, FILTER_VALIDATE_EMAIL); }));
+
+if ($recipients) {
     $labels = [
         'statut' => 'Statut', 'company' => 'Entreprise', 'category' => 'Catégorie',
         'firstname' => 'Prénom', 'lastname' => 'Nom', 'email' => 'E-mail',
@@ -122,7 +125,7 @@ if ($to !== '' && filter_var($to, FILTER_VALIDATE_EMAIL)) {
     // En-têtes construits à partir de valeurs validées uniquement : ni le
     // sujet ni le Reply-To ne peuvent porter de saut de ligne (clean_text les
     // retire) — pas d'injection d'en-tête possible.
-    @mail($to, $subject, implode("\n", $lines), implode("\r\n", [
+    @mail(implode(', ', $recipients), $subject, implode("\n", $lines), implode("\r\n", [
         'From: Site Alam Stores <no-reply@' . preg_replace('/[^a-z0-9.\-]/i', '', (string) ($_SERVER['HTTP_HOST'] ?? 'alamstores.ma')) . '>',
         'Reply-To: ' . $lead['email'],
         'Content-Type: text/plain; charset=UTF-8',

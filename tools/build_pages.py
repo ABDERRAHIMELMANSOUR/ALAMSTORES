@@ -51,8 +51,12 @@ LOGO = "assets/images/2019/05/Logo-stores-rideaux-maroc.png"
 CONTACT = {
     "phone_display": "05 37 75 97 72",
     "phone_tel": "+212537759772",
-    "whatsapp": "212537759772",
+    # WhatsApp runs on the mobile line, not the showroom landline — the two
+    # numbers are shown separately everywhere they appear.
+    "whatsapp": "212600055562",
+    "whatsapp_display": "06 00 05 55 62",
     "email": "contact@alamstores.ma",
+    "linkedin": "https://www.linkedin.com/company/alam-stores/",
     "address": "Hay Nahda 1 Grp. AlAhd N° 1042 Rabat, Maroc",
     "address_short": "Hay Nahda 1, Rabat",
     "hours": "Lun - Ven: 8:30 - 12:30 et 14:30 - 18:30 | Sam: 8:30 - 13:00",
@@ -106,8 +110,9 @@ PARENTS = {slug: parent for slug, _, parent in PAGES}
 # Shorter labels used in the navigation bar only (page titles stay full).
 NAV_LABELS = {"motorisations-automatismes": "Motorisations"}
 
-# "motorisations-automatismes" is deliberately absent: the page still exists at
-# its original URL and is linked from the footer, just not from the navbar.
+# "motorisations-automatismes" is deliberately absent. The page still exists at
+# its original URL and stays in sitemap.xml, but nothing links to it any more —
+# neither the navbar nor the footer. Put the slug back here to bring it back.
 NAV_TOP = ["home", "societe", "stores-interieurs", "stores-exterieurs",
            "service", "partenaires"]
 
@@ -676,7 +681,7 @@ def contact_card_html(compact=False):
     rows = [
         ("pin", "Adresse", esc(CONTACT["address"]), None),
         ("phone", "Téléphone", esc(CONTACT["phone_display"]), "tel:" + esc(CONTACT["phone_tel"])),
-        ("whatsapp", "WhatsApp", esc(CONTACT["phone_display"]), esc(wa_link())),
+        ("whatsapp", "WhatsApp", esc(CONTACT["whatsapp_display"]), esc(wa_link())),
         ("mail", "E-mail", esc(CONTACT["email"]), "mailto:" + esc(CONTACT["email"])),
         ("clock", "Horaires",
          esc(CONTACT["hours_week"]) + "<br>" + esc(CONTACT["hours_sat"]), None),
@@ -873,7 +878,7 @@ def showroom_card():
           <div>
             <strong>Téléphone</strong>
             <p><a href="tel:{tel}">{phone_display}</a><br>
-               <a href="{wa}" target="_blank" rel="noopener">WhatsApp&nbsp;: {phone_display}</a></p>
+               <a href="{wa}" target="_blank" rel="noopener">WhatsApp&nbsp;: {wa_display}</a></p>
           </div>
         </div>
         <div class="showroom__item">
@@ -890,6 +895,7 @@ def showroom_card():
            address=esc(CONTACT["address"]),
            tel=esc(CONTACT["phone_tel"]),
            phone_display=esc(CONTACT["phone_display"]),
+           wa_display=esc(CONTACT["whatsapp_display"]),
            wa=esc(wa_link()),
            hours_week=esc(CONTACT["hours_week"]),
            hours_sat=esc(CONTACT["hours_sat"]))
@@ -1002,7 +1008,7 @@ def quote_form():
     </div>
   </section>
 """.format(whatsapp=esc(CONTACT["whatsapp"]), email=esc(CONTACT["email"]),
-           phone=esc(CONTACT["phone_display"]), statuts=statuts, cats=cats,
+           phone=esc(CONTACT["whatsapp_display"]), statuts=statuts, cats=cats,
            wapp=icon("whatsapp"))
 
 
@@ -1023,6 +1029,8 @@ def footer_html():
           <p>{tag}. Stores intérieurs et extérieurs, pergolas, moustiquaires et
              motorisations sur mesure.</p>
           <div class="footer-social">
+            <a href="{linkedin}" target="_blank" rel="noopener"
+               aria-label="Alam Stores sur LinkedIn">{li}</a>
             <a href="mailto:{email}" aria-label="E-mail">{mail}</a>
             <a href="tel:{tel}" aria-label="Téléphone">{phone}</a>
           </div>
@@ -1039,7 +1047,6 @@ def footer_html():
         <nav aria-label="Liens de pied de page">
           <a href="societe.html">Société</a>
           <a href="service.html">Service</a>
-          <a href="motorisations-automatismes.html">Motorisations</a>
           <a href="partenaires.html">Partenaires</a>
           <a href="devis.html">Devis</a>
         </nav>
@@ -1055,6 +1062,7 @@ def footer_html():
 """.format(logo=LOGO, name=esc(SITE_NAME), tag=esc(SITE_TAGLINE),
            mail=icon("mail"), phone=icon("phone"), up=icon("arrow-up"),
            wapp=icon("whatsapp"), whatsapp=esc(CONTACT["whatsapp"]),
+           li=icon("linkedin"), linkedin=esc(CONTACT["linkedin"]),
            email=esc(CONTACT["email"]), tel=esc(CONTACT["phone_tel"]),
            c1=col("Stores Intérieurs", ["stores-enrouleurs", "stores-venitiens",
                                         "stores-californiens", "stores-bateaux",

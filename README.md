@@ -28,6 +28,9 @@ tools/                     build scripts + page copy (not web content)
 SECURITY-AUDIT.md          malware findings from the WordPress export
 ```
 
+**Installing this on a server?** `INSTALLATION.md` is the step-by-step guide,
+in French — cPanel, FileZilla, the database and the web installer.
+
 **The public pages work with or without the back-end.** Each category page
 carries the catalogue that was baked in at build time, then refreshes it from
 `api/catalog.php` on load. If PHP or the database is unavailable the fetch
@@ -114,19 +117,20 @@ payload:
 | `address_short` | Hay Nahda 1, Rabat *(top bar only)* |
 | `phone_display` | 05 37 75 97 72 |
 | `phone_tel` | `+212537759772` *(used in `tel:` links)* |
-| `whatsapp` | `212537759772` *(digits only, no `+`, no spaces)* |
+| `whatsapp` | `212600055562` *(the mobile line — digits only, no `+`, no spaces)* |
+| `whatsapp_display` | 06 00 05 55 62 *(shown wherever WhatsApp is named)* |
 | `email` | contact@alamstores.ma |
+| `linkedin` | https://www.linkedin.com/company/alam-stores/ |
 | `hours_week` | Lun - Ven : 8:30 - 12:30 et 14:30 - 18:30 |
 | `hours_sat` | Sam : 8:30 - 13:00 |
 
 Edit them, then re-run `python3 tools/build_pages.py` to push the change through
 all 26 pages.
 
-> **WhatsApp on a landline.** `212537759772` is the showroom's fixed line.
-> WhatsApp normally requires a mobile number; a landline only works if the
-> number is registered with **WhatsApp Business** and verified by voice call.
-> If that has not been set up, put your mobile in `whatsapp` — it is a separate
-> key from `phone_tel`, so the displayed phone number does not change.
+> **Two numbers, on purpose.** `phone_display` is the showroom landline, used
+> for `tel:` links. `whatsapp` / `whatsapp_display` is the mobile line, used by
+> the floating bubble, the quote form and every place WhatsApp is named. They
+> are separate keys, so changing one never touches the other.
 
 ## Calls to action
 
@@ -189,8 +193,10 @@ Categories in the form are wider than the page tree on purpose — `Rideaux` and
 
 ## Leads — "Devis reçus"
 
-Every submission is written to the `leads` table by `api/lead.php` and listed in
-the **Devis reçus** tab of the back-office: search, status and category filters,
+Every submission is written to the `leads` table by `api/lead.php`, e-mailed to
+every address in `notify_email` (`contact@alamstores.ma` and
+`kassettebrahim.1997@gmail.com` by default — add or remove them in
+`api/config.php`), and listed in the **Devis reçus** tab of the back-office: search, status and category filters,
 unread count, mark as read, delete, and a CSV export (semicolons plus a BOM, so
 Excel opens it with the accents intact). Every field is stored — timestamp,
 statut, entreprise, catégorie, prénom, nom, e-mail, téléphone, adresse, code
@@ -222,6 +228,14 @@ site ran on.
 
 ### Installation
 
+**On a shared host, without SSH** — upload the files, then open
+`https://votre-domaine/admin/setup.php`. It asks for the database credentials,
+writes `api/config.php`, imports the schema, creates the first account, then
+**deletes itself**. `INSTALLATION.md` walks through it screen by screen,
+including the cPanel and FileZilla steps.
+
+**With SSH**, the same thing by hand:
+
 ```bash
 # 1. the database
 mysql -u <user> -p <base> < db/schema.sql
@@ -237,6 +251,10 @@ php tools/make_admin.php votre-identifiant
 ```
 
 Then open `https://votre-domaine/admin/`.
+
+> `admin/setup.php` only works while no account exists, and returns 403 the
+> moment one does. Delete it anyway once you are in — `tools/security_scan.py`
+> reports it as a finding until you do.
 
 `db/seed_categories.sql` is generated from the page tree by
 `python3 tools/build_sql.py`, so **a category slug in the database is a page

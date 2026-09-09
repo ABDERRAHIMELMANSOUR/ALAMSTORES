@@ -26,9 +26,13 @@ return [
     //     php -r "echo bin2hex(random_bytes(32));"
     'ip_salt' => '',               // <- à renseigner
 
-    // Adresse qui reçoit une notification à chaque nouvelle demande de devis.
-    // Laissez vide pour ne pas envoyer d'e-mail.
-    'notify_email' => 'contact@alamstores.ma',
+    // Adresses qui reçoivent une notification à chaque nouvelle demande de
+    // devis. Ajoutez-en autant que nécessaire ; laissez la liste vide pour
+    // n'envoyer aucun e-mail (les demandes restent enregistrées en base).
+    'notify_email' => [
+        'contact@alamstores.ma',
+        'kassettebrahim.1997@gmail.com',
+    ],
 
     // Origines autorisées à appeler l'API (votre domaine, rien d'autre).
     'allowed_origins' => [

@@ -173,7 +173,13 @@ def scan():
                              % len(blob)))
             break
 
-    # 4. dérive par rapport à l'empreinte de référence
+    # 4. l'installateur laissé en place
+    if os.path.exists(os.path.join(ROOT, "admin", "setup.php")):
+        findings.append(("élevée", "admin/setup.php",
+                         "installateur encore présent : à supprimer une fois "
+                         "le back-office installé"))
+
+    # 5. dérive par rapport à l'empreinte de référence
     baseline = load_baseline()
     if baseline is None:
         findings.append(("info", "-",
@@ -187,7 +193,7 @@ def scan():
             elif baseline[rel] != digest:
                 findings.append(("élevée", rel, "fichier PHP modifié depuis la référence"))
         for rel in sorted(baseline):
-            if rel not in php_seen:
+            if rel not in php_seen and rel != "admin/setup.php":
                 findings.append(("moyenne", rel, "fichier PHP attendu mais absent"))
 
     return findings
