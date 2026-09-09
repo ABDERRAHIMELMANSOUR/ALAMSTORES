@@ -259,11 +259,11 @@
 
   /* ------------------------------------------------------- B2B quote form --- */
   /* Saves every submission to a local lead store (readable from admin.html)
-     and then hands the formatted request to the visitor's mail client.
+     and then sends the visitor to WhatsApp with the request pre-filled.
 
      NOTE: localStorage is per-browser and per-device. A lead submitted on a
      visitor's phone is stored on THAT phone — admin.html on another machine
-     will not see it. The e-mail is the delivery channel; the local store is a
+     will not see it. WhatsApp is the delivery channel; the local store is a
      convenience log for leads captured on this device. */
   var LEADS_KEY = 'alamstores.leads';
 
@@ -358,15 +358,23 @@
       return true;
     }
 
+    /* WhatsApp renders *text* in bold, so the labels stand out in the chat. */
     function compose() {
-      var lines = ['Demande de devis — alamstores.ma', ''];
+      var lines = ['*Demande de devis — alamstores.ma*', ''];
       FIELDS.forEach(function (pair) {
         var v = val(pair[0]);
-        if (v) lines.push(pair[1] + ' : ' + v);
+        if (v) lines.push('*' + pair[1] + '* : ' + v);
       });
       var msg = val('message');
-      if (msg) lines.push('', 'Message :', msg);
+      if (msg) lines.push('', '*Message :*', msg);
       return lines.join('\n');
+    }
+
+    /* wa.me wants digits only — no +, spaces or dashes. */
+    function waUrl() {
+      var number = (form.getAttribute('data-whatsapp') || '').replace(/[^0-9]/g, '');
+      if (!number) return '';
+      return 'https://wa.me/' + number + '?text=' + encodeURIComponent(compose());
     }
 
     if (statut) { on(statut, 'change', syncB2B); syncB2B(); }
@@ -383,21 +391,26 @@
       lead.message = val('message');
       var stored = saveLead(lead);
 
-      var who = val('company') || (val('firstname') + ' ' + val('lastname')).trim();
-      var subject = 'Demande de devis — ' + (val('category') || 'projet') + (who ? ' — ' + who : '');
-      var to = form.getAttribute('data-mailto');
-      if (to) {
-        window.location.href = 'mailto:' + to
-          + '?subject=' + encodeURIComponent(subject)
-          + '&body=' + encodeURIComponent(compose());
+      var url = waUrl();
+
+      /* Shown when the redirect below is blocked (pop-up blockers, in-app
+         browsers), so the visitor still has a one-tap way through. */
+      if (status) {
+        status.textContent = (stored ? 'Demande enregistrée. ' : '')
+          + 'WhatsApp s’ouvre avec votre demande pré-remplie — il ne reste qu’à l’envoyer. ';
+        status.className = 'form-status is-ok';
+        if (url) {
+          var link = document.createElement('a');
+          link.href = url;
+          link.target = '_blank';
+          link.rel = 'noopener';
+          link.setAttribute('data-wa-link', '');
+          link.textContent = 'Ouvrir WhatsApp';
+          status.appendChild(link);
+        }
       }
 
-      if (status) {
-        status.textContent = stored
-          ? 'Demande enregistrée. Votre messagerie va s’ouvrir avec le récapitulatif pré-rempli — il ne reste qu’à l’envoyer.'
-          : 'Votre messagerie va s’ouvrir avec le récapitulatif pré-rempli — il ne reste qu’à l’envoyer.';
-        status.className = 'form-status is-ok';
-      }
+      if (url) window.location.href = url;
     });
   }
 

@@ -116,9 +116,10 @@ all 26 pages.
 Every CTA on the site points at `devis.html` — "Demander un devis" or
 "Devis gratuit". There are no WhatsApp action buttons: the top bar, header,
 hero, CTA banners, category cards, product cards, footer and the old floating
-bubble all carry the quote CTA instead.
+bubble all carry the quote CTA instead. WhatsApp enters the journey once, at
+the end of it — the quote form itself hands the completed request to WhatsApp.
 
-WhatsApp still appears as a **contact channel** in the contact lists and the
+WhatsApp also appears as a **contact channel** in the contact lists and the
 showroom card, next to the address, phone, e-mail and opening hours — a
 labelled row showing the number, not a button. Say the word if you want it gone
 from there too.
@@ -145,10 +146,20 @@ makes it required; switching back to Particulier hides and clears it.
 Ville, Adresse, Code postal.
 
 **Envoyer ma demande** does two things: it appends the submission to a local
-lead log, then opens the visitor's mail client via `mailto:` with the full
-structured payload — statut, entreprise, catégorie, name, e-mail, phone, full
-postal address and the message — and a subject line carrying the category and
-the company (or contact) name.
+lead log, then sends the visitor straight to WhatsApp — `https://wa.me/<number>`
+with the whole request pre-filled as the message, ready to send in one tap. The
+number comes from the `data-whatsapp` attribute on the form, which the builder
+fills from `CONTACT["whatsapp"]`.
+
+Every filled field is in that message, in order and labelled — statut,
+entreprise, catégorie, prénom, nom, e-mail, téléphone, adresse, code postal,
+ville, pays, then the message itself. Labels are wrapped in `*…*` so WhatsApp
+renders them bold. Empty optional fields are left out rather than sent blank.
+
+If the redirect is blocked — a pop-up blocker, an in-app browser — the status
+line under the button keeps an **Ouvrir WhatsApp** link carrying the same
+pre-filled URL, so the visitor still gets through in one tap. Visitors without
+WhatsApp have the e-mail address right below, in the form note.
 
 Categories in the form are wider than the page tree on purpose — `Rideaux` and
 `Autre / Projet mixte` are offered without having a dedicated page. Edit
@@ -168,12 +179,12 @@ adresse, code postal, ville, pays and the message.
 > that phone*, and will never appear in your dashboard. The table only shows
 > what was submitted in the browser you are viewing it from.
 >
-> **The e-mails arriving at contact@alamstores.ma remain your real lead
+> **The WhatsApp conversations arriving on 05 37 75 97 72 remain your real lead
 > register.** The local log is a convenience, not a CRM.
 >
 > For a genuinely centralised list you need a form service (Formspree, Netlify
 > Forms, Google Forms) or a small back-end. Ask and we'll wire one in: add an
-> `action` to the `<form>` and drop `data-mailto`.
+> `action` to the `<form>` and let it post before the WhatsApp hand-off.
 
 ## Product dashboard (`admin.html`)
 

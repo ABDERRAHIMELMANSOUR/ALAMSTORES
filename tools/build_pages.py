@@ -840,13 +840,13 @@ def quote_form():
     return """  <section class="section" style="padding-top:clamp(24px,3vw,36px)">
     <div class="shell">
       <form class="form-card" id="devis-form" data-quote-form novalidate
-            data-whatsapp="{whatsapp}" data-mailto="{email}">
+            data-whatsapp="{whatsapp}">
         <div class="form-card__head">
           <h2>Demande de devis</h2>
           <p>Particuliers, entreprises, architectes et revendeurs : décrivez votre
              projet et nous revenons vers vous avec une proposition chiffrée.
-             Rien n'est enregistré sur ce site — votre demande part par WhatsApp
-             ou par e-mail, depuis votre propre application.</p>
+             Votre demande est mise en forme dans WhatsApp&nbsp;: vous la relisez
+             et vous l'envoyez d'un seul geste.</p>
         </div>
 
         <div class="form-card__body">
@@ -924,17 +924,20 @@ def quote_form():
 
           <div class="form-nav">
             <button class="btn btn--primary btn--lg" type="submit">
-              {mail}<span>Envoyer ma demande</span></button>
+              {wapp}<span>Envoyer ma demande</span></button>
           </div>
           <p class="form-status" role="status" aria-live="polite"></p>
-          <p class="form-note">Votre demande est enregistr&eacute;e puis mise en forme dans votre
-             messagerie&nbsp;: vous relisez et vous gardez la main sur l'envoi.</p>
+          <p class="form-note">Un r&eacute;capitulatif complet s'ouvre dans WhatsApp, pr&ecirc;t
+             &agrave; envoyer au {phone}&nbsp;: vous relisez et vous gardez la main sur l'envoi.
+             Pas de WhatsApp&nbsp;? &Eacute;crivez-nous &agrave;
+             <a href="mailto:{email}">{email}</a>.</p>
         </div>
       </form>
     </div>
   </section>
 """.format(whatsapp=esc(CONTACT["whatsapp"]), email=esc(CONTACT["email"]),
-           statuts=statuts, cats=cats, mail=icon("mail"))
+           phone=esc(CONTACT["phone_display"]), statuts=statuts, cats=cats,
+           wapp=icon("whatsapp"))
 
 
 # --------------------------------------------------------------------------
