@@ -111,6 +111,10 @@ NAV_LABELS = {"motorisations-automatismes": "Motorisations"}
 NAV_TOP = ["home", "societe", "stores-interieurs", "stores-exterieurs",
            "service", "partenaires"]
 
+# Pages that never carry a product catalogue — the same list drives
+# tools/build_sql.py, so the database and the site agree on what a category is.
+NON_CATALOGUE = {"home", "societe", "service", "partenaires", "devis"}
+
 # Small tag shown on category cards.
 CARD_TAGS = {"stores-interieurs": "Intérieur", "stores-exterieurs": "Extérieur"}
 
@@ -258,7 +262,17 @@ def thumb_for(slug, sitemap):
 
 
 def load_products():
-    """Product catalogue maintained through admin.html. Grouped by category."""
+    """Product catalogue. Two sources, same shape:
+
+    * `tools/data/products.json`, edited by hand, or
+    * the export of the database from `api/admin/export.php` (version 2, which
+      adds `variants` — the sub-products created in the back-office).
+
+    Whatever is in the file is baked into the HTML at build time. The pages
+    also refresh themselves from `api/catalog.php` at runtime, so the static
+    copy is the fallback: it keeps the catalogue visible for search engines and
+    for the day PHP is unavailable.
+    """
     if not os.path.exists(PRODUCTS_JSON):
         return {}
     try:
@@ -275,64 +289,119 @@ def load_products():
     return grouped
 
 
-def products_section(slug, products):
-    """Product cards with photo, specs, datasheet download and a video link.
+def media_url(path):
+    """A media path is either site-relative (assets/…) or under assets/images/.
 
-    Video URLs are rendered as plain outbound links, never embedded — the site
-    carries no <video> or <iframe> anywhere.
+    Uploads from the back-office land in `assets/uploads/`; the images
+    recovered from the old WordPress library are addressed by their original
+    `2022/04/name.jpg` path.
     """
-    items = products.get(slug)
-    if not items:
-        return ""
+    path = (path or "").strip().lstrip("/")
+    if not path:
+        return None
+    if path.startswith("assets/"):
+        return path if os.path.exists(os.path.join(ROOT, path)) else None
+    return ("assets/images/" + path
+            if os.path.exists(os.path.join(ROOT, "assets", "images", path)) else None)
 
-    cards = []
-    for prod in items:
-        photo = next((p for p in prod.get("photos", [])
-                      if os.path.exists(os.path.join(ROOT, "assets", "images", p))), None)
+
+def youtube_id(url):
+    """The 11-character id of a YouTube URL, or None.
+
+    Only the id travels into the page: the player URL is rebuilt from it, so
+    nothing from the catalogue can inject parameters into the iframe.
+    """
+    url = (url or "").strip()
+    if not url:
+        return None
+    for pattern in (r"youtube\.com/watch\?(?:.*&)?v=([A-Za-z0-9_-]{11})",
+                    r"youtu\.be/([A-Za-z0-9_-]{11})",
+                    r"youtube(?:-nocookie)?\.com/embed/([A-Za-z0-9_-]{11})",
+                    r"youtube\.com/shorts/([A-Za-z0-9_-]{11})"):
+        m = re.search(pattern, url, re.I)
+        if m:
+            return m.group(1)
+    return url if re.match(r"^[A-Za-z0-9_-]{11}$", url) else None
+
+
+def product_card(prod, variant=False):
+    """One catalogue entry. Mirrors the markup main.js builds from the API —
+    a page must look identical whether it was served static or refreshed."""
+    photo = next((u for u in (media_url(x) for x in prod.get("photos", [])) if u), None)
+    vid = youtube_id(prod.get("video"))
+
+    media = ""
+    if photo:
+        play = ('<button class="product__play" type="button" data-video="%s"'
+                ' aria-label="Voir la vidéo : %s">%s</button>'
+                % (esc(vid), esc(prod["title"]), icon("play"))) if vid else ""
         media = ('<div class="product__media">'
-                 '<img src="assets/images/%s" alt="%s" loading="lazy" decoding="async"></div>'
-                 % (photo, esc(prod["title"]))) if photo else ""
+                 '<img src="%s" alt="%s" loading="lazy" decoding="async">%s</div>'
+                 % (esc(photo), esc(prod["title"]), play))
 
-        specs = ""
-        rows = [sp for sp in prod.get("specs", []) if sp.get("label") or sp.get("value")]
-        if rows:
-            specs = ('<dl class="product__specs">%s</dl>' % "".join(
-                "<div><dt>%s</dt><dd>%s</dd></div>"
-                % (esc(sp.get("label", "")), esc(sp.get("value", ""))) for sp in rows))
+    specs = ""
+    rows = [sp for sp in prod.get("specs", []) if sp.get("label") or sp.get("value")]
+    if rows:
+        specs = ('<dl class="product__specs">%s</dl>' % "".join(
+            "<div><dt>%s</dt><dd>%s</dd></div>"
+            % (esc(sp.get("label", "")), esc(sp.get("value", ""))) for sp in rows))
 
-        actions = []
-        sheet = prod.get("datasheet") or {}
-        if sheet.get("file") and os.path.exists(os.path.join(ROOT, sheet["file"])):
-            actions.append('<a class="btn btn--ghost btn--sm" href="%s" download>%s<span>%s</span></a>'
-                           % (esc(sheet["file"]), icon("download"),
-                              esc(sheet.get("label") or "Fiche technique (PDF)")))
-        if prod.get("video"):
-            actions.append('<a class="btn btn--ghost btn--sm" href="%s" target="_blank" rel="noopener">'
-                           '%s<span>Voir la vidéo</span></a>' % (esc(prod["video"]), icon("play")))
+    actions = []
+    sheet = prod.get("datasheet") or {}
+    doc = sheet.get("file")
+    if doc and os.path.exists(os.path.join(ROOT, doc.lstrip("/"))):
+        actions.append('<a class="btn btn--ghost btn--sm" href="%s" download>%s<span>%s</span></a>'
+                       % (esc(doc.lstrip("/")), icon("download"),
+                          esc(sheet.get("label") or "Fiche technique (PDF)")))
+    if vid and not photo:
+        actions.append('<button class="btn btn--ghost btn--sm" type="button" data-video="%s">'
+                       '%s<span>Voir la vidéo</span></button>' % (esc(vid), icon("play")))
+    if not variant:
         actions.append('<a class="btn btn--primary btn--sm" href="devis.html">'
                        '%s<span>Demander un devis</span></a>' % icon("sparkle"))
 
-        cards.append(
-            '<li><article class="product">{media}<div class="product__body">'
-            '<h3>{title}</h3>{desc}{specs}'
-            '<div class="product__actions">{actions}</div>'
-            '</div></article></li>'.format(
+    variants = ""
+    subs = [v for v in prod.get("variants", []) if v.get("title")]
+    if subs:
+        variants = ('<div class="product__variants"><h4>Déclinaisons</h4><ul>%s</ul></div>'
+                    % "".join("<li>%s</li>" % product_card(v, variant=True) for v in subs))
+
+    return ('<article class="product{sub}">{media}<div class="product__body">'
+            '<h3>{title}</h3>{desc}{specs}{variants}'
+            '{actions}</div></article>').format(
+                sub=" product--sub" if variant else "",
                 media=media, title=esc(prod["title"]),
                 desc=('<p>%s</p>' % esc(prod["description"])) if prod.get("description") else "",
-                specs=specs, actions="".join(actions)))
+                specs=specs, variants=variants,
+                actions=('<div class="product__actions">%s</div>' % "".join(actions))
+                        if actions else "")
 
-    return """  <section class="section reveal" id="produits">
+
+def products_section(slug, products):
+    """The catalogue block of a category page.
+
+    Always rendered on a category page, even when the static file holds nothing
+    for it: `data-catalog` is the mount point main.js fills from the database,
+    so a product added in the back-office appears here without a rebuild.
+    """
+    if slug in NON_CATALOGUE:
+        return ""
+
+    items = products.get(slug) or []
+    cards = "\n        ".join("<li>%s</li>" % product_card(p) for p in items)
+
+    return """  <section class="section reveal" id="produits" data-catalog="{slug}"{hidden}>
     <div class="shell">
       <div class="section-head">
         <span class="eyebrow">Catalogue</span>
         <h2>Nos modèles</h2>
       </div>
-      <ul class="product-grid">
+      <ul class="product-grid" data-catalog-list>
         {cards}
       </ul>
     </div>
   </section>
-""".format(cards="\n        ".join(cards))
+""".format(slug=esc(slug), cards=cards, hidden="" if items else " hidden")
 
 
 # --------------------------------------------------------------------------
@@ -347,10 +416,9 @@ def topbar_html():
         <li>{phone}<a href="tel:{tel}">{phone_display}</a></li>
         <li class="is-wide">{clock}<span>{hours}</span></li>
       </ul>
-      <a class="topbar__cta" href="devis.html">{spark}<span>Devis gratuit</span></a>
     </div>
   </div>
-""".format(pin=icon("pin"), phone=icon("phone"), clock=icon("clock"), spark=icon("sparkle"),
+""".format(pin=icon("pin"), phone=icon("phone"), clock=icon("clock"),
            address_short=esc(CONTACT["address_short"]), tel=esc(CONTACT["phone_tel"]),
            phone_display=esc(CONTACT["phone_display"]), hours=esc(CONTACT["hours"]))
 
@@ -552,14 +620,12 @@ def cards_html(slugs, sitemap, tag=None):
             '{blurb}'
             '<div class="card__foot">'
             '<span class="card__more">Découvrir {arrow}</span>'
-            '<a class="card__ask" href="devis.html"'
-            ' aria-label="Demander un devis pour {title}">{spark}<span>Devis</span></a>'
             '</div></div>'
             '<a class="card__link" href="{h}"><span class="sr-only">{title}</span></a>'
             '</article></li>'.format(
                 media=media, title=esc(TITLES[s]),
                 blurb='<p class="card__text">%s</p>' % esc(blurb) if blurb else "",
-                arrow=icon("arrow-right"), spark=icon("sparkle"), h=href(s)))
+                arrow=icon("arrow-right"), h=href(s)))
     return '<ul class="card-grid">\n        %s\n      </ul>' % "\n        ".join(items)
 
 
@@ -982,10 +1048,13 @@ def footer_html():
   </footer>
 
   <div class="fab">
+    <a class="fab__wa" href="https://wa.me/{whatsapp}" target="_blank" rel="noopener"
+       aria-label="Nous écrire sur WhatsApp"><span class="fab__pulse" aria-hidden="true"></span>{wapp}</a>
     <button class="to-top" type="button" id="to-top" aria-label="Retour en haut de page">{up}</button>
   </div>
 """.format(logo=LOGO, name=esc(SITE_NAME), tag=esc(SITE_TAGLINE),
            mail=icon("mail"), phone=icon("phone"), up=icon("arrow-up"),
+           wapp=icon("whatsapp"), whatsapp=esc(CONTACT["whatsapp"]),
            email=esc(CONTACT["email"]), tel=esc(CONTACT["phone_tel"]),
            c1=col("Stores Intérieurs", ["stores-enrouleurs", "stores-venitiens",
                                         "stores-californiens", "stores-bateaux",

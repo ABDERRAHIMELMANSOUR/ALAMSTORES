@@ -318,21 +318,6 @@ small { font-size: .85rem; }
 .topbar__list svg { width: 15px; height: 15px; color: var(--brand-300); flex: none; }
 .topbar a { color: var(--slate-300); font-weight: 600; }
 .topbar a:hover { color: #fff; }
-.topbar__cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 15px;
-  border-radius: var(--r-full);
-  background: var(--grad-brand);
-  color: #fff !important;
-  font-weight: 700;
-  font-size: .8rem;
-  white-space: nowrap;
-  transition: filter .2s var(--ease), transform .2s var(--ease);
-}
-.topbar__cta:hover { filter: brightness(1.12); transform: translateY(-1px); }
-.topbar__cta svg { width: 15px; height: 15px; }
 
 @media (max-width: 860px) {
   .topbar__inner { justify-content: center; }
@@ -847,26 +832,8 @@ small { font-size: .85rem; }
 .card__more svg { width: 15px; height: 15px; transition: transform .25s var(--ease); }
 .card:hover .card__more svg { transform: translateX(4px); }
 
-/* Whole-card link overlay, with the inquiry button kept clickable above it */
+/* Whole-card link overlay. */
 .card__link { position: absolute; inset: 0; z-index: 1; }
-.card__ask {
-  position: relative;
-  z-index: 2;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 8px 14px;
-  border-radius: var(--r-full);
-  background: var(--brand-50);
-  border: 1px solid var(--brand-100);
-  color: var(--brand-700);
-  font-size: .78rem;
-  font-weight: 700;
-  transition: background-color .2s var(--ease), color .2s var(--ease), transform .2s var(--ease);
-}
-.card__ask:hover { background: var(--whatsapp); border-color: var(--whatsapp); color: #06301a; transform: translateY(-1px); }
-.card__ask svg { width: 14px; height: 14px; }
 
 /* --------------------------------------------------------- feature list -- */
 .feature-grid {
@@ -1361,6 +1328,42 @@ small { font-size: .85rem; }
               background-color .2s var(--ease), color .2s var(--ease);
 }
 .to-top.is-visible { opacity: 1; visibility: visible; transform: translateY(0); }
+
+/* Always-on WhatsApp bubble. Unlike .to-top it never hides — it is the one
+   permanent shortcut to a human, so it stays put through the whole scroll. */
+.fab__wa {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border-radius: var(--r-full);
+  background: var(--whatsapp);
+  color: #06301a;
+  box-shadow: 0 14px 30px rgba(37, 211, 102, .34);
+  transition: transform .2s var(--ease), background-color .2s var(--ease);
+}
+.fab__wa:hover { background: var(--whatsapp-dark); transform: translateY(-2px) scale(1.04); }
+.fab__wa svg { width: 27px; height: 27px; position: relative; z-index: 1; }
+.fab__pulse {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--whatsapp);
+  opacity: .55;
+  animation: fabPulse 2.6s var(--ease) infinite;
+}
+@keyframes fabPulse {
+  0%   { transform: scale(1);   opacity: .5; }
+  70%  { transform: scale(1.6); opacity: 0; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .fab__pulse { animation: none; opacity: 0; } }
+@media (max-width: 520px) {
+  .fab { right: 14px; bottom: 14px; }
+  .fab__wa { width: 50px; height: 50px; }
+  .fab__wa svg { width: 25px; height: 25px; }
+}
 .to-top:hover { background: var(--brand-500); color: #fff; border-color: var(--brand-500); }
 .to-top svg { width: 17px; height: 17px; }
 
@@ -1550,3 +1553,92 @@ main { flex: 1; }
   padding-top: 6px;
 }
 .product__actions .btn { flex: 1 1 auto; }
+
+/* Play badge over a product photo. The video itself is only fetched on click. */
+.product__media { position: relative; }
+.product__play {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  border: 0;
+  background: rgba(15, 23, 42, .28);
+  color: #fff;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity .22s var(--ease);
+}
+.product__play svg { width: 52px; height: 52px; filter: drop-shadow(0 6px 16px rgba(0,0,0,.45)); }
+.product:hover .product__play,
+.product__play:focus-visible { opacity: 1; }
+@media (hover: none) { .product__play { opacity: 1; background: rgba(15, 23, 42, .18); } }
+
+/* Sub-products: the same card, quieter, nested inside its parent. */
+.product__variants { margin-top: 4px; }
+.product__variants h4 {
+  margin: 0 0 10px;
+  font-size: .74rem;
+  font-weight: 800;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--text-mute);
+}
+.product__variants > ul { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.product--sub {
+  flex-direction: row;
+  align-items: stretch;
+  gap: 12px;
+  border-radius: var(--r-md);
+  border-color: var(--line);
+  background: var(--surface-muted);
+  box-shadow: none;
+}
+.product--sub .product__media { flex: none; width: 96px; aspect-ratio: 1 / 1; border-radius: var(--r-md) 0 0 var(--r-md); }
+.product--sub .product__body { padding: 12px 14px; gap: 7px; }
+.product--sub .product__body h3 { font-size: .93rem; }
+.product--sub .product__body > p { font-size: .82rem; }
+.product--sub .product__play svg { width: 34px; height: 34px; }
+.product--sub .product__actions { gap: 6px; }
+@media (max-width: 480px) {
+  .product--sub { flex-direction: column; }
+  .product--sub .product__media { width: 100%; aspect-ratio: 16 / 10; border-radius: var(--r-md) var(--r-md) 0 0; }
+}
+
+/* ----------------------------------------------------------- video modal -- */
+.vbox {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(8, 12, 22, .88);
+  backdrop-filter: blur(3px);
+}
+.vbox__frame {
+  width: min(100%, 1000px);
+  aspect-ratio: 16 / 9;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, .55);
+}
+.vbox__frame iframe { width: 100%; height: 100%; border: 0; display: block; }
+.vbox__close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: var(--r-full);
+  background: rgba(255, 255, 255, .12);
+  color: #fff;
+  cursor: pointer;
+  transition: background-color .2s var(--ease);
+}
+.vbox__close:hover { background: rgba(255, 255, 255, .24); }
+.vbox__close svg { width: 20px; height: 20px; }

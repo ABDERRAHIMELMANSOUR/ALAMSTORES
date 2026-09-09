@@ -267,6 +267,30 @@
      convenience log for leads captured on this device. */
   var LEADS_KEY = 'alamstores.leads';
 
+  /* Sends the lead to the database. The page navigates to WhatsApp a moment
+     later, which would abort a normal fetch — sendBeacon is queued by the
+     browser and delivered regardless. Failure is silent on purpose: the
+     visitor's request must go through even when the API is down. */
+  function postLead(lead) {
+    var url = 'api/lead.php';
+    var payload = JSON.stringify(lead);
+    try {
+      if (navigator.sendBeacon) {
+        return navigator.sendBeacon(url, new Blob([payload], { type: 'application/json' }));
+      }
+      if (window.fetch) {
+        fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          keepalive: true,
+          body: payload
+        }).catch(function () {});
+      }
+    } catch (e) { /* no back-end on this host */ }
+    return false;
+  }
+
   function saveLead(lead) {
     try {
       var raw = localStorage.getItem(LEADS_KEY);
@@ -389,6 +413,11 @@
       var lead = { timestamp: new Date().toISOString() };
       FIELDS.forEach(function (pair) { lead[pair[0]] = val(pair[0]); });
       lead.message = val('message');
+
+      // Three destinations, in order of reliability: the database (shared,
+      // survives the visitor's device), this browser's local log, and finally
+      // WhatsApp, which is what the visitor actually sees.
+      postLead(lead);
       var stored = saveLead(lead);
 
       var url = waUrl();
@@ -412,6 +441,153 @@
 
       if (url) window.location.href = url;
     });
+  }
+
+
+  /* ------------------------------------------------------- video pop-up --- */
+  /* A YouTube player is only ever built on click. Nothing is requested from
+     youtube.com while the page is simply being read, so the page stays as
+     light and as private as it was before a video was attached to a product. */
+  function initVideo() {
+    var box = null;
+    var frame = null;
+    var lastFocus = null;
+
+    function build() {
+      box = document.createElement('div');
+      box.className = 'vbox';
+      box.setAttribute('role', 'dialog');
+      box.setAttribute('aria-modal', 'true');
+      box.setAttribute('aria-label', 'Vidéo du produit');
+      box.hidden = true;
+      box.innerHTML = '<button type="button" class="vbox__close" aria-label="Fermer">'
+                    + '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' + '</button><div class="vbox__frame"></div>';
+      document.body.appendChild(box);
+      frame = $('.vbox__frame', box);
+
+      on($('.vbox__close', box), 'click', close);
+      on(box, 'click', function (e) { if (e.target === box) close(); });
+      on(document, 'keydown', function (e) {
+        if (e.key === 'Escape' && box && !box.hidden) close();
+      });
+    }
+
+    function open(id) {
+      if (!/^[A-Za-z0-9_-]{11}$/.test(id)) return;
+      if (!box) build();
+      lastFocus = document.activeElement;
+      // The URL is rebuilt from the id alone, so nothing from the catalogue
+      // can smuggle parameters into the player.
+      frame.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/'
+        + id + '?autoplay=1&rel=0&modestbranding=1" title="Vidéo du produit"'
+        + ' allow="accelerometer; autoplay; encrypted-media; picture-in-picture"'
+        + ' referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>';
+      box.hidden = false;
+      document.body.classList.add('is-locked');
+      $('.vbox__close', box).focus();
+    }
+
+    function close() {
+      if (!box) return;
+      box.hidden = true;
+      frame.innerHTML = '';          // stops playback and drops the connection
+      document.body.classList.remove('is-locked');
+      if (lastFocus) lastFocus.focus();
+    }
+
+    // Delegated: product cards can arrive from the API after this runs.
+    on(document, 'click', function (e) {
+      var trigger = e.target.closest ? e.target.closest('[data-video]') : null;
+      if (!trigger) return;
+      e.preventDefault();
+      open(trigger.getAttribute('data-video'));
+    });
+  }
+
+  /* --------------------------------------------------- catalogue (API) --- */
+  /* Products entered in the back-office. The page already carries whatever was
+     baked in at build time; this refreshes it from the database. If the API is
+     not there — static hosting, PHP down — the static cards simply stay. */
+  function initCatalog() {
+    var mount = $('[data-catalog]');
+    if (!mount || !window.fetch) return;
+
+    var slug = mount.getAttribute('data-catalog');
+    var list = $('[data-catalog-list]', mount);
+    if (!slug || !list) return;
+
+    fetch('api/catalog.php?category=' + encodeURIComponent(slug), {
+      credentials: 'same-origin',
+      headers: { 'Accept': 'application/json' }
+    })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (data) {
+        var items = data && data.products && data.products[slug];
+        if (!items || !items.length) return;
+        list.innerHTML = items.map(function (p) {
+          return '<li>' + card(p, false) + '</li>';
+        }).join('');
+        mount.hidden = false;
+        mount.classList.add('is-in');
+      })
+      .catch(function () { /* the statically built cards remain */ });
+  }
+
+  function esc(value) {
+    return String(value == null ? '' : value)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  /* Mirrors product_card() in tools/build_pages.py: a page must look the same
+     whether its cards were baked in or fetched. */
+  function card(prod, isVariant) {
+    var photo = prod.images && prod.images[0] ? prod.images[0].path : '';
+    var vid = prod.video && prod.video.id ? prod.video.id : '';
+
+    var media = '';
+    if (photo) {
+      media = '<div class="product__media"><img src="' + esc(photo) + '" alt="'
+            + esc(prod.title) + '" loading="lazy" decoding="async">'
+            + (vid ? '<button class="product__play" type="button" data-video="' + esc(vid)
+                   + '" aria-label="Voir la vidéo : ' + esc(prod.title) + '">' + '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>'
+                   + '</button>' : '')
+            + '</div>';
+    }
+
+    var specs = (prod.specs || []).filter(function (sp) { return sp.label || sp.value; });
+    var specHtml = specs.length
+      ? '<dl class="product__specs">' + specs.map(function (sp) {
+          return '<div><dt>' + esc(sp.label) + '</dt><dd>' + esc(sp.value) + '</dd></div>';
+        }).join('') + '</dl>'
+      : '';
+
+    var actions = (prod.docs || []).map(function (d) {
+      return '<a class="btn btn--ghost btn--sm" href="' + esc(d.path) + '" download>'
+           + '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' + '<span>' + esc(d.label || 'Fiche technique (PDF)') + '</span></a>';
+    });
+    if (vid && !photo) {
+      actions.push('<button class="btn btn--ghost btn--sm" type="button" data-video="'
+        + esc(vid) + '">' + '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>' + '<span>Voir la vidéo</span></button>');
+    }
+    if (!isVariant) {
+      actions.push('<a class="btn btn--primary btn--sm" href="devis.html">'
+        + '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></svg>' + '<span>Demander un devis</span></a>');
+    }
+
+    var subs = (prod.variants || []).filter(function (v) { return v.title; });
+    var variantHtml = subs.length
+      ? '<div class="product__variants"><h4>Déclinaisons</h4><ul>' + subs.map(function (v) {
+          return '<li>' + card(v, true) + '</li>';
+        }).join('') + '</ul></div>'
+      : '';
+
+    return '<article class="product' + (isVariant ? ' product--sub' : '') + '">' + media
+         + '<div class="product__body"><h3>' + esc(prod.title) + '</h3>'
+         + (prod.description ? '<p>' + esc(prod.description) + '</p>' : '')
+         + specHtml + variantHtml
+         + (actions.length ? '<div class="product__actions">' + actions.join('') + '</div>' : '')
+         + '</div></article>';
   }
 
   /* ------------------------------------------------------------ misc --- */
@@ -440,6 +616,8 @@
     initToTop();
     initReveal();
     initQuoteForm();
+    initVideo();
+    initCatalog();
     initMisc();
   }
 

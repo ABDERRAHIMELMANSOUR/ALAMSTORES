@@ -1,6 +1,20 @@
-node_modules/
+# Identifiants de la base : jamais versionnés.
+# (Le wp-config.php de l'ancien site l'avait été — voir SECURITY-AUDIT.md §3.)
+/api/config.php
+
+# Fichiers téléversés depuis le back-office : ils vivent sur le serveur,
+# pas dans le dépôt.
+/assets/uploads/photos/*
+/assets/uploads/docs/*
+!/assets/uploads/*/.gitkeep
+
+# Outils de build installés localement.
+/node_modules/
 __pycache__/
 *.pyc
-tools/data/.bundle*.css
+
+# Déchets d'éditeur et de système.
 .DS_Store
-*.log
+Thumbs.db
+*.swp
+*~

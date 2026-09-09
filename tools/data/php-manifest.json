@@ -1,0 +1,15 @@
+{
+  "files": {
+    "admin/index.php": "99b41a6dc72ed170aad6571b20027ce391d6c9d7784ec6836590f39173ed2910",
+    "api/admin/export.php": "dd3210404f1e2286e0dc2835a6c9a6152c6da180d506e74561d85fd2308b7342",
+    "api/admin/leads.php": "608c58b0b926c80d46785feb2d3a027208591a226361c3ad0cf1b68f78099cbc",
+    "api/admin/products.php": "1f664ac563134e8a4d07b72e5ac6956114fc6e2e26cb4eaa53425bc4afea5069",
+    "api/admin/session.php": "99542671d8b40e9d15650f3b336fc0c99c55b795eb48a8ae27567d72a5465958",
+    "api/admin/upload.php": "c9d11ae47d8779c6c5c59bc5bbcb2f670e1975ca9e764170ce760a912db6c0a9",
+    "api/bootstrap.php": "d0f924e57b4eece2b4d96f4993ddc835aa3832a03bf07f17738c7aa88535dc2d",
+    "api/catalog.php": "2cd12b431c6f0a3009b22f52730a2efad3e656a18acb3b511a02731023af5a8c",
+    "api/config.sample.php": "ff7cf6fa02803955b09257707d184d8cafa2aea38ecd3a8f51b291cd8cd46b42",
+    "api/lead.php": "d318f429505232a8afe6940323c4f8f9fa437e8172b022d06b59c3c7db98ebd5",
+    "tools/make_admin.php": "cd3564f98f357340da9244a2a71c83b05544bb7b0b48ded3e353603197f1c176"
+  }
+}

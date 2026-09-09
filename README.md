@@ -1,26 +1,38 @@
-# Alam Stores — static site
+# Alam Stores — site statique + back-office
 
-Static HTML/CSS/JS conversion of the `alamstores.ma` WordPress installation.
-No PHP, no database, no WordPress. Deploy by copying the repository root to the
-document root.
+Static HTML/CSS/JS rebuild of the `alamstores.ma` WordPress installation, plus
+a small PHP/MySQL back-office for the product catalogue and the incoming quote
+requests. No WordPress, no plugins, no theme — the public pages stay flat HTML
+and the dynamic part is confined to two folders.
 
 ```
 index.html                 Accueil
 societe.html               … 24 further pages, one per original URL
 404.html
-admin.html                 product / datasheet dashboard (not indexed)
+admin.html                 redirect to /admin/ (old bookmark)
 sitemap.xml  robots.txt  .htaccess
 
 assets/
-  css/main.min.css         one stylesheet  (37 KB → 7.9 KB gzip)
-  js/main.min.js           one script      (10.5 KB → 3.8 KB gzip)
+  css/main.min.css         one stylesheet
+  js/main.min.js           one script
   images/                  871 files as YYYY/MM/ + hero/ carousel photos
+  uploads/                 photos and PDFs added from the back-office
   docs/                    fiches techniques (PDF)
   fonts/                   4 files, Plus Jakarta Sans (84 KB total)
+
+admin/index.php            the back-office (login required)
+api/                       JSON endpoints — catalogue, leads, admin CRUD
+db/schema.sql              database schema + seed_categories.sql
 
 tools/                     build scripts + page copy (not web content)
 SECURITY-AUDIT.md          malware findings from the WordPress export
 ```
+
+**The public pages work with or without the back-end.** Each category page
+carries the catalogue that was baked in at build time, then refreshes it from
+`api/catalog.php` on load. If PHP or the database is unavailable the fetch
+fails silently and the built-in cards stay on screen — the site never breaks
+because the back-office is down.
 
 ## Design system
 
@@ -42,20 +54,25 @@ and 1.9 MB of font files, now 37 KB and 84 KB.**
 
 ### Layout and UX
 
-- **Sticky header** that turns to frosted glass on scroll, over a dark top bar
-  carrying the phone number and a WhatsApp button.
+- **Sticky header** that turns to frosted glass on scroll and carries the only
+  "Devis gratuit" button, over a dark top bar showing address, phone and hours.
 - **Slide-out drawer** on mobile with accordion submenus, focus trapping,
   Escape to close, and contact details plus both CTAs pinned to its foot.
 - **Home hero** with a cross-fading photo slider on a 5-second auto-advance,
   trust badges and a single "Demander un devis" CTA.
-- **Category cards** with hover zoom, a category tag and a "Devis" button.
+- **Category cards** with hover zoom, a category tag and a single "Découvrir"
+  affordance — the whole card is the link.
 - **Partner logos** as an infinite, continuously scrolling marquee (pure CSS,
   pauses on hover, falls back to a plain scroll strip under
   `prefers-reduced-motion`).
+- **Product cards** fed by the database, with a play badge over the photo when
+  a video is attached, a PDF download when there is a fiche technique, and
+  sub-products nested under **Déclinaisons**.
 - **B2B quote form** with a showroom info card, conditional company field and
-  inline validation; each submission is logged locally and handed to the mail
-  client.
-- **Floating WhatsApp button** and scroll-to-top on every page.
+  inline validation; each submission goes to the database, to a local log, and
+  then to WhatsApp pre-filled.
+- **Floating WhatsApp bubble**, fixed bottom-right and visible through the whole
+  scroll, above the scroll-to-top button.
 
 ## What carried over from WordPress
 
@@ -113,16 +130,21 @@ all 26 pages.
 
 ## Calls to action
 
-Every CTA on the site points at `devis.html` — "Demander un devis" or
-"Devis gratuit". There are no WhatsApp action buttons: the top bar, header,
-hero, CTA banners, category cards, product cards, footer and the old floating
-bubble all carry the quote CTA instead. WhatsApp enters the journey once, at
-the end of it — the quote form itself hands the completed request to WhatsApp.
+Every quote CTA points at `devis.html`. There is exactly **one** on a page —
+"Devis gratuit" in the header — plus the hero and CTA-band buttons further down.
+The top bar carries no button any more (address, phone and hours only), and the
+category cards carry no "Devis" button either: the whole card is the link to its
+page, ending in "Découvrir →".
 
-WhatsApp also appears as a **contact channel** in the contact lists and the
-showroom card, next to the address, phone, e-mail and opening hours — a
-labelled row showing the number, not a button. Say the word if you want it gone
-from there too.
+WhatsApp appears in two places, both deliberate:
+
+- the **floating bubble**, bottom right, fixed through the whole scroll — the
+  permanent shortcut to a human;
+- the end of the quote form, which hands the completed request to WhatsApp.
+
+It also shows as a **contact channel** in the contact lists and the showroom
+card, next to the address, phone, e-mail and opening hours — a labelled row
+showing the number, not a button.
 
 `motorisations-automatismes.html` is no longer in the navbar or the mobile
 drawer. The page is untouched at its original URL, stays in `sitemap.xml`, and
@@ -167,66 +189,149 @@ Categories in the form are wider than the page tree on purpose — `Rideaux` and
 
 ## Leads — "Devis reçus"
 
-The **Devis reçus** tab in `admin.html` lists submissions with search, status
-and category filters, per-row delete, JSON import and a CSV export (semicolons
-plus a BOM, so Excel opens it correctly with accents). Every field is stored:
-timestamp, statut, entreprise, catégorie, prénom, nom, e-mail, téléphone,
-adresse, code postal, ville, pays and the message.
+Every submission is written to the `leads` table by `api/lead.php` and listed in
+the **Devis reçus** tab of the back-office: search, status and category filters,
+unread count, mark as read, delete, and a CSV export (semicolons plus a BOM, so
+Excel opens it with the accents intact). Every field is stored — timestamp,
+statut, entreprise, catégorie, prénom, nom, e-mail, téléphone, adresse, code
+postal, ville, pays and the message.
 
-> ⚠️ **Read this before relying on the table.** The site is static — no server,
-> no database. The form writes each submission to `localStorage` **in the
-> visitor's own browser**. A request sent from a client's phone is stored *on
-> that phone*, and will never appear in your dashboard. The table only shows
-> what was submitted in the browser you are viewing it from.
->
-> **The WhatsApp conversations arriving on 05 37 75 97 72 remain your real lead
-> register.** The local log is a convenience, not a CRM.
->
-> For a genuinely centralised list you need a form service (Formspree, Netlify
-> Forms, Google Forms) or a small back-end. Ask and we'll wire one in: add an
-> `action` to the `<form>` and let it post before the WhatsApp hand-off.
+The browser sends it with `navigator.sendBeacon`, which the browser queues and
+delivers even though the page is navigating to WhatsApp a moment later. A normal
+`fetch` would be cancelled by that navigation.
 
-## Product dashboard (`admin.html`)
+Three destinations, in order of reliability:
 
-A dependency-free browser tool for maintaining the product catalogue —
-title, category, description, photos, video link, fiche technique (PDF) and a
-free-form specs table.
+1. **the database** — shared, survives the visitor's device, this is your register;
+2. **`localStorage` in the visitor's browser** — a local trace, kept as a
+   fallback for the case where PHP is unavailable;
+3. **WhatsApp** — what the visitor actually sees and sends.
+
+If the API is unreachable the first step fails silently: the visitor still gets
+their WhatsApp message, and you still get the conversation. You lose the
+database row, not the lead.
+
+> Leads recorded before the database existed are still in the browser that
+> submitted them. The dashboard notices them and offers a CSV export.
+
+## Back-office (`/admin/`)
+
+`admin/index.php` maintains the catalogue and reads the quote requests. It
+needs PHP 7.4+ and MySQL 5.7+ / MariaDB 10.3+ — the same stack the WordPress
+site ran on.
+
+### Installation
 
 ```bash
-python3 -m http.server 8000     # then open http://127.0.0.1:8000/admin.html
+# 1. the database
+mysql -u <user> -p <base> < db/schema.sql
+mysql -u <user> -p <base> < db/seed_categories.sql
+
+# 2. the credentials  (this file is gitignored and blocked by .htaccess)
+cp api/config.sample.php api/config.php
+chmod 640 api/config.php
+php -r "echo bin2hex(random_bytes(32));"     # -> ip_salt
+
+# 3. the first account (the password is typed, never passed as an argument)
+php tools/make_admin.php votre-identifiant
 ```
 
-Because the site is static, the page cannot write to the server. It edits in
-memory, keeps an unexported draft in `localStorage`, and publishes like this:
+Then open `https://votre-domaine/admin/`.
 
-1. Add or edit fiches, then **Exporter products.json**.
+`db/seed_categories.sql` is generated from the page tree by
+`python3 tools/build_sql.py`, so **a category slug in the database is a page
+slug on the site** — that is the whole mechanism that puts a product on the
+right page. Re-run both after adding a page; the seed is an idempotent upsert,
+replaying it never loses products.
+
+### What you can enter
+
+| Champ | Obligatoire | Ce qui apparaît sur le site |
+|---|---|---|
+| Titre | oui | le titre de la fiche |
+| Catégorie | oui | la page où la fiche apparaît |
+| Description | oui | le paragraphe sous le titre |
+| Photos | oui, au moins une | la photo de la carte |
+| Sous-produit de | non | range la fiche sous un produit principal |
+| Lien vidéo YouTube | non | un bouton ▶ sur la photo, qui ouvre une fenêtre |
+| Fiches techniques (PDF) | non | un bouton de téléchargement |
+| Caractéristiques | non | le tableau intitulé / valeur |
+| Visibilité | — | brouillon = invisible sur le site |
+
+Sub-products nest one level deep, under **Déclinaisons** on the parent card.
+The API refuses a sub-product of a sub-product rather than letting the tree run
+away.
+
+**Videos are never loaded before the click.** Only the 11-character YouTube id
+is stored and published; the player URL is rebuilt from it, so nothing in the
+catalogue can inject parameters into the `<iframe>`. Opening a video builds a
+`youtube-nocookie.com` player on the spot, and closing it removes the frame,
+which stops playback and drops the connection. A page nobody clicks makes zero
+requests to YouTube.
+
+### Publishing to the static build
+
+The pages read the database live, so a change is visible immediately. To also
+bake the catalogue into the HTML — better for search engines, and it keeps the
+products visible if PHP ever stops:
+
+1. **Exporter products.json** in the dashboard.
 2. Replace `tools/data/products.json` with the downloaded file.
-3. Run `python3 tools/build_pages.py` and publish.
+3. `python3 tools/build_pages.py`, then publish.
 
-Products appear as a **Nos modèles** section on their category page, with the
-photo, description, specs table, a **Fiche technique** download button and a
-WhatsApp "Demander un prix" button.
+### Uploads
 
-Put PDFs in `assets/docs/` and reference them as
-`assets/docs/<file>.pdf`; the download button only renders when the file
-actually exists, so a typo fails visibly at build time rather than shipping a
-dead link.
+Photos and PDFs land in `assets/uploads/`, renamed at random. `api/admin/upload.php`
+checks the real MIME type with `finfo` (not the browser's claim), re-checks
+images with `getimagesize`, checks the `%PDF-` magic bytes, and refuses any file
+containing `<?php`. On top of that, `assets/uploads/.htaccess` switches the PHP
+engine off and remaps every executable extension to `text/plain`, so a file that
+somehow got through would still be served as text. That is the exact path that
+compromised the old WordPress site — see `SECURITY-AUDIT.md` §1.1.
 
-> **Video links, not embeds.** The dashboard stores a video URL per product and
-> the page renders it as a plain outbound "Voir la vidéo" link. Nothing is
-> embedded — the site still contains no `<video>`, `<iframe>`, `<embed>` or
-> `<object>` anywhere, per the earlier brief. Say the word if you would rather
-> have real embedded players.
+## Sécurité du back-office
 
-`admin.html` is `noindex` and disallowed in `robots.txt`. It has **no access
-control** — it is an authoring tool, not a protected admin area. It cannot
-change anything server-side, but if you would rather it were not reachable at
-all, delete it from the deployed copy and run it locally.
+Everything that touches the database or a session is centralised in
+`api/bootstrap.php`:
+
+- **SQL** — PDO with `ATTR_EMULATE_PREPARES = false`; every value is bound, no
+  query is built by concatenation.
+- **Mots de passe** — `password_hash()` only. Five failures lock an account for
+  fifteen minutes; a wrong username is verified against a dummy hash so the
+  response takes the same time either way, and nothing distinguishes "unknown
+  user" from "wrong password".
+- **Sessions** — cookie `HttpOnly`, `SameSite=Strict`, `Secure` over HTTPS,
+  regenerated on login, expired after two hours of inactivity.
+- **CSRF** — every write carries a token compared with `hash_equals`.
+- **En-têtes** — CSP, `nosniff`, `X-Frame-Options`, `Referrer-Policy`,
+  `Permissions-Policy`, HSTS over HTTPS.
+- **Formulaire public** — honeypot field, five submissions per hour per device
+  (the IP is stored as a truncated HMAC, never in clear), origin check.
+- **Export CSV** — a cell starting with `= + - @` is prefixed so Excel treats it
+  as text rather than a formula.
+
+### Le scanner anti-webshell
+
+```bash
+python3 tools/security_scan.py --baseline    # une fois, sur une install saine
+python3 tools/security_scan.py               # ensuite, régulièrement
+```
+
+It flags executable files outside `api/`, `admin/` and `tools/`, the classic
+backdoor signatures (eval on request data, base64/gzinflate chains, `parse_str`
+decoders, mixed-case `<?phP` tags written to dodge a grep), oversized encoded
+payloads, and any PHP file added, modified or missing since the baseline. Exit
+code 1 when something needs looking at, so it drops straight into cron:
+
+```cron
+0 4 * * 1 cd /home/site && python3 tools/security_scan.py --quiet
+```
 
 ## Home carousel
 
-The hero is a pure image carousel — **there is no video anywhere on the site**,
-by design. `tools/build_hero.py` re-encodes five hand-picked, high-resolution
+The hero is a pure image carousel — no video, no placeholder. (The only video
+on the site is the product pop-up, and it is built on click, never before.)
+`tools/build_hero.py` re-encodes five hand-picked, high-resolution
 Alam Stores product photos to 1920x1080 WebP in `assets/images/hero/`
 (904 KB total; only the first slide loads eagerly, at 156 KB). Swap the
 `SOURCES` list in that script and re-run it, then update `HERO_IMAGES` in
@@ -262,6 +367,7 @@ and point `--base` at it.
 python3 tools/build_pages.py     # regenerate the HTML from the page model
 python3 tools/build_css.py       # reassemble, purge and minify the stylesheet
 node  tools/data/minify-js.js assets/js/main.js assets/js/main.min.js
+python3 tools/build_sql.py       # regenerate db/seed_categories.sql from PAGES
 ```
 
 `build_css.py` and the JS minifier need `clean-css`, `purgecss` and `terser`;
@@ -281,7 +387,9 @@ Where to edit what:
 | Page copy | `tools/content_fr.py` |
 | Partner logos | `PARTNER_LOGOS` in `tools/build_pages.py` |
 | Hero carousel photos | `SOURCES` in `tools/build_hero.py`, then `HERO_IMAGES` |
-| Products / fiches techniques | `admin.html`, saved to `tools/data/products.json` |
+| Products, sub-products, media, fiches techniques | the back-office at `/admin/` (database) |
+| Product fallback baked into the HTML | `tools/data/products.json`, exported from the back-office |
+| Category tree in the database | `PAGES` in `tools/build_pages.py`, then `tools/build_sql.py` |
 | Quote form statuses / categories | `STATUTS`, `FORM_CATEGORIES` in `tools/build_pages.py` |
 | Colours, type, components | `tools/data/design-system.css` |
 | Icons | `tools/icons.py` |
@@ -312,23 +420,33 @@ Responsive: mobile-first, verified with no horizontal overflow from 320px to
 ## Local preview
 
 ```bash
-python3 -m http.server 8000
+php -S 127.0.0.1:8000            # site + back-office + API
+python3 -m http.server 8000      # static pages only, no back-office
 ```
 
 Open <http://127.0.0.1:8000/>. Extensionless URLs (`/pergolas`) only work
 through the `.htaccess` rules on a real Apache/LiteSpeed host; the local
 preview uses the `.html` filenames, which is what every internal link points at.
 
+`php -S` ignores `.htaccess`, so it is fine for trying the back-office but says
+nothing about whether your hardening rules are in force — check those on the
+real host.
+
 ## Before going live
 
 1. Work through §4 of `SECURITY-AUDIT.md` — the live server still needs cleaning.
 2. Rotate the credentials named in §3; `wp-config.php` was committed in plaintext
    and remains in git history.
-3. Confirm the WhatsApp number: `212537759772` is the showroom landline, which
+3. Install the back-office: import `db/schema.sql` and `db/seed_categories.sql`,
+   create `api/config.php` from the sample with a database user restricted to
+   that one schema, generate an `ip_salt`, and create your account with
+   `php tools/make_admin.php`. Then run `python3 tools/security_scan.py --baseline`
+   on the freshly deployed tree and put the scan in cron.
+4. Confirm the WhatsApp number: `212537759772` is the showroom landline, which
    only works on WhatsApp Business with voice verification (see above). Put a
    mobile in `CONTACT["whatsapp"]` if that is not set up.
-4. Read through the copy in `tools/content_fr.py` and adjust it to how you
+5. Read through the copy in `tools/content_fr.py` and adjust it to how you
    actually describe your work — or restore the originals with
    `tools/fetch_content.py`.
-5. Check the partner logos on `partenaires.html`: they come from your own media
+6. Check the partner logos on `partenaires.html`: they come from your own media
    library, but confirm you still have permission to display each one.

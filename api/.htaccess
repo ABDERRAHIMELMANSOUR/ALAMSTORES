@@ -1,0 +1,23 @@
+# Alam Stores — API.
+#
+# Seuls les points d'entrée sont accessibles. La configuration (qui porte le
+# mot de passe de la base) et le socle commun ne doivent jamais être servis,
+# ni comme code, ni comme texte.
+
+Options -Indexes
+
+<Files "config.php">
+  Require all denied
+</Files>
+<Files "config.sample.php">
+  Require all denied
+</Files>
+<Files "bootstrap.php">
+  Require all denied
+</Files>
+
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "DENY"
+  Header always set Cache-Control "no-store"
+</IfModule>

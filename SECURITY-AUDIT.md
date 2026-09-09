@@ -167,13 +167,55 @@ Before or alongside the static cutover:
 
 ---
 
-## 5. What the static site removes by construction
+## 5. What the rebuild removes by construction
 
-The published site is HTML, CSS, JS, images and fonts only. There is no PHP,
-no database, no admin panel, no plugin loader, no XML-RPC endpoint, no
-`wp-login.php` and no file upload path — which eliminates the entire class of
-attack that produced the findings above.
+The public pages are HTML, CSS, JS, images and fonts only. No plugin loader, no
+XML-RPC endpoint, no `wp-login.php`, no theme, no `wp-admin` — the entire class
+of attack that produced the findings above is gone with the platform.
 
 `assets/js/main.js` is the only JavaScript, it is first-party, and it loads no
-third-party script. Fonts are self-hosted, so the site makes **zero** external
-requests at runtime.
+third-party script. Fonts are self-hosted. The only external request the site
+can make is the YouTube player, and only after a visitor clicks a product video.
+
+## 6. The back-office — PHP, back on purpose
+
+The product catalogue and the quote requests need to be stored somewhere shared,
+so PHP and MySQL are back — but confined to `api/` and `admin/`, roughly 1 500
+lines that can be read in a sitting, against the ~600 000 lines WordPress and
+its plugins carried. Every finding in §1 is answered directly:
+
+| Finding | What now prevents it |
+|---|---|
+| §1.1 webshell dropped through an upload | `api/admin/upload.php` checks the real MIME type with `finfo`, re-checks images with `getimagesize` and PDFs by their `%PDF-` magic bytes, rejects any file containing `<?php`, and renames everything at random. `assets/uploads/.htaccess` switches the PHP engine off and remaps executable extensions to `text/plain`. Verified: a webshell renamed `innocent.jpg` with `Content-Type: image/jpeg` is refused with 415. |
+| §1.2 obfuscated droppers | `tools/security_scan.py` matches the exact signatures found here — `eval(base64_decode(…))`, `parse_str` decoders, mixed-case `<?phP` tags — and flags any PHP file added or changed since the baseline. |
+| §1.3 plugin duplicated under a random name | There are no plugins. The scanner's manifest lists 11 PHP files; a twelfth is reported. |
+| §1.5 stripped `.htaccess` hardening | The hardening is in the repository. A change to it shows up in `git status`; the scanner reads `.htaccess` files too. |
+| §3 credentials in the repository | `api/config.php` is gitignored, denied by two `.htaccess` rules, and shipped only as `config.sample.php` with empty values. |
+
+The rest of the surface is closed the ordinary way: PDO with real prepared
+statements, `password_hash` with lockout after five failures, CSRF tokens on
+every write, `HttpOnly`/`SameSite=Strict`/`Secure` session cookies regenerated
+on login, a CSP that allows nothing but `self` and the YouTube frame, a honeypot
+and per-device rate limit on the public form, and IP addresses stored only as a
+truncated HMAC.
+
+### Verified, not just asserted
+
+The API was exercised end to end before shipping: wrong password rejected, write
+without a CSRF token rejected (403), webshell-as-JPG rejected (415), image path
+`../../etc/passwd` rejected (422), non-YouTube video URL rejected (422),
+sub-product nesting capped, honeypot swallowed silently, CSV export carrying its
+BOM. The one thing **not** verified here is the MySQL schema against a live
+MySQL server — no MySQL was available in the build environment, so the API was
+tested against an equivalent SQLite database. Import `db/schema.sql` on a test
+database before pointing it at production.
+
+### Still on you
+
+Give the database user rights on that one schema only — no `FILE`, no `GRANT`,
+no access to other databases. Serve `/admin/` over HTTPS. And run the scanner on
+a schedule; a baseline taken today is what makes tomorrow's change visible:
+
+```cron
+0 4 * * 1 cd /home/site && python3 tools/security_scan.py --quiet
+```

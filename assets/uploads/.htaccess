@@ -1,0 +1,39 @@
+# Alam Stores — dossier des fichiers téléversés depuis le back-office.
+#
+# Rien ici ne doit JAMAIS être exécuté. C'est la contre-mesure au scénario qui
+# a compromis l'ancien site WordPress : un webshell déposé via un formulaire de
+# téléversement puis appelé directement par son URL (SECURITY-AUDIT.md §1.1).
+#
+# api/admin/upload.php refuse déjà tout ce qui n'est pas une image ou un PDF
+# valide, et renomme chaque fichier. Ces règles sont la seconde barrière : même
+# si un fichier exécutable arrivait ici, le serveur le servirait en texte brut.
+
+Options -ExecCGI -Indexes -FollowSymLinks
+
+<FilesMatch "\.(php|php[0-9]*|phtml|phps|pht|phar|shtml|cgi|pl|py|rb|sh|bash|jsp|asp|aspx|htaccess)$">
+  Require all denied
+</FilesMatch>
+
+# Coupe l'interpréteur, quel que soit le mode d'exécution du serveur.
+<IfModule mod_php.c>
+  php_flag engine off
+</IfModule>
+<IfModule mod_php7.c>
+  php_flag engine off
+</IfModule>
+<IfModule mod_php5.c>
+  php_flag engine off
+</IfModule>
+
+<IfModule mod_mime.c>
+  RemoveHandler .php .php3 .php4 .php5 .php7 .php8 .phtml .phar .pl .py .cgi
+  RemoveType .php .php3 .php4 .php5 .php7 .php8 .phtml .phar
+  AddType text/plain .php .phtml .phar .pl .py .cgi .sh
+</IfModule>
+
+# Les téléversements ne sont que des images et des PDF : on force le
+# téléchargement plutôt que l'affichage pour tout le reste.
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Content-Security-Policy "default-src 'none'; img-src 'self'; object-src 'none'; sandbox"
+</IfModule>

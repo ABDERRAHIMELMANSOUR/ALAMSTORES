@@ -1,8 +1,8 @@
-# Alam Stores — static site
-# No PHP, no database, no rewrite rules needed. This file only sets caching,
-# compression and security headers, and restores the hardening that was
-# stripped from the WordPress .htaccess during the compromise (see
-# SECURITY-AUDIT.md §1.5).
+# Alam Stores — static site + back-office
+# The public pages are static HTML. PHP exists in exactly two places, api/ and
+# admin/, and is refused everywhere else. This file sets caching, compression
+# and security headers, and restores the hardening that was stripped from the
+# WordPress .htaccess during the compromise (see SECURITY-AUDIT.md §1.5).
 
 # ---------------------------------------------------------------- routing --
 DirectoryIndex index.html
@@ -35,15 +35,27 @@ Options -Indexes
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
   Header always set Permissions-Policy "geolocation=(), microphone=(), camera=(), interest-cohort=()"
 
-  # The site loads nothing from third parties, so the policy can be strict.
-  Header always set Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; font-src 'self'; form-action 'self'; frame-ancestors 'self'; base-uri 'self'; object-src 'none'"
+  # Scoped to .html so the PHP back-office can send its own, slightly wider
+  # policy (an "always set" here would overwrite whatever PHP sets).
+  # The only third parties are the YouTube player and its thumbnails, both
+  # loaded on demand when a visitor opens a product video.
+  <FilesMatch "\.html$">
+    Header always set Content-Security-Policy "default-src 'self'; img-src 'self' data: https://i.ytimg.com; style-src 'self'; script-src 'self'; font-src 'self'; connect-src 'self'; frame-src https://www.youtube-nocookie.com; form-action 'self'; frame-ancestors 'self'; base-uri 'self'; object-src 'none'"
+  </FilesMatch>
 
   Header always unset X-Powered-By
   Header unset X-Powered-By
 </IfModule>
 
-# Nothing here is executable. Refuse to serve or run server-side sources.
-<FilesMatch "\.(php|php[0-9]?|phtml|phps|pl|py|cgi|sh|bash|sql|log|bak|inc|ini|env)$">
+# Server-side sources and data files are never served as content. PHP is NOT in
+# this list: it is allowed under api/ and admin/ only, and blocked everywhere
+# else by the per-directory .htaccess files (assets/uploads/ above all).
+<FilesMatch "\.(phps|phtml|pht|pl|py|cgi|sh|bash|sql|log|bak|inc|ini|env|yml|yaml|lock|md)$">
+  Require all denied
+</FilesMatch>
+
+# The configuration file carries the database password. It must never be read.
+<FilesMatch "^config\.php$">
   Require all denied
 </FilesMatch>
 
@@ -52,8 +64,16 @@ Options -Indexes
   Require all denied
 </FilesMatch>
 
-# The build tooling is source, not web content.
+# The build tooling and the SQL schema are source, not web content.
 RedirectMatch 404 ^/tools/.*$
+RedirectMatch 404 ^/db/.*$
+RedirectMatch 404 ^/node_modules/.*$
+
+# The repository itself. `<FilesMatch "^\.">` above only covers files, not the
+# contents of a dot-directory: without this, /.git/config and the whole history
+# would be downloadable when the repository root is the document root.
+RedirectMatch 404 ^/\.git(/.*)?$
+RedirectMatch 404 ^/\.github(/.*)?$
 
 # ------------------------------------------------------------ compression --
 <IfModule mod_deflate.c>
