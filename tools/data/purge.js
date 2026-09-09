@@ -10,7 +10,7 @@ const fs = require('fs');
         /^is-/, /^has-/, 'reveal',
         /^lightbox/, /^drawer/, /^hero__/, /^partners/, /^steps/,
         /^field/, /^form-/, /^summary/, /^to-top$/, /^fab/,
-        /^nav__/, /^card__/, /^gallery/, /^badge/, /^btn/,
+        /^nav__/, /^card__/, /^badge/, /^btn/,
       ],
       deep: [/lightbox/, /drawer/, /hero/, /partners/, /steps/],
       greedy: [/^\.lightbox/, /^\.drawer/],

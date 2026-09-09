@@ -106,8 +106,10 @@ PARENTS = {slug: parent for slug, _, parent in PAGES}
 # Shorter labels used in the navigation bar only (page titles stay full).
 NAV_LABELS = {"motorisations-automatismes": "Motorisations"}
 
+# "motorisations-automatismes" is deliberately absent: the page still exists at
+# its original URL and is linked from the footer, just not from the navbar.
 NAV_TOP = ["home", "societe", "stores-interieurs", "stores-exterieurs",
-           "motorisations-automatismes", "service", "partenaires"]
+           "service", "partenaires"]
 
 # Small tag shown on category cards.
 CARD_TAGS = {"stores-interieurs": "Intérieur", "stores-exterieurs": "Extérieur"}
@@ -307,10 +309,8 @@ def products_section(slug, products):
         if prod.get("video"):
             actions.append('<a class="btn btn--ghost btn--sm" href="%s" target="_blank" rel="noopener">'
                            '%s<span>Voir la vidéo</span></a>' % (esc(prod["video"]), icon("play")))
-        actions.append('<a class="btn btn--wa btn--sm" href="%s" target="_blank" rel="noopener">'
-                       '%s<span>Demander un prix</span></a>'
-                       % (esc(wa_link("Bonjour, je souhaite un prix pour : %s." % prod["title"])),
-                          icon("whatsapp")))
+        actions.append('<a class="btn btn--primary btn--sm" href="devis.html">'
+                       '%s<span>Demander un devis</span></a>' % icon("sparkle"))
 
         cards.append(
             '<li><article class="product">{media}<div class="product__body">'
@@ -347,15 +347,12 @@ def topbar_html():
         <li>{phone}<a href="tel:{tel}">{phone_display}</a></li>
         <li class="is-wide">{clock}<span>{hours}</span></li>
       </ul>
-      <a class="topbar__cta" href="{wa}" target="_blank" rel="noopener">
-        {wapp}<span>WhatsApp direct</span>
-      </a>
+      <a class="topbar__cta" href="devis.html">{spark}<span>Devis gratuit</span></a>
     </div>
   </div>
-""".format(pin=icon("pin"), phone=icon("phone"), clock=icon("clock"), wapp=icon("whatsapp"),
+""".format(pin=icon("pin"), phone=icon("phone"), clock=icon("clock"), spark=icon("sparkle"),
            address_short=esc(CONTACT["address_short"]), tel=esc(CONTACT["phone_tel"]),
-           phone_display=esc(CONTACT["phone_display"]), hours=esc(CONTACT["hours"]),
-           wa=esc(wa_link("Bonjour Alam Stores, je souhaite des informations.")))
+           phone_display=esc(CONTACT["phone_display"]), hours=esc(CONTACT["hours"]))
 
 
 def nav_tree_html():
@@ -451,18 +448,14 @@ def header_html():
         <a href="tel:{tel}">{phone_display}</a>
         <a href="mailto:{email}">{email}</a>
       </div>
-      <a class="btn btn--wa btn--block" href="{wa}" target="_blank" rel="noopener">
-        {wapp}<span>WhatsApp direct</span>
-      </a>
       <a class="btn btn--primary btn--block" href="devis.html">{spark}<span>Devis gratuit</span></a>
     </div>
   </aside>
 """.format(topbar=topbar_html(), logo=LOGO, name=esc(SITE_NAME), tag=esc(SITE_TAGLINE),
            nav=nav_tree_html(), drawer=drawer_tree_html(), close=icon("close"),
-           spark=icon("sparkle"), wapp=icon("whatsapp"),
+           spark=icon("sparkle"),
            tel=esc(CONTACT["phone_tel"]), phone_display=esc(CONTACT["phone_display"]),
-           email=esc(CONTACT["email"]),
-           wa=esc(wa_link("Bonjour Alam Stores, je souhaite des informations.")))
+           email=esc(CONTACT["email"]))
 
 
 def crumbs_html(slug):
@@ -526,8 +519,6 @@ def hero_html(_images=None):
            étudiés pour votre exposition et l'usage réel de chaque pièce.</p>
         <div class="btn-row">
           <a class="btn btn--primary btn--lg" href="devis.html">{spark}<span>Demander un devis</span></a>
-          <a class="btn btn--wa btn--lg" href="{wa}" target="_blank" rel="noopener">
-            {wapp}<span>WhatsApp direct</span></a>
         </div>
         <div class="hero__trust">{trust}</div>
       </div>
@@ -536,8 +527,7 @@ def hero_html(_images=None):
   </section>
 """.format(slides="\n      ".join(slides), tagline=esc(SITE_TAGLINE), trust=trust,
            check=icon("check"), truck=icon("truck"), ruler=icon("ruler"),
-           spark=icon("sparkle"), wapp=icon("whatsapp"),
-           wa=esc(wa_link("Bonjour Alam Stores, je souhaite un devis.")))
+           spark=icon("sparkle"))
 
 
 # --------------------------------------------------------------------------
@@ -554,7 +544,6 @@ def cards_html(slugs, sitemap, tag=None):
                  % (thumb, esc(TITLES[s]),
                     '<span class="card__tag">%s</span>' % esc(tag) if tag else "")) if thumb else ""
         blurb = card_blurb(s)
-        ask = wa_link("Bonjour, je souhaite des informations sur : %s." % TITLES[s])
         items.append(
             '<li><article class="card">'
             '{media}'
@@ -563,14 +552,14 @@ def cards_html(slugs, sitemap, tag=None):
             '{blurb}'
             '<div class="card__foot">'
             '<span class="card__more">Découvrir {arrow}</span>'
-            '<a class="card__ask" href="{ask}" target="_blank" rel="noopener"'
-            ' aria-label="Demander des informations sur {title} par WhatsApp">{wapp}<span>Demander</span></a>'
+            '<a class="card__ask" href="devis.html"'
+            ' aria-label="Demander un devis pour {title}">{spark}<span>Devis</span></a>'
             '</div></div>'
             '<a class="card__link" href="{h}"><span class="sr-only">{title}</span></a>'
             '</article></li>'.format(
                 media=media, title=esc(TITLES[s]),
                 blurb='<p class="card__text">%s</p>' % esc(blurb) if blurb else "",
-                arrow=icon("arrow-right"), ask=esc(ask), wapp=icon("whatsapp"), h=href(s)))
+                arrow=icon("arrow-right"), spark=icon("sparkle"), h=href(s)))
     return '<ul class="card-grid">\n        %s\n      </ul>' % "\n        ".join(items)
 
 
@@ -621,7 +610,7 @@ def contact_card_html(compact=False):
     rows = [
         ("pin", "Adresse", esc(CONTACT["address"]), None),
         ("phone", "Téléphone", esc(CONTACT["phone_display"]), "tel:" + esc(CONTACT["phone_tel"])),
-        ("whatsapp", "WhatsApp", "Écrire sur WhatsApp", esc(wa_link())),
+        ("whatsapp", "WhatsApp", esc(CONTACT["phone_display"]), esc(wa_link())),
         ("mail", "E-mail", esc(CONTACT["email"]), "mailto:" + esc(CONTACT["email"])),
         ("clock", "Horaires",
          esc(CONTACT["hours_week"]) + "<br>" + esc(CONTACT["hours_sat"]), None),
@@ -637,9 +626,9 @@ def contact_card_html(compact=False):
         return body
     return ('<aside class="contact-card sticky-aside">'
             '<h2>Nous joindre directement</h2>%s'
-            '<a class="btn btn--wa btn--block" style="margin-top:20px" href="%s" target="_blank" rel="noopener">'
-            '%s<span>WhatsApp direct</span></a>'
-            "</aside>" % (body, esc(wa_link()), icon("whatsapp")))
+            '<a class="btn btn--primary btn--block" style="margin-top:20px" href="devis.html">'
+            '%s<span>Demander un devis</span></a>'
+            "</aside>" % (body, icon("sparkle")))
 
 
 def prose_section(slug, with_aside=True, skip_lead=False, center=False):
@@ -772,15 +761,12 @@ def cta_band():
           </div>
           <div class="btn-row">
             <a class="btn btn--primary btn--lg" href="devis.html">{spark}<span>Demander un devis</span></a>
-            <a class="btn btn--light btn--lg" href="{wa}" target="_blank" rel="noopener">
-              {wapp}<span>WhatsApp</span></a>
           </div>
         </div>
       </div>
     </div>
   </section>
-""".format(spark=icon("sparkle"), wapp=icon("whatsapp"),
-           wa=esc(wa_link("Bonjour Alam Stores, je souhaite un devis.")))
+""".format(spark=icon("sparkle"))
 
 
 # --------------------------------------------------------------------------
@@ -937,20 +923,18 @@ def quote_form():
           </fieldset>
 
           <div class="form-nav">
-            <button class="btn btn--wa btn--lg" type="submit" data-send="whatsapp">
-              {wapp}<span>Envoyer sur WhatsApp</span></button>
-            <button class="btn btn--ghost btn--lg" type="submit" data-send="mailto">
-              {mail}<span>Envoyer par e-mail</span></button>
+            <button class="btn btn--primary btn--lg" type="submit">
+              {mail}<span>Envoyer ma demande</span></button>
           </div>
           <p class="form-status" role="status" aria-live="polite"></p>
-          <p class="form-note">Votre demande est mise en forme dans WhatsApp ou dans votre
+          <p class="form-note">Votre demande est enregistr&eacute;e puis mise en forme dans votre
              messagerie&nbsp;: vous relisez et vous gardez la main sur l'envoi.</p>
         </div>
       </form>
     </div>
   </section>
 """.format(whatsapp=esc(CONTACT["whatsapp"]), email=esc(CONTACT["email"]),
-           statuts=statuts, cats=cats, wapp=icon("whatsapp"), mail=icon("mail"))
+           statuts=statuts, cats=cats, mail=icon("mail"))
 
 
 # --------------------------------------------------------------------------
@@ -970,7 +954,6 @@ def footer_html():
           <p>{tag}. Stores intérieurs et extérieurs, pergolas, moustiquaires et
              motorisations sur mesure.</p>
           <div class="footer-social">
-            <a href="{wa}" target="_blank" rel="noopener" aria-label="WhatsApp">{wapp}</a>
             <a href="mailto:{email}" aria-label="E-mail">{mail}</a>
             <a href="tel:{tel}" aria-label="Téléphone">{phone}</a>
           </div>
@@ -996,13 +979,10 @@ def footer_html():
   </footer>
 
   <div class="fab">
-    <a class="fab__wa" href="{wa}" target="_blank" rel="noopener" aria-label="Nous écrire sur WhatsApp">{wapp}</a>
     <button class="to-top" type="button" id="to-top" aria-label="Retour en haut de page">{up}</button>
   </div>
 """.format(logo=LOGO, name=esc(SITE_NAME), tag=esc(SITE_TAGLINE),
-           wa=esc(wa_link("Bonjour Alam Stores, je souhaite des informations.")),
-           wapp=icon("whatsapp"), mail=icon("mail"), phone=icon("phone"),
-           up=icon("arrow-up"),
+           mail=icon("mail"), phone=icon("phone"), up=icon("arrow-up"),
            email=esc(CONTACT["email"]), tel=esc(CONTACT["phone_tel"]),
            c1=col("Stores Intérieurs", ["stores-enrouleurs", "stores-venitiens",
                                         "stores-californiens", "stores-bateaux",
@@ -1122,14 +1102,12 @@ def build():
             body.append(page_hero_html(slug))
             body.append(prose_section(slug, skip_lead=True))
             body.append(partners_html(alt=True))
-            body.append(gallery_html(slug, images))
             body.append(cta_band())
         else:
             body.append(page_hero_html(slug))
             body.append(prose_section(slug, skip_lead=True))
             body.append(category_section(slug, sitemap, alt=True, blurb=False))
             body.append(products_section(slug, products))
-            body.append(gallery_html(slug, images))
             body.append(cta_band())
 
         og = images[0] if images else None

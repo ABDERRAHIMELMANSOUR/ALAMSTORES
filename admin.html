@@ -72,6 +72,53 @@
   }
   .adm__toast.is-on { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
   .adm__count { font-size: .8rem; color: var(--text-mute); font-weight: 600; }
+
+  /* Tabs */
+  .adm__tabs { display: flex; gap: 4px; padding: 4px; background: var(--surface-muted);
+               border-radius: var(--r-full); }
+  .adm__tab {
+    border: 0; background: none; cursor: pointer;
+    padding: 9px 18px; border-radius: var(--r-full);
+    font-size: .87rem; font-weight: 700; color: var(--text-soft);
+    transition: background-color .2s var(--ease), color .2s var(--ease);
+  }
+  .adm__tab:hover { color: var(--brand-600); }
+  .adm__tab[aria-selected="true"] { background: var(--surface); color: var(--brand-600); box-shadow: var(--sh-xs); }
+  .adm__badge {
+    display: inline-block; margin-left: 6px; padding: 1px 8px;
+    border-radius: var(--r-full); background: var(--brand-500); color: #fff;
+    font-size: .72rem; font-weight: 800;
+  }
+
+  /* Leads */
+  .adm__filters { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
+  .adm__filters input, .adm__filters select {
+    padding: 10px 14px; border: 1.5px solid var(--line); border-radius: var(--r-md);
+    font: inherit; font-size: .9rem; background: var(--surface);
+  }
+  .adm__filters input { flex: 1 1 240px; }
+  .adm__tablewrap { overflow-x: auto; border: 1px solid var(--line-soft); border-radius: var(--r-md); }
+  .adm__table { width: 100%; border-collapse: collapse; font-size: .85rem; min-width: 900px; }
+  .adm__table th, .adm__table td { padding: 11px 13px; text-align: left; vertical-align: top; }
+  .adm__table thead th {
+    position: sticky; top: 0; background: var(--surface-alt);
+    font-size: .72rem; letter-spacing: .07em; text-transform: uppercase;
+    color: var(--text-mute); border-bottom: 1px solid var(--line);
+  }
+  .adm__table tbody tr { border-bottom: 1px solid var(--line-soft); }
+  .adm__table tbody tr:hover { background: var(--brand-50); }
+  .adm__table td.msg { max-width: 320px; white-space: pre-line; color: var(--text-soft); }
+  .adm__pill {
+    display: inline-block; padding: 3px 10px; border-radius: var(--r-full);
+    background: var(--brand-50); border: 1px solid var(--brand-100);
+    color: var(--brand-700); font-size: .74rem; font-weight: 700; white-space: nowrap;
+  }
+  .adm__pill--b2b { background: #eef6ff; border-color: #cfe3fb; color: #14508f; }
+  .adm__rowdel {
+    border: 0; background: none; color: var(--danger); cursor: pointer;
+    font-size: 1.1rem; line-height: 1; padding: 2px 6px; border-radius: var(--r-xs);
+  }
+  .adm__rowdel:hover { background: #fff1f1; }
 </style>
 </head>
 <body class="adm">
@@ -83,16 +130,30 @@
       <strong style="display:block;line-height:1.2">Gestion des produits</strong>
       <span class="adm__count" id="count">0 produit</span>
     </div>
+    <div class="adm__tabs" role="tablist">
+      <button class="adm__tab" type="button" role="tab" id="tab-products"
+              aria-selected="true" aria-controls="panel-products">Produits</button>
+      <button class="adm__tab" type="button" role="tab" id="tab-leads"
+              aria-selected="false" aria-controls="panel-leads">Devis reçus<span class="adm__badge" id="leads-badge">0</span></button>
+    </div>
     <span class="spacer"></span>
-    <button class="btn btn--ghost btn--sm" type="button" id="import">Importer un JSON</button>
-    <button class="btn btn--ghost btn--sm" type="button" id="reload">Recharger le fichier</button>
-    <button class="btn btn--primary btn--sm" type="button" id="export">Exporter products.json</button>
+    <span data-for="products">
+      <button class="btn btn--ghost btn--sm" type="button" id="import">Importer un JSON</button>
+      <button class="btn btn--ghost btn--sm" type="button" id="reload">Recharger le fichier</button>
+      <button class="btn btn--primary btn--sm" type="button" id="export">Exporter products.json</button>
+    </span>
+    <span data-for="leads" hidden>
+      <button class="btn btn--ghost btn--sm" type="button" id="leads-import">Importer des leads</button>
+      <button class="btn btn--ghost btn--sm" type="button" id="leads-clear">Tout effacer</button>
+      <button class="btn btn--primary btn--sm" type="button" id="leads-export">Exporter en CSV</button>
+    </span>
     <input type="file" id="file" accept="application/json,.json" hidden>
+    <input type="file" id="leads-file" accept="application/json,.json" hidden>
   </div>
 </header>
 
 <main class="shell" style="padding-block: 28px 60px">
-  <div class="adm__grid">
+  <div class="adm__grid" id="panel-products" role="tabpanel" aria-labelledby="tab-products">
 
     <section class="adm__panel">
       <h2>Produits</h2>
@@ -175,6 +236,54 @@
     </section>
 
   </div>
+  <section class="adm__panel" id="panel-leads" role="tabpanel" aria-labelledby="tab-leads" hidden>
+    <h2>Devis reçus</h2>
+    <p class="hint">Demandes enregistrées par le formulaire <code>devis.html</code>
+       <strong>dans ce navigateur</strong>.</p>
+
+    <div class="adm__filters">
+      <input type="search" id="lead-search" placeholder="Rechercher : nom, entreprise, ville, e-mail…"
+             aria-label="Rechercher dans les demandes">
+      <select id="lead-statut" aria-label="Filtrer par statut">
+        <option value="">Tous les statuts</option>
+        <option>Particulier</option>
+        <option>Entreprise / Professionnel (B2B)</option>
+        <option>Architecte / Revendeur</option>
+      </select>
+      <select id="lead-category" aria-label="Filtrer par catégorie">
+        <option value="">Toutes les catégories</option>
+      </select>
+    </div>
+
+    <div class="adm__tablewrap">
+      <table class="adm__table">
+        <thead>
+          <tr>
+            <th>Date</th><th>Statut</th><th>Entreprise</th><th>Nom</th>
+            <th>Catégorie</th><th>Téléphone</th><th>E-mail</th>
+            <th>Ville</th><th>Adresse</th><th>Message</th><th></th>
+          </tr>
+        </thead>
+        <tbody id="lead-rows"></tbody>
+      </table>
+    </div>
+    <p class="adm__empty" id="lead-empty" hidden>Aucune demande enregistrée dans ce navigateur.</p>
+
+    <div class="adm__note">
+      <strong>À lire : où sont réellement vos demandes</strong><br>
+      Ce site est statique, sans serveur ni base de données. Le formulaire enregistre
+      chaque demande dans le <code>localStorage</code> du navigateur <em>du visiteur</em>,
+      puis ouvre sa messagerie avec le récapitulatif pré-rempli.<br><br>
+      Autrement dit : une demande envoyée depuis le téléphone d'un client est stockée
+      <strong>sur ce téléphone</strong>, pas ici. Ce tableau ne montre que les demandes
+      saisies dans <em>ce</em> navigateur (vos tests, ou un client qui remplirait le
+      formulaire sur votre poste). <strong>Les e-mails reçus sur
+      contact@alamstores.ma restent votre véritable registre de leads.</strong><br><br>
+      Pour un vrai registre centralisé, il faut un service de formulaire
+      (Formspree, Netlify Forms, Google Forms…) ou un back-end&nbsp;: dites-le-nous et
+      nous le branchons.
+    </div>
+  </section>
 </main>
 
 <div class="adm__toast" id="toast" role="status" aria-live="polite"></div>
@@ -186,6 +295,7 @@
   var $ = function (s, c) { return (c || document).querySelector(s); };
   var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
 
+  var on2 = function (el, ev, fn) { if (el) el.addEventListener(ev, fn); };
   var DRAFT_KEY = 'alamstores.products.draft';
   var SOURCE = 'tools/data/products.json';
 
@@ -459,6 +569,200 @@
     try { localStorage.removeItem(DRAFT_KEY); } catch (e) { /* ignore */ }
     loadFromFile();
   });
+
+  /* ------------------------------------------------------------- leads --- */
+  var LEADS_KEY = 'alamstores.leads';
+  var LEAD_COLS = [
+    ['timestamp', 'Date'], ['statut', 'Statut'], ['company', 'Entreprise'],
+    ['name', 'Nom'], ['category', 'Catégorie'], ['phone', 'Téléphone'],
+    ['email', 'E-mail'], ['city', 'Ville'], ['address', 'Adresse'],
+    ['zip', 'Code postal'], ['country', 'Pays'], ['message', 'Message']
+  ];
+
+  function readLeads() {
+    try {
+      var raw = localStorage.getItem(LEADS_KEY);
+      var list = raw ? JSON.parse(raw) : [];
+      return Array.isArray(list) ? list : [];
+    } catch (e) { return []; }
+  }
+
+  function writeLeads(list) {
+    try { localStorage.setItem(LEADS_KEY, JSON.stringify(list)); return true; }
+    catch (e) { toast('Impossible d\u2019écrire dans le stockage local'); return false; }
+  }
+
+  function leadName(l) {
+    return [l.firstname, l.lastname].filter(Boolean).join(' ').trim();
+  }
+
+  function leadValue(l, key) {
+    if (key === 'name') return leadName(l);
+    if (key === 'timestamp') {
+      if (!l.timestamp) return '';
+      var d = new Date(l.timestamp);
+      return isNaN(d) ? l.timestamp : d.toLocaleString('fr-FR');
+    }
+    return l[key] || '';
+  }
+
+  function filteredLeads() {
+    var q = ($('#lead-search').value || '').trim().toLowerCase();
+    var st = $('#lead-statut').value;
+    var cat = $('#lead-category').value;
+    return readLeads().filter(function (l) {
+      if (st && l.statut !== st) return false;
+      if (cat && l.category !== cat) return false;
+      if (!q) return true;
+      return LEAD_COLS.some(function (c) {
+        return String(leadValue(l, c[0])).toLowerCase().indexOf(q) !== -1;
+      });
+    });
+  }
+
+  function renderLeads() {
+    var all = readLeads();
+    $('#leads-badge').textContent = all.length;
+
+    /* Keep the category filter in step with what has actually been received. */
+    var sel = $('#lead-category');
+    var keep = sel.value;
+    var cats = [];
+    all.forEach(function (l) { if (l.category && cats.indexOf(l.category) === -1) cats.push(l.category); });
+    cats.sort();
+    sel.innerHTML = '<option value="">Toutes les catégories</option>';
+    cats.forEach(function (c) {
+      var o = document.createElement('option');
+      o.value = c; o.textContent = c;
+      sel.appendChild(o);
+    });
+    sel.value = cats.indexOf(keep) === -1 ? '' : keep;
+
+    var rows = filteredLeads().slice().reverse();   // newest first
+    var body = $('#lead-rows');
+    body.innerHTML = '';
+    rows.forEach(function (l) {
+      var tr = document.createElement('tr');
+      ['timestamp', 'statut', 'company', 'name', 'category', 'phone',
+       'email', 'city', 'address', 'message'].forEach(function (key) {
+        var td = document.createElement('td');
+        var v = leadValue(l, key);
+        if (key === 'statut' && v) {
+          var span = document.createElement('span');
+          span.className = 'adm__pill' + (/B2B|Architecte/i.test(v) ? ' adm__pill--b2b' : '');
+          span.textContent = v;
+          td.appendChild(span);
+        } else if (key === 'email' && v) {
+          var a = document.createElement('a');
+          a.href = 'mailto:' + v; a.textContent = v;
+          td.appendChild(a);
+        } else if (key === 'phone' && v) {
+          var t = document.createElement('a');
+          t.href = 'tel:' + v.replace(/[^0-9+]/g, ''); t.textContent = v;
+          td.appendChild(t);
+        } else {
+          if (key === 'message') td.className = 'msg';
+          td.textContent = v;
+        }
+        tr.appendChild(td);
+      });
+      var actions = document.createElement('td');
+      var del = document.createElement('button');
+      del.type = 'button'; del.className = 'adm__rowdel';
+      del.title = 'Supprimer cette demande'; del.textContent = '×';
+      del.addEventListener('click', function () {
+        if (!window.confirm('Supprimer cette demande ?')) return;
+        var list = readLeads();
+        var i = list.findIndex(function (x) {
+          return x.timestamp === l.timestamp && x.email === l.email;
+        });
+        if (i !== -1) { list.splice(i, 1); writeLeads(list); }
+        renderLeads();
+        toast('Demande supprimée');
+      });
+      actions.appendChild(del);
+      tr.appendChild(actions);
+      body.appendChild(tr);
+    });
+    $('#lead-empty').hidden = rows.length > 0;
+    $('#lead-empty').textContent = all.length
+      ? 'Aucune demande ne correspond à ce filtre.'
+      : 'Aucune demande enregistrée dans ce navigateur.';
+  }
+
+  function csvCell(v) {
+    v = String(v == null ? '' : v);
+    return /[",\n;]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
+  }
+
+  function exportLeadsCsv() {
+    var rows = filteredLeads();
+    if (!rows.length) { toast('Aucune demande à exporter'); return; }
+    var lines = [LEAD_COLS.map(function (c) { return csvCell(c[1]); }).join(';')];
+    rows.forEach(function (l) {
+      lines.push(LEAD_COLS.map(function (c) { return csvCell(leadValue(l, c[0])); }).join(';'));
+    });
+    /* BOM + semicolons so Excel opens it correctly in a French locale. */
+    var blob = new Blob(['\ufeff' + lines.join('\r\n') + '\r\n'],
+                        { type: 'text/csv;charset=utf-8;' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'devis-alamstores-' + new Date().toISOString().slice(0, 10) + '.csv';
+    document.body.appendChild(a); a.click(); a.remove();
+    window.setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+    toast(rows.length + ' demande(s) exportée(s)');
+  }
+
+  ['#lead-search', '#lead-statut', '#lead-category'].forEach(function (sel2) {
+    var el = $(sel2);
+    on2(el, 'input', renderLeads);
+    on2(el, 'change', renderLeads);
+  });
+  $('#leads-export').addEventListener('click', exportLeadsCsv);
+  $('#leads-clear').addEventListener('click', function () {
+    if (!readLeads().length) { toast('Rien à effacer'); return; }
+    if (!window.confirm('Effacer toutes les demandes enregistrées dans ce navigateur ?')) return;
+    writeLeads([]); renderLeads(); toast('Demandes effacées');
+  });
+  $('#leads-import').addEventListener('click', function () { $('#leads-file').click(); });
+  $('#leads-file').addEventListener('change', function () {
+    var f = this.files && this.files[0];
+    if (!f) return;
+    var r = new FileReader();
+    r.onload = function () {
+      try {
+        var incoming = JSON.parse(r.result);
+        if (!Array.isArray(incoming)) throw new Error('le fichier doit contenir un tableau');
+        var list = readLeads();
+        var seen = {};
+        list.forEach(function (l) { seen[l.timestamp + '|' + l.email] = true; });
+        var added = 0;
+        incoming.forEach(function (l) {
+          var k = l.timestamp + '|' + l.email;
+          if (!seen[k]) { list.push(l); seen[k] = true; added++; }
+        });
+        writeLeads(list); renderLeads();
+        toast(added + ' demande(s) importée(s)');
+      } catch (err) { toast('Fichier illisible : ' + err.message); }
+    };
+    r.readAsText(f);
+    this.value = '';
+  });
+
+  /* ---------------------------------------------------------------- tabs -- */
+  function selectTab(name) {
+    ['products', 'leads'].forEach(function (n) {
+      var on_ = n === name;
+      $('#tab-' + n).setAttribute('aria-selected', on_ ? 'true' : 'false');
+      $('#panel-' + n).hidden = !on_;
+      var bar = document.querySelector('[data-for="' + n + '"]');
+      if (bar) bar.hidden = !on_;
+    });
+    if (name === 'leads') renderLeads();
+  }
+  $('#tab-products').addEventListener('click', function () { selectTab('products'); });
+  $('#tab-leads').addEventListener('click', function () { selectTab('leads'); });
+  renderLeads();
 
   /* Prefer an unexported draft; otherwise read the committed file. */
   var draft = null;

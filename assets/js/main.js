@@ -2,7 +2,7 @@
  * Alam Stores — front-end behaviour
  * Dependency-free. Sticky/glass header, slide-out drawer, hero slider
  * (5 s auto-advance), lightbox, scroll reveal, scroll-to-top and the B2B
- * quote form that hands off to WhatsApp or e-mail.
+ * quote form, which logs each lead locally and hands it to the mail client.
  * The partner logo marquee is pure CSS — no JavaScript involved.
  */
 (function () {
@@ -258,6 +258,28 @@
   }
 
   /* ------------------------------------------------------- B2B quote form --- */
+  /* Saves every submission to a local lead store (readable from admin.html)
+     and then hands the formatted request to the visitor's mail client.
+
+     NOTE: localStorage is per-browser and per-device. A lead submitted on a
+     visitor's phone is stored on THAT phone — admin.html on another machine
+     will not see it. The e-mail is the delivery channel; the local store is a
+     convenience log for leads captured on this device. */
+  var LEADS_KEY = 'alamstores.leads';
+
+  function saveLead(lead) {
+    try {
+      var raw = localStorage.getItem(LEADS_KEY);
+      var list = raw ? JSON.parse(raw) : [];
+      if (!Array.isArray(list)) list = [];
+      list.push(lead);
+      localStorage.setItem(LEADS_KEY, JSON.stringify(list));
+      return true;
+    } catch (e) {
+      return false;   // private mode, quota, or blocked storage
+    }
+  }
+
   function initQuoteForm() {
     var form = $('[data-quote-form]');
     if (!form) return;
@@ -266,9 +288,8 @@
     var companyWrap = $('[data-b2b-field]', form);
     var company = companyWrap ? $('input', companyWrap) : null;
     var status = $('.form-status', form);
-    var channel = 'whatsapp';
 
-    /* Order and labels of everything sent in the payload. */
+    /* Order and labels of everything sent and stored. */
     var FIELDS = [
       ['statut', 'Statut'],
       ['company', 'Entreprise'],
@@ -297,13 +318,10 @@
 
     function syncB2B() {
       if (!companyWrap || !company) return;
-      var on = isB2B();
-      companyWrap.hidden = !on;
-      company.required = on;
-      if (!on) {
-        company.value = '';
-        showError(company, '');
-      }
+      var on_ = isB2B();
+      companyWrap.hidden = !on_;
+      company.required = on_;
+      if (!on_) { company.value = ''; showError(company, ''); }
     }
 
     function showError(field, msg) {
@@ -341,7 +359,7 @@
     }
 
     function compose() {
-      var lines = ['*Demande de devis — alamstores.ma*', ''];
+      var lines = ['Demande de devis — alamstores.ma', ''];
       FIELDS.forEach(function (pair) {
         var v = val(pair[0]);
         if (v) lines.push(pair[1] + ' : ' + v);
@@ -352,10 +370,6 @@
     }
 
     if (statut) { on(statut, 'change', syncB2B); syncB2B(); }
-    $$('[data-send]', form).forEach(function (b) {
-      on(b, 'click', function () { channel = b.getAttribute('data-send'); });
-    });
-    /* Clear an error as soon as the visitor fixes the field. */
     $$('input, select, textarea', form).forEach(function (f) {
       on(f, 'input', function () { if (f.classList.contains('is-invalid')) showError(f, ''); });
     });
@@ -364,28 +378,24 @@
       e.preventDefault();
       if (!validate()) return;
 
-      var body = compose();
-      var who = val('company') || (val('firstname') + ' ' + val('lastname')).trim();
-      var subject = 'Demande de devis — ' + (val('category') || 'projet')
-        + (who ? ' — ' + who : '');
+      var lead = { timestamp: new Date().toISOString() };
+      FIELDS.forEach(function (pair) { lead[pair[0]] = val(pair[0]); });
+      lead.message = val('message');
+      var stored = saveLead(lead);
 
-      if (channel === 'mailto') {
-        var to = form.getAttribute('data-mailto');
-        if (!to) return;
+      var who = val('company') || (val('firstname') + ' ' + val('lastname')).trim();
+      var subject = 'Demande de devis — ' + (val('category') || 'projet') + (who ? ' — ' + who : '');
+      var to = form.getAttribute('data-mailto');
+      if (to) {
         window.location.href = 'mailto:' + to
           + '?subject=' + encodeURIComponent(subject)
-          + '&body=' + encodeURIComponent(body);
-      } else {
-        var num = (form.getAttribute('data-whatsapp') || '').replace(/[^0-9]/g, '');
-        if (!num) return;
-        window.open('https://wa.me/' + num + '?text=' + encodeURIComponent(body),
-                    '_blank', 'noopener');
+          + '&body=' + encodeURIComponent(compose());
       }
 
       if (status) {
-        status.textContent = channel === 'mailto'
-          ? 'Votre messagerie va s’ouvrir avec la demande pré-remplie. Il ne reste qu’à l’envoyer.'
-          : 'WhatsApp va s’ouvrir avec la demande pré-remplie. Il ne reste qu’à l’envoyer.';
+        status.textContent = stored
+          ? 'Demande enregistrée. Votre messagerie va s’ouvrir avec le récapitulatif pré-rempli — il ne reste qu’à l’envoyer.'
+          : 'Votre messagerie va s’ouvrir avec le récapitulatif pré-rempli — il ne reste qu’à l’envoyer.';
         status.className = 'form-status is-ok';
       }
     });

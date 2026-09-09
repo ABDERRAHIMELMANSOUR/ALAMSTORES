@@ -47,16 +47,14 @@ and 1.9 MB of font files, now 37 KB and 84 KB.**
 - **Slide-out drawer** on mobile with accordion submenus, focus trapping,
   Escape to close, and contact details plus both CTAs pinned to its foot.
 - **Home hero** with a cross-fading photo slider on a 5-second auto-advance,
-  trust badges and dual CTAs.
-- **Category cards** with hover zoom, a category tag and a per-product
-  "Demander" button that opens WhatsApp pre-filled with that product name.
-- **Gallery tiles** on a 4:3 grid: photos fill the tile, while logos, banners
-  and portraits are letterboxed on a padded card instead of being cropped.
+  trust badges and a single "Demander un devis" CTA.
+- **Category cards** with hover zoom, a category tag and a "Devis" button.
 - **Partner logos** as an infinite, continuously scrolling marquee (pure CSS,
   pauses on hover, falls back to a plain scroll strip under
   `prefers-reduced-motion`).
 - **B2B quote form** with a showroom info card, conditional company field and
-  inline validation, sending to WhatsApp or e-mail.
+  inline validation; each submission is logged locally and handed to the mail
+  client.
 - **Floating WhatsApp button** and scroll-to-top on every page.
 
 ## What carried over from WordPress
@@ -113,6 +111,26 @@ all 26 pages.
 > If that has not been set up, put your mobile in `whatsapp` — it is a separate
 > key from `phone_tel`, so the displayed phone number does not change.
 
+## Calls to action
+
+Every CTA on the site points at `devis.html` — "Demander un devis" or
+"Devis gratuit". There are no WhatsApp action buttons: the top bar, header,
+hero, CTA banners, category cards, product cards, footer and the old floating
+bubble all carry the quote CTA instead.
+
+WhatsApp still appears as a **contact channel** in the contact lists and the
+showroom card, next to the address, phone, e-mail and opening hours — a
+labelled row showing the number, not a button. Say the word if you want it gone
+from there too.
+
+`motorisations-automatismes.html` is no longer in the navbar or the mobile
+drawer. The page is untouched at its original URL, stays in `sitemap.xml`, and
+is still linked from the footer — drop the slug back into `NAV_TOP` in
+`tools/build_pages.py` to restore it.
+
+The "Galerie / Nos réalisations" section has been removed from every page. The
+builder still has `gallery_html()` if you ever want it back; nothing calls it.
+
 ## The B2B quote form
 
 `devis.html` opens with a showroom card (address, phone + WhatsApp, opening
@@ -126,25 +144,36 @@ makes it required; switching back to Particulier hides and clears it.
 **Vos coordonnées** — Prénom, Nom, E-mail, Téléphone, Pays (defaults to Maroc),
 Ville, Adresse, Code postal.
 
-The site is static, so nothing is stored or transmitted by the page. Both
-buttons build the same structured payload — statut, entreprise, catégorie,
-name, e-mail, phone, full postal address and the message — and hand it off:
-
-- **Envoyer sur WhatsApp** opens `https://wa.me/212537759772` with the message
-  pre-filled, in a new tab.
-- **Envoyer par e-mail** opens the visitor's mail client via `mailto:`, with
-  the subject line carrying the category and the company (or contact) name.
+**Envoyer ma demande** does two things: it appends the submission to a local
+lead log, then opens the visitor's mail client via `mailto:` with the full
+structured payload — statut, entreprise, catégorie, name, e-mail, phone, full
+postal address and the message — and a subject line carrying the category and
+the company (or contact) name.
 
 Categories in the form are wider than the page tree on purpose — `Rideaux` and
 `Autre / Projet mixte` are offered without having a dedicated page. Edit
 `FORM_CATEGORIES` and `STATUTS` in `tools/build_pages.py`.
 
-Product cards across the site also carry a "Demander" button that opens
-WhatsApp pre-filled with that product's name.
+## Leads — "Devis reçus"
 
-To post to a form service such as Formspree or Netlify Forms instead, add an
-`action` to the `<form>` and drop the `data-whatsapp` / `data-mailto`
-attributes.
+The **Devis reçus** tab in `admin.html` lists submissions with search, status
+and category filters, per-row delete, JSON import and a CSV export (semicolons
+plus a BOM, so Excel opens it correctly with accents). Every field is stored:
+timestamp, statut, entreprise, catégorie, prénom, nom, e-mail, téléphone,
+adresse, code postal, ville, pays and the message.
+
+> ⚠️ **Read this before relying on the table.** The site is static — no server,
+> no database. The form writes each submission to `localStorage` **in the
+> visitor's own browser**. A request sent from a client's phone is stored *on
+> that phone*, and will never appear in your dashboard. The table only shows
+> what was submitted in the browser you are viewing it from.
+>
+> **The e-mails arriving at contact@alamstores.ma remain your real lead
+> register.** The local log is a convenience, not a CRM.
+>
+> For a genuinely centralised list you need a form service (Formspree, Netlify
+> Forms, Google Forms) or a small back-end. Ask and we'll wire one in: add an
+> `action` to the `<form>` and drop `data-mailto`.
 
 ## Product dashboard (`admin.html`)
 

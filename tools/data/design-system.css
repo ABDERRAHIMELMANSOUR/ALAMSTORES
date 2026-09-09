@@ -324,14 +324,14 @@ small { font-size: .85rem; }
   gap: 8px;
   padding: 6px 15px;
   border-radius: var(--r-full);
-  background: var(--whatsapp);
-  color: #06301a !important;
+  background: var(--grad-brand);
+  color: #fff !important;
   font-weight: 700;
   font-size: .8rem;
   white-space: nowrap;
-  transition: background-color .2s var(--ease), transform .2s var(--ease);
+  transition: filter .2s var(--ease), transform .2s var(--ease);
 }
-.topbar__cta:hover { background: var(--whatsapp-dark); transform: translateY(-1px); }
+.topbar__cta:hover { filter: brightness(1.12); transform: translateY(-1px); }
 .topbar__cta svg { width: 15px; height: 15px; }
 
 @media (max-width: 860px) {
@@ -1342,20 +1342,6 @@ small { font-size: .85rem; }
   gap: 10px;
   justify-items: end;
 }
-.fab__wa {
-  display: inline-grid;
-  place-items: center;
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: var(--whatsapp);
-  color: #06301a;
-  box-shadow: 0 12px 30px rgba(37,211,102,.4);
-  transition: transform .25s var(--ease), background-color .2s var(--ease);
-}
-.fab__wa:hover { transform: scale(1.07); background: var(--whatsapp-dark); color: #052a17; }
-.fab__wa svg { width: 27px; height: 27px; }
-
 .to-top {
   display: inline-grid;
   place-items: center;
@@ -1379,7 +1365,6 @@ small { font-size: .85rem; }
 
 @media (max-width: 520px) {
   .fab { right: 14px; bottom: 14px; }
-  .fab__wa { width: 52px; height: 52px; }
 }
 
 /* ------------------------------------------------------------- lightbox -- */
