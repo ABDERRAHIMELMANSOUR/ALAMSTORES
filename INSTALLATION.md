@@ -26,10 +26,18 @@ installé.
 
 ## 1. Télécharger la version finale
 
-<https://github.com/ABDERRAHIMELMANSOUR/ALAMSTORES/archive/refs/tags/v1.0.zip>
+<https://github.com/ABDERRAHIMELMANSOUR/ALAMSTORES/archive/refs/heads/main.zip>
 
-Décompressez l'archive. Elle contient un dossier `ALAMSTORES-1.0` : **c'est le
+Si le lien direct ne fonctionne pas (dépôt privé, session expirée), passez par
+l'interface : ouvrez
+<https://github.com/ABDERRAHIMELMANSOUR/ALAMSTORES>, cliquez sur le bouton vert
+**Code**, puis **Download ZIP**.
+
+Décompressez l'archive. Elle contient un dossier `ALAMSTORES-main` : **c'est le
 contenu de ce dossier** que vous enverrez, pas le dossier lui-même.
+
+> La branche `main` est toujours la version à jour. Si vous réinstallez plus
+> tard, retéléchargez depuis ce même lien.
 
 Ce qu'il y a dedans :
 
@@ -102,7 +110,7 @@ Dans FileZilla, **Fichier → Gestionnaire de sites → Nouveau site** :
    Renommez-le d'abord en `ancien-site` — vous le supprimerez une fois le
    nouveau site vérifié. (Voir `SECURITY-AUDIT.md` : l'ancienne installation
    était infectée, ne recopiez rien depuis elle.)
-3. À gauche (votre ordinateur), ouvrez le dossier `ALAMSTORES-1.0`.
+3. À gauche (votre ordinateur), ouvrez le dossier `ALAMSTORES-main`.
 4. Sélectionnez **tout son contenu**, puis glissez-le vers la droite.
 5. Vérifiez que **`.htaccess` est bien parti**. FileZilla masque parfois les
    fichiers commençant par un point : **Serveur → Forcer l'affichage des
