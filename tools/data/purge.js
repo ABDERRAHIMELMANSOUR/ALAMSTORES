@@ -2,7 +2,9 @@ const { PurgeCSS } = require(require('path').join(process.env.NODE_TOOLS, 'node_
 const fs = require('fs');
 (async () => {
   const res = await new PurgeCSS().purge({
-    content: ['*.html', 'assets/js/main.js'],
+    // The pages are PHP now, and the chrome lives in includes/. Missing one
+    // of these would silently purge most of the stylesheet.
+    content: ['*.php', 'includes/*.php', 'admin/*.php', 'assets/js/main.js'],
     css: [process.argv[2]],
     // Classes toggled by JavaScript at runtime never appear in the HTML.
     safelist: {

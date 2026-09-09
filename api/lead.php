@@ -2,25 +2,32 @@
 declare(strict_types=1);
 
 /**
- * Réception des demandes de devis envoyées par devis.html.
+ * Réception des demandes de devis envoyées par devis.php.
  *
- *   POST api/lead.php   (corps JSON)
+ * Le formulaire est un formulaire HTML ordinaire : il fonctionne sans
+ * JavaScript. Le déroulé est toujours le même — vérifier le reCAPTCHA,
+ * contrôler les champs, enregistrer, prévenir par e-mail, puis rediriger le
+ * visiteur vers WhatsApp avec sa demande déjà rédigée.
  *
- * La page continue d'ouvrir WhatsApp et de garder une copie locale : cet
- * endpoint est la troisième couche, celle qui centralise réellement les
- * demandes dans la base, quel que soit l'appareil du visiteur.
+ * En cas d'erreur, on renvoie vers le formulaire avec les valeurs saisies et
+ * les messages, plutôt que d'afficher une page d'erreur.
  */
 
 require __DIR__ . '/bootstrap.php';
+require_once dirname(__DIR__) . '/includes/recaptcha.php';
 
-require_method('POST', 'OPTIONS');
+require_method('POST');
 send_security_headers();
-apply_cors();
 
-if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
-    header('Access-Control-Allow-Methods: POST, OPTIONS');
-    header('Access-Control-Allow-Headers: Content-Type');
-    http_response_code(204);
+const DEVIS_PAGE = '../devis.php';
+
+/** Renvoie au formulaire en conservant la saisie et les erreurs. */
+function back_to_form(array $old, array $errors, string $message): void
+{
+    alam_session();
+    unset($old['website']);
+    $_SESSION['devis'] = ['old' => $old, 'errors' => $errors, 'message' => $message];
+    header('Location: ' . DEVIS_PAGE . '#devis-form', true, 303);
     exit;
 }
 
@@ -30,30 +37,38 @@ if ($origin !== '' && !in_array($origin, (array) cfg('allowed_origins', []), tru
     json_out(['error' => 'Origine non autorisée.'], 403);
 }
 
-$body = json_body();
-
-// Champ piège : invisible pour un humain, rempli par la plupart des robots.
-if (clean_text($body['website'] ?? '', 100) !== '') {
-    json_out(['ok' => true, 'id' => 0]);   // on acquiesce sans rien enregistrer
-}
-
 $lead = [
-    'statut'    => clean_text($body['statut']    ?? '', 80),
-    'company'   => clean_text($body['company']   ?? '', 180),
-    'category'  => clean_text($body['category']  ?? '', 120),
-    'firstname' => clean_text($body['firstname'] ?? '', 120),
-    'lastname'  => clean_text($body['lastname']  ?? '', 120),
-    'email'     => clean_text($body['email']     ?? '', 190),
-    'phone'     => clean_text($body['phone']     ?? '', 60),
-    'address'   => clean_text($body['address']   ?? '', 240),
-    'zip'       => clean_text($body['zip']       ?? '', 20),
-    'city'      => clean_text($body['city']      ?? '', 120),
-    'country'   => clean_text($body['country']   ?? '', 120),
-    'message'   => clean_multiline($body['message'] ?? '', 5000),
+    'statut'    => clean_text($_POST['statut']    ?? '', 80),
+    'company'   => clean_text($_POST['company']   ?? '', 180),
+    'category'  => clean_text($_POST['category']  ?? '', 120),
+    'firstname' => clean_text($_POST['firstname'] ?? '', 120),
+    'lastname'  => clean_text($_POST['lastname']  ?? '', 120),
+    'email'     => clean_text($_POST['email']     ?? '', 190),
+    'phone'     => clean_text($_POST['phone']     ?? '', 60),
+    'address'   => clean_text($_POST['address']   ?? '', 240),
+    'zip'       => clean_text($_POST['zip']       ?? '', 20),
+    'city'      => clean_text($_POST['city']      ?? '', 120),
+    'country'   => clean_text($_POST['country']   ?? '', 120),
+    'message'   => clean_multiline($_POST['message'] ?? '', 5000),
 ];
 
+// Champ piège : invisible pour un humain, rempli par la plupart des robots.
+// On acquiesce sans rien enregistrer, pour ne pas renseigner le robot.
+if (clean_text($_POST['website'] ?? '', 100) !== '') {
+    header('Location: ' . DEVIS_PAGE, true, 303);
+    exit;
+}
+
+// ------------------------------------------------------------- reCAPTCHA ---
+if (!alam_recaptcha_verify((string) ($_POST['g-recaptcha-response'] ?? ''))) {
+    back_to_form($lead, ['recaptcha' => 'Merci de confirmer que vous n’êtes pas un robot.'],
+                 'La vérification anti-robot n’a pas abouti. Réessayez.');
+}
+
+// -------------------------------------------------------------- contrôles ---
 $errors = [];
-foreach (['firstname' => 'Prénom', 'lastname' => 'Nom', 'message' => 'Message'] as $k => $label) {
+foreach (['firstname' => 'Prénom', 'lastname' => 'Nom', 'message' => 'Message',
+          'statut' => 'Statut professionnel', 'category' => 'Catégorie'] as $k => $label) {
     if ($lead[$k] === '') {
         $errors[$k] = $label . ' obligatoire.';
     }
@@ -65,51 +80,61 @@ if (strlen(preg_replace('/\D/', '', $lead['phone'])) < 8) {
     $errors['phone'] = 'Numéro de téléphone incomplet.';
 }
 if ($errors) {
-    json_out(['error' => 'Formulaire incomplet.', 'fields' => $errors], 422);
+    back_to_form($lead, $errors, 'Merci de corriger les champs signalés.');
 }
 
-$pdo  = db();
+// ---------------------------------------------------- limite anti-flood ----
 $hash = ip_hash();
-
-// Limite anti-flood : 5 demandes par heure et par appareil. Sans sel configuré
-// le hash est vide, et la limite ne s'applique pas — c'est volontaire, mieux
-// vaut accepter un lead que d'en perdre un.
-if ($hash !== '') {
-    $stmt = $pdo->prepare('SELECT COUNT(*) FROM leads
-                            WHERE ip_hash = ? AND created_at > ?');
-    $stmt->execute([$hash, gmdate('Y-m-d H:i:s', time() - 3600)]);
-    if ((int) $stmt->fetchColumn() >= 5) {
-        json_out(['error' => 'Trop de demandes envoyées. Réessayez dans une heure ou appelez-nous.'], 429);
+$pdo  = null;
+try {
+    $pdo = db();
+    if ($hash !== '') {
+        $stmt = $pdo->prepare('SELECT COUNT(*) FROM leads
+                                WHERE ip_hash = ? AND created_at > ?');
+        $stmt->execute([$hash, gmdate('Y-m-d H:i:s', time() - 3600)]);
+        if ((int) $stmt->fetchColumn() >= 5) {
+            back_to_form($lead, [],
+                'Vous avez déjà envoyé plusieurs demandes dans l’heure. '
+                . 'Réessayez plus tard, ou appelez-nous directement.');
+        }
     }
+
+    $stmt = $pdo->prepare(
+        'INSERT INTO leads (statut, company, category, firstname, lastname, email, phone,
+                            address, zip, city, country, message, source, ip_hash, user_agent)
+         VALUES (:statut, :company, :category, :firstname, :lastname, :email, :phone,
+                 :address, :zip, :city, :country, :message, :source, :ip_hash, :user_agent)');
+    $stmt->execute($lead + [
+        'source'     => 'devis.php',
+        'ip_hash'    => $hash,
+        'user_agent' => clean_text($_SERVER['HTTP_USER_AGENT'] ?? '', 255),
+    ]);
+} catch (Throwable $e) {
+    // Base indisponible : on n'arrête pas le visiteur pour autant. Sa demande
+    // part quand même par e-mail et par WhatsApp — on perd la ligne en base,
+    // pas le client.
+    error_log('[alamstores] lead non enregistré : ' . $e->getMessage());
 }
 
-$stmt = $pdo->prepare(
-    'INSERT INTO leads (statut, company, category, firstname, lastname, email, phone,
-                        address, zip, city, country, message, source, ip_hash, user_agent)
-     VALUES (:statut, :company, :category, :firstname, :lastname, :email, :phone,
-             :address, :zip, :city, :country, :message, :source, :ip_hash, :user_agent)');
-$stmt->execute($lead + [
-    'source'     => clean_text($body['source'] ?? 'devis.html', 40),
-    'ip_hash'    => $hash,
-    'user_agent' => clean_text($_SERVER['HTTP_USER_AGENT'] ?? '', 255),
-]);
-$id = (int) $pdo->lastInsertId();
+// ------------------------------------------------------ mise en forme -------
+const LEAD_LABELS = [
+    'statut' => 'Statut', 'company' => 'Entreprise', 'category' => 'Catégorie',
+    'firstname' => 'Prénom', 'lastname' => 'Nom', 'email' => 'E-mail',
+    'phone' => 'Téléphone', 'address' => 'Adresse', 'zip' => 'Code postal',
+    'city' => 'Ville', 'country' => 'Pays',
+];
 
-// Notification, en meilleur effort : un e-mail qui ne part pas ne doit jamais
-// faire échouer l'enregistrement du lead.
+$who = $lead['company'] !== '' ? $lead['company']
+                               : trim($lead['firstname'] . ' ' . $lead['lastname']);
+
+// ---------------------------------------------------------- notification ---
 $recipients = array_values(array_filter(
     array_map('trim', (array) cfg('notify_email', [])),
     static function ($address) { return filter_var($address, FILTER_VALIDATE_EMAIL); }));
 
 if ($recipients) {
-    $labels = [
-        'statut' => 'Statut', 'company' => 'Entreprise', 'category' => 'Catégorie',
-        'firstname' => 'Prénom', 'lastname' => 'Nom', 'email' => 'E-mail',
-        'phone' => 'Téléphone', 'address' => 'Adresse', 'zip' => 'Code postal',
-        'city' => 'Ville', 'country' => 'Pays',
-    ];
-    $lines = ["Nouvelle demande de devis (#$id)", ''];
-    foreach ($labels as $k => $label) {
+    $lines = ['Nouvelle demande de devis', ''];
+    foreach (LEAD_LABELS as $k => $label) {
         if ($lead[$k] !== '') {
             $lines[] = "$label : " . $lead[$k];
         }
@@ -118,19 +143,35 @@ if ($recipients) {
     $lines[] = 'Message :';
     $lines[] = $lead['message'];
 
-    $who     = $lead['company'] !== '' ? $lead['company']
-                                       : trim($lead['firstname'] . ' ' . $lead['lastname']);
     $subject = '=?UTF-8?B?' . base64_encode('Devis — ' . ($lead['category'] ?: 'projet')
                                             . ($who !== '' ? " — $who" : '')) . '?=';
-    // En-têtes construits à partir de valeurs validées uniquement : ni le
-    // sujet ni le Reply-To ne peuvent porter de saut de ligne (clean_text les
-    // retire) — pas d'injection d'en-tête possible.
+    // En-têtes construits à partir de valeurs déjà validées : clean_text a
+    // retiré les sauts de ligne, donc aucune injection d'en-tête possible.
+    $host = preg_replace('/[^a-z0-9.\-]/i', '', (string) ($_SERVER['HTTP_HOST'] ?? 'alamstores.ma'));
     @mail(implode(', ', $recipients), $subject, implode("\n", $lines), implode("\r\n", [
-        'From: Site Alam Stores <no-reply@' . preg_replace('/[^a-z0-9.\-]/i', '', (string) ($_SERVER['HTTP_HOST'] ?? 'alamstores.ma')) . '>',
+        'From: Site Alam Stores <no-reply@' . $host . '>',
         'Reply-To: ' . $lead['email'],
         'Content-Type: text/plain; charset=UTF-8',
         'X-Mailer: alamstores',
     ]));
 }
 
-json_out(['ok' => true, 'id' => $id], 201);
+// -------------------------------------------------------------- WhatsApp ---
+// WhatsApp met en gras ce qui est entouré d'astérisques : les intitulés
+// ressortent dans la conversation.
+$lines = ['*Demande de devis — alamstores.ma*', ''];
+foreach (LEAD_LABELS as $k => $label) {
+    if ($lead[$k] !== '') {
+        $lines[] = '*' . $label . '* : ' . $lead[$k];
+    }
+}
+if ($lead['message'] !== '') {
+    $lines[] = '';
+    $lines[] = '*Message :*';
+    $lines[] = $lead['message'];
+}
+
+$number = preg_replace('/\D/', '', (string) cfg('whatsapp', '212600055562'));
+header('Location: https://wa.me/' . $number . '?text=' . rawurlencode(implode("\n", $lines)),
+       true, 303);
+exit;

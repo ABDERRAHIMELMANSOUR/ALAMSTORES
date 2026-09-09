@@ -1,0 +1,3 @@
+# Ces fichiers sont des morceaux de page, pas des pages.
+# Les appeler directement afficherait du HTML tronqué.
+Require all denied

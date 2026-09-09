@@ -1,31 +1,38 @@
-# Alam Stores — static site + back-office
-# The public pages are static HTML. PHP exists in exactly two places, api/ and
-# admin/, and is refused everywhere else. This file sets caching, compression
+# Alam Stores — site PHP + back-office
+# The pages are PHP so the catalogue is rendered by the server. PHP runs at the
+# document root and in api/, admin/ and includes/, and is refused everywhere
+# else — assets/uploads/ above all. This file sets caching, compression
 # and security headers, and restores the hardening that was stripped from the
 # WordPress .htaccess during the compromise (see SECURITY-AUDIT.md §1.5).
 
 # ---------------------------------------------------------------- routing --
-DirectoryIndex index.html
-ErrorDocument 404 /404.html
+DirectoryIndex index.php
+ErrorDocument 404 /404.php
 
 # Never serve a directory listing.
 Options -Indexes
 
-# Extensionless URLs: /pergolas -> /pergolas.html, so links that were indexed
-# under the old WordPress permalinks keep working.
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
+
+  # The pages used to be .html. Send those URLs to the extensionless address
+  # once and for all, so what search engines indexed keeps its ranking.
+  RewriteCond %{THE_REQUEST} "\s/+(.+)\.html[\s?]" [NC]
+  RewriteRule ^ /%1 [R=301,L]
 
   # Strip a trailing slash from what used to be a WordPress permalink.
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteRule ^(.+)/$ /$1 [R=301,L]
 
-  # Serve the matching .html file.
+  # Extensionless URLs: /pergolas -> /pergolas.php. Internal links carry the
+  # .php extension so the site still works if this module is unavailable; the
+  # canonical tag on every page points at the extensionless address.
   RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteCond %{REQUEST_FILENAME}\.html -f
-  RewriteRule ^(.+)$ $1.html [L]
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME}\.php -f
+  RewriteRule ^(.+)$ $1.php [L]
 </IfModule>
 
 # --------------------------------------------------------------- security --
@@ -35,12 +42,13 @@ Options -Indexes
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
   Header always set Permissions-Policy "geolocation=(), microphone=(), camera=(), interest-cohort=()"
 
-  # Scoped to .html so the PHP back-office can send its own, slightly wider
-  # policy (an "always set" here would overwrite whatever PHP sets).
-  # The only third parties are the YouTube player and its thumbnails, both
-  # loaded on demand when a visitor opens a product video.
-  <FilesMatch "\.html$">
-    Header always set Content-Security-Policy "default-src 'self'; img-src 'self' data: https://i.ytimg.com; style-src 'self'; script-src 'self'; font-src 'self'; connect-src 'self'; frame-src https://www.youtube-nocookie.com; form-action 'self'; frame-ancestors 'self'; base-uri 'self'; object-src 'none'"
+  # Applies to the public pages. admin/.htaccess redefines it for the
+  # back-office, which needs a wider policy for its inline script — an
+  # "always set" here would otherwise overwrite what PHP sends.
+  # reCAPTCHA needs google.com and gstatic.com; the product pop-up needs the
+  # YouTube frame and its thumbnails. Nothing else is allowed.
+  <FilesMatch "\.php$">
+    Header always set Content-Security-Policy "default-src 'self'; img-src 'self' data: https://i.ytimg.com https://www.gstatic.com; style-src 'self' 'unsafe-inline'; script-src 'self' https://www.google.com https://www.gstatic.com; font-src 'self'; connect-src 'self'; frame-src https://www.youtube-nocookie.com https://www.google.com; form-action 'self'; frame-ancestors 'self'; base-uri 'self'; object-src 'none'"
   </FilesMatch>
 
   Header always unset X-Powered-By
@@ -108,7 +116,7 @@ RedirectMatch 404 ^/\.github(/.*)?$
   <FilesMatch "\.(css|js|jpg|jpeg|png|gif|webp|svg|woff2?|ttf)$">
     Header set Cache-Control "public, max-age=31536000, immutable"
   </FilesMatch>
-  <FilesMatch "\.html$">
+  <FilesMatch "\.(html|php)$">
     Header set Cache-Control "public, max-age=0, must-revalidate"
   </FilesMatch>
 </IfModule>

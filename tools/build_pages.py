@@ -23,6 +23,7 @@ Showroom contact details live in CONTACT below.
 Usage:  python3 tools/build_pages.py
 """
 
+import datetime
 import html
 import json
 import os
@@ -188,8 +189,44 @@ def nav_label(slug):
     return NAV_LABELS.get(slug, TITLES[slug])
 
 
+# Pages are PHP so the catalogue can be rendered by the server. Links keep the
+# extension: they work even on a host where mod_rewrite is off. The canonical
+# URL stays extensionless (/pergolas), which is what search engines indexed.
+PAGE_EXT = ".php"
+
+
 def href(slug):
-    return "index.html" if slug == "home" else slug + ".html"
+    return ("index" if slug == "home" else slug) + PAGE_EXT
+
+
+def canonical(slug):
+    return SITE_URL + ("/" if slug == "home" else "/" + slug)
+
+
+def php_str(value):
+    """A single-quoted PHP string literal."""
+    return "'" + str(value).replace("\\", "\\\\").replace("'", "\\'") + "'"
+
+
+def fix_links(text):
+    """Rewrite the .html link targets left in the markup templates to PAGE_EXT.
+
+    The templates were written when the site was static; this keeps them
+    readable while letting PAGE_EXT decide the real extension.
+    """
+    return re.sub(
+        r'href="([a-z0-9-]+)\.html"',
+        lambda m: 'href="%s"' % href("home" if m.group(1) == "index" else m.group(1)),
+        text)
+
+
+def dslug(slug):
+    """Marks a navigation link so the current page can highlight itself.
+
+    Matching on the slug rather than on the URL keeps the highlight working
+    whether the visitor is on /pergolas, /pergolas.php or /pergolas.html.
+    """
+    return ' data-slug="%s"' % esc(slug)
 
 
 def children(slug):
@@ -383,30 +420,37 @@ def product_card(prod, variant=False):
 
 
 def products_section(slug, products):
-    """The catalogue block of a category page.
+    """The catalogue block, rendered by the server from the database.
 
-    Always rendered on a category page, even when the static file holds nothing
-    for it: `data-catalog` is the mount point main.js fills from the database,
-    so a product added in the back-office appears here without a rebuild.
+    The page only carries the call; includes/catalogue.php queries the products
+    entered in the back-office and writes the cards into the HTML. That is what
+    makes a new product visible to a search engine without a rebuild.
     """
     if slug in NON_CATALOGUE:
         return ""
+    return "  <?php alam_catalogue('%s'); ?>\n" % slug
 
-    items = products.get(slug) or []
-    cards = "\n        ".join("<li>%s</li>" % product_card(p) for p in items)
 
-    return """  <section class="section reveal" id="produits" data-catalog="{slug}"{hidden}>
-    <div class="shell">
-      <div class="section-head">
-        <span class="eyebrow">Catalogue</span>
-        <h2>Nos modèles</h2>
-      </div>
-      <ul class="product-grid" data-catalog-list>
-        {cards}
-      </ul>
-    </div>
-  </section>
-""".format(slug=esc(slug), cards=cards, hidden="" if items else " hidden")
+def catalogue_static_php(products):
+    """includes/catalogue-static.php — the cards as they stood at build time.
+
+    Used only when the database is unreachable, so a hiccup on the database
+    never blanks out the catalogue on a live page.
+    """
+    entries = []
+    for slug, items in sorted(products.items()):
+        if slug in NON_CATALOGUE:
+            continue
+        cards = "".join("<li>%s</li>" % product_card(p) for p in items)
+        if cards:
+            entries.append("    %s => <<<'HTML'\n%s\nHTML,\n"
+                           % (php_str(slug), cards))
+    return ("<?php\n"
+            "/**\n"
+            " * Repli du catalogue, généré par tools/build_pages.py.\n"
+            " * Sert uniquement quand la base est injoignable.\n"
+            " */\n"
+            "return [\n%s];\n" % "".join(entries))
 
 
 # --------------------------------------------------------------------------
@@ -434,23 +478,26 @@ def nav_tree_html():
     for slug in NAV_TOP:
         kids = children(slug)
         if not kids:
-            out.append('<li class="nav__item"><a class="nav__link" href="%s">%s</a></li>'
-                       % (href(slug), esc(nav_label(slug))))
+            out.append('<li class="nav__item"><a class="nav__link" href="%s"%s>%s</a></li>'
+                       % (href(slug), dslug(slug), esc(nav_label(slug))))
             continue
         subs = []
         for k in kids:
             gk = children(k)
             if gk:
-                inner = "".join('<li><a href="%s">%s</a></li>' % (href(g), esc(nav_label(g)))
-                                for g in gk)
-                subs.append('<li class="nav__item"><a href="%s">%s %s</a>'
+                inner = "".join('<li><a href="%s"%s>%s</a></li>'
+                                % (href(g), dslug(g), esc(nav_label(g))) for g in gk)
+                subs.append('<li class="nav__item"><a href="%s"%s>%s %s</a>'
                             '<ul class="nav__sub">%s</ul></li>'
-                            % (href(k), esc(nav_label(k)), icon("chevron-right", "nav__caret"), inner))
+                            % (href(k), dslug(k), esc(nav_label(k)),
+                               icon("chevron-right", "nav__caret"), inner))
             else:
-                subs.append('<li><a href="%s">%s</a></li>' % (href(k), esc(nav_label(k))))
-        out.append('<li class="nav__item"><a class="nav__link" href="%s">%s %s</a>'
+                subs.append('<li><a href="%s"%s>%s</a></li>'
+                            % (href(k), dslug(k), esc(nav_label(k))))
+        out.append('<li class="nav__item"><a class="nav__link" href="%s"%s>%s %s</a>'
                    '<ul class="nav__sub">%s</ul></li>'
-                   % (href(slug), esc(nav_label(slug)), icon("chevron-down", "nav__caret"), "".join(subs)))
+                   % (href(slug), dslug(slug), esc(nav_label(slug)),
+                      icon("chevron-down", "nav__caret"), "".join(subs)))
     return "\n            ".join(out)
 
 
@@ -459,15 +506,17 @@ def drawer_tree_html():
     for slug in NAV_TOP:
         kids = children(slug)
         if not kids:
-            out.append('<li><div class="drawer__row"><a href="%s">%s</a></div></li>'
-                       % (href(slug), esc(nav_label(slug))))
+            out.append('<li><div class="drawer__row"><a href="%s"%s>%s</a></div></li>'
+                       % (href(slug), dslug(slug), esc(nav_label(slug))))
             continue
         subs = []
         for k in kids:
             gk = children(k)
-            subs.append('<li><a href="%s">%s</a></li>' % (href(k), esc(nav_label(k))))
+            subs.append('<li><a href="%s"%s>%s</a></li>'
+                        % (href(k), dslug(k), esc(nav_label(k))))
             for g in gk:
-                subs.append('<li><a href="%s">&nbsp;&nbsp;%s</a></li>' % (href(g), esc(nav_label(g))))
+                subs.append('<li><a href="%s"%s>&nbsp;&nbsp;%s</a></li>'
+                            % (href(g), dslug(g), esc(nav_label(g))))
         out.append(
             '<li>'
             '<div class="drawer__row"><a href="{h}">{t}</a>'
@@ -902,17 +951,46 @@ def showroom_card():
 
 
 def quote_form():
-    statuts = "".join(
-        '<option value="%s"%s>%s</option>'
-        % (esc(label), ' data-b2b="1"' if is_b2b else "", esc(label))
-        for label, is_b2b in STATUTS)
-    cats = "".join('<option value="%s">%s</option>' % (esc(c), esc(c))
-                   for c in FORM_CATEGORIES)
+    """Generates includes/quote-form.php.
 
-    return """  <section class="section" style="padding-top:clamp(24px,3vw,36px)">
+    The form posts to api/lead.php like an ordinary HTML form, so it works with
+    JavaScript switched off. PHP repopulates the fields and shows the errors
+    when a submission comes back refused — which is what `alam_old` and
+    `alam_err` are doing in the markup below.
+    """
+    statuts = "".join(
+        "<option value=\"%s\"%s<?= alam_selected('statut', '%s') ?>>%s</option>"
+        % (esc(label), ' data-b2b="1"' if is_b2b else "", esc(label), esc(label))
+        for label, is_b2b in STATUTS)
+    cats = "".join(
+        "<option value=\"%s\"<?= alam_selected('category', '%s') ?>>%s</option>"
+        % (esc(c), esc(c), esc(c)) for c in FORM_CATEGORIES)
+
+    def field(name, label, kind="text", required=False, extra="", full=False, hint=""):
+        req = ' <span class="req" aria-hidden="true">*</span>' if required else ""
+        return """              <div class="field{full}">
+                <label for="f-{n}">{label}{req}</label>
+                <input id="f-{n}" name="{n}" type="{kind}"{required}{extra}
+                       value="<?= alam_old('{n}'{default}) ?>">
+                <span class="field__error" data-error-for="{n}"><?= alam_err('{n}') ?></span>
+              </div>
+""".format(n=name, label=label, req=req, kind=kind, full=" field--full" if full else "",
+           required=" required" if required else "", extra=(" " + extra) if extra else "",
+           default=(", '%s'" % hint) if hint else "")
+
+    return """<?php
+/**
+ * Formulaire de devis. Généré par tools/build_pages.py — ne pas éditer ici.
+ * Les listes déroulantes viennent de STATUTS et FORM_CATEGORIES.
+ */
+require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/recaptcha.php';
+$flash = alam_flash();
+?>
+  <section class="section" style="padding-top:clamp(24px,3vw,36px)">
     <div class="shell">
       <form class="form-card" id="devis-form" data-quote-form novalidate
-            data-whatsapp="{whatsapp}">
+            method="post" action="api/lead.php" data-whatsapp="{whatsapp}">
         <div class="form-card__head">
           <h2>Demande de devis</h2>
           <p>Particuliers, entreprises, architectes et revendeurs : décrivez votre
@@ -922,6 +1000,9 @@ def quote_form():
         </div>
 
         <div class="form-card__body">
+<?php if (!empty($flash['message'])): ?>
+          <p class="form-status is-error" role="alert"><?= alam_e($flash['message']) ?></p>
+<?php endif; ?>
           <fieldset class="fieldset">
             <legend class="fieldset__title">Votre projet</legend>
             <p class="fieldset__hint">Ces trois champs nous suffisent pour vous orienter.</p>
@@ -929,24 +1010,25 @@ def quote_form():
               <div class="field">
                 <label for="f-statut">Statut professionnel <span class="req" aria-hidden="true">*</span></label>
                 <select id="f-statut" name="statut" required data-statut>{statuts}</select>
-                <span class="field__error" data-error-for="statut"></span>
+                <span class="field__error" data-error-for="statut"><?= alam_err('statut') ?></span>
               </div>
               <div class="field">
                 <label for="f-category">Catégorie <span class="req" aria-hidden="true">*</span></label>
                 <select id="f-category" name="category" required>{cats}</select>
-                <span class="field__error" data-error-for="category"></span>
+                <span class="field__error" data-error-for="category"><?= alam_err('category') ?></span>
               </div>
-              <div class="field field--full" data-b2b-field hidden>
+              <div class="field field--full" data-b2b-field<?= alam_old('company') !== '' ? '' : ' hidden' ?>>
                 <label for="f-company">Nom de l'entreprise <span class="req" aria-hidden="true">*</span></label>
                 <input id="f-company" name="company" type="text" autocomplete="organization"
-                       placeholder="Raison sociale, cabinet ou enseigne">
-                <span class="field__error" data-error-for="company"></span>
+                       placeholder="Raison sociale, cabinet ou enseigne"
+                       value="<?= alam_old('company') ?>">
+                <span class="field__error" data-error-for="company"><?= alam_err('company') ?></span>
               </div>
               <div class="field field--full">
                 <label for="f-message">Message <span class="req" aria-hidden="true">*</span></label>
                 <textarea id="f-message" name="message" rows="5" required
-                  placeholder="Nombre d'ouvertures, dimensions approximatives, pièce concernée, orientation, commande manuelle ou motorisée, délai souhaité…"></textarea>
-                <span class="field__error" data-error-for="message"></span>
+                  placeholder="Nombre d'ouvertures, dimensions approximatives, pièce concernée, orientation, commande manuelle ou motorisée, délai souhaité…"><?= alam_old('message') ?></textarea>
+                <span class="field__error" data-error-for="message"><?= alam_err('message') ?></span>
               </div>
             </div>
           </fieldset>
@@ -955,44 +1037,12 @@ def quote_form():
             <legend class="fieldset__title">Vos coordonnées</legend>
             <p class="fieldset__hint">Pour vous recontacter et, si besoin, planifier la prise de mesures.</p>
             <div class="field-grid">
-              <div class="field">
-                <label for="f-firstname">Prénom <span class="req" aria-hidden="true">*</span></label>
-                <input id="f-firstname" name="firstname" type="text" required autocomplete="given-name">
-                <span class="field__error" data-error-for="firstname"></span>
-              </div>
-              <div class="field">
-                <label for="f-lastname">Nom <span class="req" aria-hidden="true">*</span></label>
-                <input id="f-lastname" name="lastname" type="text" required autocomplete="family-name">
-                <span class="field__error" data-error-for="lastname"></span>
-              </div>
-              <div class="field">
-                <label for="f-email">E-mail <span class="req" aria-hidden="true">*</span></label>
-                <input id="f-email" name="email" type="email" required autocomplete="email">
-                <span class="field__error" data-error-for="email"></span>
-              </div>
-              <div class="field">
-                <label for="f-phone">Téléphone <span class="req" aria-hidden="true">*</span></label>
-                <input id="f-phone" name="phone" type="tel" required autocomplete="tel">
-                <span class="field__error" data-error-for="phone"></span>
-              </div>
-              <div class="field">
-                <label for="f-country">Pays</label>
-                <input id="f-country" name="country" type="text" value="Maroc" autocomplete="country-name">
-              </div>
-              <div class="field">
-                <label for="f-city">Ville</label>
-                <input id="f-city" name="city" type="text" autocomplete="address-level2">
-              </div>
-              <div class="field">
-                <label for="f-address">Adresse</label>
-                <input id="f-address" name="address" type="text" autocomplete="street-address">
-              </div>
-              <div class="field">
-                <label for="f-zip">Code postal</label>
-                <input id="f-zip" name="zip" type="text" autocomplete="postal-code" inputmode="numeric">
-              </div>
-            </div>
+{coords}            </div>
           </fieldset>
+
+          <div class="field-grid">
+<?php alam_recaptcha_widget(); ?>
+          </div>
 
           <div class="form-nav">
             <button class="btn btn--primary btn--lg" type="submit">
@@ -1004,12 +1054,24 @@ def quote_form():
              Pas de WhatsApp&nbsp;? &Eacute;crivez-nous &agrave;
              <a href="mailto:{email}">{email}</a>.</p>
         </div>
+        <input type="text" name="website" tabindex="-1" autocomplete="off"
+               aria-hidden="true" style="position:absolute;left:-9999px">
       </form>
     </div>
   </section>
 """.format(whatsapp=esc(CONTACT["whatsapp"]), email=esc(CONTACT["email"]),
            phone=esc(CONTACT["whatsapp_display"]), statuts=statuts, cats=cats,
-           wapp=icon("whatsapp"))
+           wapp=icon("whatsapp"),
+           coords="".join([
+               field("firstname", "Prénom", required=True, extra='autocomplete="given-name"'),
+               field("lastname", "Nom", required=True, extra='autocomplete="family-name"'),
+               field("email", "E-mail", kind="email", required=True, extra='autocomplete="email"'),
+               field("phone", "Téléphone", kind="tel", required=True, extra='autocomplete="tel"'),
+               field("country", "Pays", extra='autocomplete="country-name"', hint="Maroc"),
+               field("city", "Ville", extra='autocomplete="address-level2"'),
+               field("address", "Adresse", extra='autocomplete="street-address"'),
+               field("zip", "Code postal", extra='autocomplete="postal-code" inputmode="numeric"'),
+           ]))
 
 
 # --------------------------------------------------------------------------
@@ -1076,38 +1138,96 @@ def footer_html():
 # Page assembly
 # --------------------------------------------------------------------------
 
-PAGE = """<!DOCTYPE html>
+# Each page is a thin PHP file: the metadata it needs, then the shared header,
+# its own body, then the shared footer. Chrome lives in includes/ and is edited
+# in one place.
+PAGE = """<?php
+/**
+ * {comment}
+ * Généré par tools/build_pages.py — les modifications faites ici seront perdues.
+ */
+$page = [
+    'slug'        => {slug},
+    'title'       => {title},
+    'description' => {description},
+    'canonical'   => {canonical},
+    'og_image'    => {og_image},
+    'jsonld'      => {jsonld},
+];
+require __DIR__ . '/includes/header.php';
+?>
+{content}<?php require __DIR__ . '/includes/footer.php';
+"""
+
+HEADER_PARTIAL = """<?php
+/**
+ * En-tête commun à toutes les pages. Généré par tools/build_pages.py.
+ * $page est défini par la page appelante.
+ */
+require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/icons.php';
+require_once __DIR__ . '/catalogue.php';
+
+$page = (array) ($page ?? []);
+$slug = (string) ($page['slug'] ?? '');
+
+// Lu ici, avant la première ligne de HTML : une session ne peut plus s'ouvrir
+// une fois les en-têtes partis. Le formulaire de devis s'en sert plus bas pour
+// réafficher la saisie et les erreurs d'un envoi refusé.
+alam_flash();
+?><!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{title}</title>
-<meta name="description" content="{description}">
-<link rel="canonical" href="{canonical}">
+<title><?= alam_e($page['title'] ?? '{site}') ?></title>
+<meta name="description" content="<?= alam_e($page['description'] ?? '') ?>">
+<link rel="canonical" href="<?= alam_e($page['canonical'] ?? '') ?>">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="{site}">
 <meta property="og:locale" content="fr_FR">
-<meta property="og:title" content="{title}">
-<meta property="og:description" content="{description}">
-<meta property="og:url" content="{canonical}">
-<meta property="og:image" content="{og_image}">
+<meta property="og:title" content="<?= alam_e($page['title'] ?? '') ?>">
+<meta property="og:description" content="<?= alam_e($page['description'] ?? '') ?>">
+<meta property="og:url" content="<?= alam_e($page['canonical'] ?? '') ?>">
+<meta property="og:image" content="<?= alam_e($page['og_image'] ?? '') ?>">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#7d0e7c">
 <link rel="icon" href="{logo}" type="image/png">
 <link rel="apple-touch-icon" href="{logo}">
 <link rel="preload" as="style" href="assets/css/main.min.css">
 <link rel="stylesheet" href="assets/css/main.min.css">
-{jsonld}</head>
-<body class="page-{slug}">
+<?= $page['jsonld'] ?? '' ?></head>
+<body class="page-<?= alam_e($slug) ?>" data-slug="<?= alam_e($slug) ?>">
 <a id="top"></a>
-{header}
-<main id="main">
-{content}</main>
-{footer}
-<script src="assets/js/main.min.js" defer></script>
+{header}<main id="main">
+"""
+
+FOOTER_PARTIAL = """<?php
+/**
+ * Pied de page commun. Généré par tools/build_pages.py.
+ */
+?></main>
+{footer}<script src="assets/js/main.min.js" defer></script>
 </body>
 </html>
 """
+
+
+def icons_php():
+    """includes/icons.php — the same SVG set the generator uses."""
+    from icons import _PATHS  # noqa: WPS433  (generation-time import)
+    rows = "".join("    %s => %s,\n" % (php_str(name), php_str(icon(name)))
+                   for name in sorted(_PATHS))
+    return ("<?php\n"
+            "/**\n"
+            " * Jeu d'icônes SVG, généré par tools/build_pages.py depuis tools/icons.py.\n"
+            " */\n"
+            "$ALAM_ICONS = [\n%s];\n\n"
+            "function alam_icon(string $name): string\n"
+            "{\n"
+            "    global $ALAM_ICONS;\n"
+            "    return $ALAM_ICONS[$name] ?? '';\n"
+            "}\n" % rows)
 
 
 def meta_description(slug, title):
@@ -1127,7 +1247,7 @@ def jsonld_for(slug):
                 "@type": "ListItem",
                 "position": i + 1,
                 "name": TITLES[s],
-                "item": "%s/%s" % (SITE_URL, "" if s == "home" else s + "/"),
+                "item": canonical(s),
             } for i, s in enumerate(trail)],
         })
 
@@ -1152,12 +1272,25 @@ def jsonld_for(slug):
                    % json.dumps(b, ensure_ascii=False, separators=(",", ":")) for b in blocks)
 
 
+def write(rel_path, text):
+    full = os.path.join(ROOT, rel_path)
+    os.makedirs(os.path.dirname(full), exist_ok=True)
+    with open(full, "w", encoding="utf-8", newline="\n") as fh:
+        fh.write(text)
+
+
 def build():
     sitemap = load_sitemap()
     products = load_products()
-    header = header_html()
-    footer = footer_html()
     written = []
+
+    # ---- shared chrome, written once and included by every page ------------
+    write("includes/header.php", fix_links(HEADER_PARTIAL.format(
+        site=esc(SITE_NAME), logo=LOGO, header=header_html())))
+    write("includes/footer.php", fix_links(FOOTER_PARTIAL.format(footer=footer_html())))
+    write("includes/icons.php", icons_php())
+    write("includes/quote-form.php", fix_links(quote_form()))
+    write("includes/catalogue-static.php", fix_links(catalogue_static_php(products)))
 
     for slug, title, parent in PAGES:
         images = sitemap.get(slug, [])
@@ -1176,7 +1309,7 @@ def build():
         elif slug == "devis":
             body.append(page_hero_html(slug))
             body.append(showroom_card())
-            body.append(quote_form())
+            body.append("  <?php require __DIR__ . '/includes/quote-form.php'; ?>\n")
             body.append(prose_section(slug, with_aside=False, skip_lead=True, center=True))
         elif slug == "partenaires":
             body.append(page_hero_html(slug))
@@ -1192,27 +1325,30 @@ def build():
 
         og = images[0] if images else None
         out = PAGE.format(
-            title=esc(("%s | %s" % (title, SITE_NAME)) if slug != "home"
-                      else ("%s | %s" % (SITE_NAME, SITE_TAGLINE))),
-            description=esc(meta_description(slug, title)),
-            canonical="%s/%s" % (SITE_URL, "" if slug == "home" else slug + "/"),
-            og_image="%s/assets/images/%s" % (SITE_URL, og) if og else "%s/%s" % (SITE_URL, LOGO),
-            site=esc(SITE_NAME), logo=LOGO, slug=slug,
-            jsonld=jsonld_for(slug), header=header,
-            content="".join(x for x in body if x), footer=footer)
+            comment=esc(TITLES[slug]),
+            slug=php_str(slug),
+            title=php_str(("%s | %s" % (title, SITE_NAME)) if slug != "home"
+                          else ("%s | %s" % (SITE_NAME, SITE_TAGLINE))),
+            description=php_str(meta_description(slug, title)),
+            canonical=php_str(canonical(slug)),
+            og_image=php_str("%s/assets/images/%s" % (SITE_URL, og) if og
+                             else "%s/%s" % (SITE_URL, LOGO)),
+            jsonld=php_str(jsonld_for(slug)),
+            content=fix_links("".join(x for x in body if x)))
 
-        with open(os.path.join(ROOT, href(slug)), "w", encoding="utf-8") as fh:
-            fh.write(out)
+        write(href(slug), out)
         written.append((href(slug), len(images)))
 
-    # 404
-    not_found = PAGE.format(
-        title=esc("Page introuvable | " + SITE_NAME),
-        description=esc("La page demandée est introuvable."),
-        canonical=SITE_URL + "/404.html",
-        og_image="%s/%s" % (SITE_URL, LOGO),
-        site=esc(SITE_NAME), logo=LOGO, slug="404", jsonld="", header=header,
-        content="""  <section class="page-hero">
+    # ---- 404 ---------------------------------------------------------------
+    write("404.php", PAGE.format(
+        comment="Page introuvable",
+        slug=php_str("404"),
+        title=php_str("Page introuvable | " + SITE_NAME),
+        description=php_str("La page demandée est introuvable."),
+        canonical=php_str(SITE_URL + "/404"),
+        og_image=php_str("%s/%s" % (SITE_URL, LOGO)),
+        jsonld=php_str(""),
+        content=fix_links("""  <section class="page-hero">
     <div class="shell page-hero__inner">
       <ol class="crumbs"><li><a href="index.html">Accueil</a></li>
         <li class="sep" aria-hidden="true">{chev}</li><li aria-current="page">Erreur 404</li></ol>
@@ -1228,15 +1364,38 @@ def build():
       </div>
     </div>
   </section>
-""".format(chev=icon("chevron-right"), arrow=icon("arrow-right")),
-        footer=footer)
-    with open(os.path.join(ROOT, "404.html"), "w", encoding="utf-8") as fh:
-        fh.write(not_found)
+""".format(chev=icon("chevron-right"), arrow=icon("arrow-right")))))
 
-    print("Generated %d pages + 404.html" % len(written))
+    # ---- sitemap, aligned on the canonical URLs ----------------------------
+    today = datetime.date.today().isoformat()
+    urls = []
+    for slug, _title, _parent in PAGES:
+        depth = len(ancestors(slug))
+        urls.append("  <url>\n    <loc>%s</loc>\n    <lastmod>%s</lastmod>\n"
+                    "    <changefreq>monthly</changefreq>\n    <priority>%.1f</priority>\n  </url>"
+                    % (canonical(slug), today, 1.0 if slug == "home" else max(0.5, 1.1 - 0.1 * depth)))
+    write("sitemap.xml",
+          '<?xml version="1.0" encoding="UTF-8"?>\n'
+          '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+          + "\n".join(urls) + "\n</urlset>\n")
+
+    # ---- the static pages this replaces ------------------------------------
+    removed = 0
+    for slug, _title, _parent in PAGES:
+        old = os.path.join(ROOT, ("index" if slug == "home" else slug) + ".html")
+        if os.path.exists(old):
+            os.remove(old)
+            removed += 1
+    for stale in ("404.html",):
+        if os.path.exists(os.path.join(ROOT, stale)):
+            os.remove(os.path.join(ROOT, stale))
+            removed += 1
+
+    print("Generated %d pages + 404.php" % len(written))
+    if removed:
+        print("Removed %d superseded .html file(s)" % removed)
     for name, n in written:
         print("  %-34s %2d image(s)" % (name, n))
-
 
 if __name__ == "__main__":
     build()

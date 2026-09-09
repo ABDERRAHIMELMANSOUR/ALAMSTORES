@@ -33,8 +33,9 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MANIFEST = os.path.join(ROOT, "tools", "data", "php-manifest.json")
 
-# Les seuls dossiers où du PHP a le droit d'exister.
-PHP_ALLOWED = ("api/", "admin/", "tools/")
+# Les seuls dossiers où du PHP a le droit d'exister, en plus des pages du site
+# à la racine. Tout le reste — assets/uploads/ en tête — est suspect.
+PHP_ALLOWED = ("api/", "admin/", "includes/", "tools/")
 
 SKIP_DIRS = {".git", "node_modules", ".idea", ".vscode"}
 
@@ -137,11 +138,15 @@ def scan():
     for full, rel in walk():
         lower = rel.lower()
 
-        # 1. du code exécutable là où il ne devrait pas y en avoir
-        if lower.endswith(CODE_EXT) and not rel.startswith(PHP_ALLOWED):
+        # 1. du code exécutable là où il ne devrait pas y en avoir.
+        # Les pages du site sont des .php à la racine : c'est le seul endroit
+        # hors des dossiers autorisés où l'on en attend.
+        at_root = "/" not in rel
+        if lower.endswith(CODE_EXT) and not rel.startswith(PHP_ALLOWED) \
+                and not (at_root and lower.endswith(".php")):
             findings.append(("critique", rel,
                              "fichier exécutable hors des dossiers autorisés "
-                             "(api/, admin/, tools/)"))
+                             "(racine, api/, admin/, includes/, tools/)"))
 
         if not lower.endswith((".php", ".phtml", ".html", ".htm", ".js", ".htaccess")) \
                 and not lower.endswith(CODE_EXT):

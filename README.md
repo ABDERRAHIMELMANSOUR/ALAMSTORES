@@ -1,16 +1,27 @@
-# Alam Stores — site statique + back-office
+# Alam Stores — site PHP + back-office
 
-Static HTML/CSS/JS rebuild of the `alamstores.ma` WordPress installation, plus
-a small PHP/MySQL back-office for the product catalogue and the incoming quote
-requests. No WordPress, no plugins, no theme — the public pages stay flat HTML
-and the dynamic part is confined to two folders.
+PHP/MySQL rebuild of the `alamstores.ma` WordPress installation. No WordPress,
+no plugins, no theme — 25 pages, a back-office for the catalogue and the quote
+requests, and about 2 000 lines you can read in a sitting.
+
+**Installing this on a server?** `INSTALLATION.md` is the step-by-step guide, in
+French — cPanel, FileZilla, the database and the web installer.
 
 ```
-index.html                 Accueil
-societe.html               … 24 further pages, one per original URL
-404.html
+index.php                  Accueil
+societe.php                … 24 further pages, one per original URL
+404.php
 admin.html                 redirect to /admin/ (old bookmark)
 sitemap.xml  robots.txt  .htaccess
+
+includes/                  the shared chrome, generated except where noted
+  header.php  footer.php   <head>, top bar, nav, drawer / footer, scripts
+  bootstrap.php            helpers, database access, flash messages (hand-written)
+  catalogue.php            renders the products from the database (hand-written)
+  recaptcha.php            widget + verification (hand-written)
+  quote-form.php           the devis form
+  icons.php                the SVG set
+  catalogue-static.php     the catalogue as it stood at build time (fallback)
 
 assets/
   css/main.min.css         one stylesheet
@@ -21,6 +32,7 @@ assets/
   fonts/                   4 files, Plus Jakarta Sans (84 KB total)
 
 admin/index.php            the back-office (login required)
+admin/setup.php            the installer — delete it once you are in
 api/                       JSON endpoints — catalogue, leads, admin CRUD
 db/schema.sql              database schema + seed_categories.sql
 
@@ -28,14 +40,39 @@ tools/                     build scripts + page copy (not web content)
 SECURITY-AUDIT.md          malware findings from the WordPress export
 ```
 
-**Installing this on a server?** `INSTALLATION.md` is the step-by-step guide,
-in French — cPanel, FileZilla, the database and the web installer.
+## How a page is put together
 
-**The public pages work with or without the back-end.** Each category page
-carries the catalogue that was baked in at build time, then refreshes it from
-`api/catalog.php` on load. If PHP or the database is unavailable the fetch
-fails silently and the built-in cards stay on screen — the site never breaks
-because the back-office is down.
+`tools/build_pages.py` generates the pages from the model in that file plus the
+copy in `tools/content_fr.py`. Each generated page is thin — its metadata, then
+the shared header, its own body, then the shared footer:
+
+```php
+$page = ['slug' => 'pergolas', 'title' => …, 'canonical' => …];
+require __DIR__ . '/includes/header.php';
+?>
+  …the body…
+<?php require __DIR__ . '/includes/footer.php';
+```
+
+**The catalogue is written by the server.** `includes/catalogue.php` queries the
+products entered in the back-office and writes the cards straight into the HTML,
+so a search engine sees them without running JavaScript and publishing a product
+needs no rebuild. If the database is unreachable the cards frozen at build time
+(`includes/catalogue-static.php`) take over, so a database hiccup never blanks
+out a page. With no `api/config.php` at all — the state right after an FTP
+upload — every page still renders in full.
+
+## URLs
+
+Internal links carry the `.php` extension, so the site works even where
+`mod_rewrite` is unavailable. The canonical tag on every page points at the
+extensionless address (`https://alamstores.ma/pergolas`), which is what search
+engines indexed, and `.htaccess` maps `/pergolas` to `/pergolas.php` and
+301-redirects the old `/pergolas.html` there. `sitemap.xml` is generated from
+the same `canonical()` helper, so the three can not drift apart.
+
+Prefer extensionless internal links? Change `PAGE_EXT` in
+`tools/build_pages.py` and `ALAM_LINK_DEVIS` in `includes/bootstrap.php`.
 
 ## Design system
 
@@ -83,7 +120,7 @@ and 1.9 MB of font files, now 37 KB and 84 KB.**
 |---|---|
 | `wp-content/uploads` media | `assets/images/` |
 | Page list + per-page images | recovered from the Rank Math sitemap cache |
-| URL structure | unchanged — one `.html` per original URL |
+| URL structure | unchanged — one page per original URL, `.html` 301s to it |
 | Logo, brand colour `#7d0e7c` | `assets/images/2019/05/Logo-stores-rideaux-maroc.png`, sampled from it |
 | Partner logos | `PARTNER_LOGOS` in `tools/build_pages.py` |
 
@@ -134,7 +171,7 @@ all 26 pages.
 
 ## Calls to action
 
-Every quote CTA points at `devis.html`. There is exactly **one** on a page —
+Every quote CTA points at `devis.php`. There is exactly **one** on a page —
 "Devis gratuit" in the header — plus the hero and CTA-band buttons further down.
 The top bar carries no button any more (address, phone and hours only), and the
 category cards carry no "Devis" button either: the whole card is the link to its
@@ -150,17 +187,17 @@ It also shows as a **contact channel** in the contact lists and the showroom
 card, next to the address, phone, e-mail and opening hours — a labelled row
 showing the number, not a button.
 
-`motorisations-automatismes.html` is no longer in the navbar or the mobile
-drawer. The page is untouched at its original URL, stays in `sitemap.xml`, and
-is still linked from the footer — drop the slug back into `NAV_TOP` in
-`tools/build_pages.py` to restore it.
+`motorisations-automatismes.php` is no longer in the navbar or the mobile
+drawer, nor in the footer. The page still answers at its URL and stays in
+`sitemap.xml`, but nothing on the site links to it any more — drop the slug back
+into `NAV_TOP` in `tools/build_pages.py` to restore it.
 
 The "Galerie / Nos réalisations" section has been removed from every page. The
 builder still has `gallery_html()` if you ever want it back; nothing calls it.
 
 ## The B2B quote form
 
-`devis.html` opens with a showroom card (address, phone + WhatsApp, opening
+`devis.php` opens with a showroom card (address, phone + WhatsApp, opening
 hours) and then a single clean form aimed at both retail and trade buyers.
 
 **Votre projet** — Statut professionnel (Particulier / Entreprise ·
@@ -171,25 +208,55 @@ makes it required; switching back to Particulier hides and clears it.
 **Vos coordonnées** — Prénom, Nom, E-mail, Téléphone, Pays (defaults to Maroc),
 Ville, Adresse, Code postal.
 
-**Envoyer ma demande** does two things: it appends the submission to a local
-lead log, then sends the visitor straight to WhatsApp — `https://wa.me/<number>`
-with the whole request pre-filled as the message, ready to send in one tap. The
-number comes from the `data-whatsapp` attribute on the form, which the builder
-fills from `CONTACT["whatsapp"]`.
+It is an ordinary HTML form: `method="post" action="api/lead.php"`. **It works
+with JavaScript switched off.** The script only validates before the round trip
+and fetches the reCAPTCHA token; the server does the real work:
 
-Every filled field is in that message, in order and labelled — statut,
+1. verify the reCAPTCHA;
+2. check the fields, and on failure send the visitor back to the form with
+   everything they typed and a message per field — nothing is retyped;
+3. store the request in the `leads` table;
+4. e-mail every address in `notify_email`;
+5. redirect to `https://wa.me/<number>` with the whole request pre-filled.
+
+Every filled field is in that WhatsApp message, in order and labelled — statut,
 entreprise, catégorie, prénom, nom, e-mail, téléphone, adresse, code postal,
 ville, pays, then the message itself. Labels are wrapped in `*…*` so WhatsApp
 renders them bold. Empty optional fields are left out rather than sent blank.
 
-If the redirect is blocked — a pop-up blocker, an in-app browser — the status
-line under the button keeps an **Ouvrir WhatsApp** link carrying the same
-pre-filled URL, so the visitor still gets through in one tap. Visitors without
-WhatsApp have the e-mail address right below, in the form note.
+If the database is down the request still goes out by e-mail and WhatsApp: the
+failure is logged and the visitor is redirected as usual. You lose the row, not
+the client.
+
+A hidden `website` field is the honeypot. A robot that fills it gets a polite
+redirect and nothing is written.
 
 Categories in the form are wider than the page tree on purpose — `Rideaux` and
 `Autre / Projet mixte` are offered without having a dedicated page. Edit
 `FORM_CATEGORIES` and `STATUTS` in `tools/build_pages.py`.
+
+### reCAPTCHA
+
+Configured in `api/config.php` — the installer asks for the keys, or you paste
+them in later:
+
+```php
+'recaptcha' => [
+    'site_key'   => '…',   // public, appears in the page HTML
+    'secret_key' => '…',   // NEVER commit this one
+    'version'    => 'v2',  // 'v2' checkbox, or 'v3' invisible
+    'min_score'  => 0.5,   // v3 only
+],
+```
+
+Both variants are supported. **v2** draws the "Je ne suis pas un robot" box;
+**v3** is invisible and returns a score, checked against `min_score`. The
+front-end reads `data-version` on the widget and does the right thing.
+
+Two deliberate fail-open choices: with `secret_key` empty the check is skipped
+entirely (so a half-finished install still receives leads), and if Google is
+unreachable the request is let through. Both are logged. A missing or invalid
+token with a configured secret is refused — that is the case that matters.
 
 ## Leads — "Devis reçus"
 
@@ -370,7 +437,7 @@ For each page it fetches the live URL, extracts the main content region, strips
 scripts / iframes / inline event handlers / the injected SEO-spam block
 (see `SECURITY-AUDIT.md`), downloads any image not already present, rewrites
 `wp-content/uploads` paths to `assets/images` and internal links to the local
-`.html` files, then **replaces the written copy** with the original.
+pages, then **replaces the written copy** with the original.
 Standard library only.
 
 Afterwards re-run `python3 tools/build_css.py` so the CSS purge accounts for
@@ -387,6 +454,14 @@ python3 tools/build_css.py       # reassemble, purge and minify the stylesheet
 node  tools/data/minify-js.js assets/js/main.js assets/js/main.min.js
 python3 tools/build_sql.py       # regenerate db/seed_categories.sql from PAGES
 ```
+
+`build_pages.py` writes the 25 pages, `404.php`, `sitemap.xml` and everything in
+`includes/` except `bootstrap.php`, `catalogue.php` and `recaptcha.php`, which
+are hand-written. It also deletes the `.html` pages it supersedes.
+
+> `tools/data/purge.js` lists the files PurgeCSS scans. It must include `*.php`
+> and `includes/*.php` — miss one and most of the stylesheet is silently purged
+> away.
 
 `build_css.py` and the JS minifier need `clean-css`, `purgecss` and `terser`;
 point `NODE_TOOLS` at the directory holding their `node_modules`:
@@ -406,6 +481,7 @@ Where to edit what:
 | Partner logos | `PARTNER_LOGOS` in `tools/build_pages.py` |
 | Hero carousel photos | `SOURCES` in `tools/build_hero.py`, then `HERO_IMAGES` |
 | Products, sub-products, media, fiches techniques | the back-office at `/admin/` (database) |
+| reCAPTCHA keys, notification e-mails, WhatsApp number | `api/config.php` |
 | Product fallback baked into the HTML | `tools/data/products.json`, exported from the back-office |
 | Category tree in the database | `PAGES` in `tools/build_pages.py`, then `tools/build_sql.py` |
 | Quote form statuses / categories | `STATUTS`, `FORM_CATEGORIES` in `tools/build_pages.py` |
@@ -438,13 +514,14 @@ Responsive: mobile-first, verified with no horizontal overflow from 320px to
 ## Local preview
 
 ```bash
-php -S 127.0.0.1:8000            # site + back-office + API
-python3 -m http.server 8000      # static pages only, no back-office
+php -S 127.0.0.1:8000            # the whole site
 ```
+
+The pages are PHP, so a plain static server no longer serves them.
 
 Open <http://127.0.0.1:8000/>. Extensionless URLs (`/pergolas`) only work
 through the `.htaccess` rules on a real Apache/LiteSpeed host; the local
-preview uses the `.html` filenames, which is what every internal link points at.
+preview uses the `.php` filenames, which is what every internal link points at.
 
 `php -S` ignores `.htaccess`, so it is fine for trying the back-office but says
 nothing about whether your hardening rules are in force — check those on the
@@ -466,5 +543,5 @@ real host.
 5. Read through the copy in `tools/content_fr.py` and adjust it to how you
    actually describe your work — or restore the originals with
    `tools/fetch_content.py`.
-6. Check the partner logos on `partenaires.html`: they come from your own media
+6. Check the partner logos on `partenaires.php`: they come from your own media
    library, but confirm you still have permission to display each one.

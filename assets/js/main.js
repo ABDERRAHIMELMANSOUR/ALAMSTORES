@@ -258,51 +258,11 @@
   }
 
   /* ------------------------------------------------------- B2B quote form --- */
-  /* Saves every submission to a local lead store (readable from admin.html)
-     and then sends the visitor to WhatsApp with the request pre-filled.
-
-     NOTE: localStorage is per-browser and per-device. A lead submitted on a
-     visitor's phone is stored on THAT phone — admin.html on another machine
-     will not see it. WhatsApp is the delivery channel; the local store is a
-     convenience log for leads captured on this device. */
-  var LEADS_KEY = 'alamstores.leads';
-
-  /* Sends the lead to the database. The page navigates to WhatsApp a moment
-     later, which would abort a normal fetch — sendBeacon is queued by the
-     browser and delivered regardless. Failure is silent on purpose: the
-     visitor's request must go through even when the API is down. */
-  function postLead(lead) {
-    var url = 'api/lead.php';
-    var payload = JSON.stringify(lead);
-    try {
-      if (navigator.sendBeacon) {
-        return navigator.sendBeacon(url, new Blob([payload], { type: 'application/json' }));
-      }
-      if (window.fetch) {
-        fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'same-origin',
-          keepalive: true,
-          body: payload
-        }).catch(function () {});
-      }
-    } catch (e) { /* no back-end on this host */ }
-    return false;
-  }
-
-  function saveLead(lead) {
-    try {
-      var raw = localStorage.getItem(LEADS_KEY);
-      var list = raw ? JSON.parse(raw) : [];
-      if (!Array.isArray(list)) list = [];
-      list.push(lead);
-      localStorage.setItem(LEADS_KEY, JSON.stringify(list));
-      return true;
-    } catch (e) {
-      return false;   // private mode, quota, or blocked storage
-    }
-  }
+  /* The form is an ordinary HTML form: it posts to api/lead.php, which checks
+     the reCAPTCHA, stores the request, sends the notification and redirects to
+     WhatsApp. Everything here is enhancement — validating before the round
+     trip, and showing the fields in error — so the page still works with
+     JavaScript switched off. */
 
   function initQuoteForm() {
     var form = $('[data-quote-form]');
@@ -312,26 +272,6 @@
     var companyWrap = $('[data-b2b-field]', form);
     var company = companyWrap ? $('input', companyWrap) : null;
     var status = $('.form-status', form);
-
-    /* Order and labels of everything sent and stored. */
-    var FIELDS = [
-      ['statut', 'Statut'],
-      ['company', 'Entreprise'],
-      ['category', 'Catégorie'],
-      ['firstname', 'Prénom'],
-      ['lastname', 'Nom'],
-      ['email', 'E-mail'],
-      ['phone', 'Téléphone'],
-      ['address', 'Adresse'],
-      ['zip', 'Code postal'],
-      ['city', 'Ville'],
-      ['country', 'Pays']
-    ];
-
-    function val(name) {
-      var el = form.elements[name];
-      return el && el.value ? el.value.trim() : '';
-    }
 
     /* The company name is required only for the two professional statuses. */
     function isB2B() {
@@ -382,64 +322,61 @@
       return true;
     }
 
-    /* WhatsApp renders *text* in bold, so the labels stand out in the chat. */
-    function compose() {
-      var lines = ['*Demande de devis — alamstores.ma*', ''];
-      FIELDS.forEach(function (pair) {
-        var v = val(pair[0]);
-        if (v) lines.push('*' + pair[1] + '* : ' + v);
-      });
-      var msg = val('message');
-      if (msg) lines.push('', '*Message :*', msg);
-      return lines.join('\n');
-    }
-
-    /* wa.me wants digits only — no +, spaces or dashes. */
-    function waUrl() {
-      var number = (form.getAttribute('data-whatsapp') || '').replace(/[^0-9]/g, '');
-      if (!number) return '';
-      return 'https://wa.me/' + number + '?text=' + encodeURIComponent(compose());
-    }
-
     if (statut) { on(statut, 'change', syncB2B); syncB2B(); }
     $$('input, select, textarea', form).forEach(function (f) {
       on(f, 'input', function () { if (f.classList.contains('is-invalid')) showError(f, ''); });
     });
 
+    /* reCAPTCHA v2 draws a checkbox; v3 needs a token fetched on submit.
+       Caught here rather than after the round trip, so the visitor is told
+       straight away instead of losing what they typed. */
+    function captchaReady(done) {
+      var box = $('[data-recaptcha]', form);
+      if (!box || typeof grecaptcha === 'undefined') { done(true); return; }
+
+      if (box.getAttribute('data-version') === 'v3') {
+        var key = box.getAttribute('data-sitekey');
+        grecaptcha.ready(function () {
+          grecaptcha.execute(key, { action: 'devis' }).then(function (token) {
+            var field = $('#g-recaptcha-response');
+            if (field) field.value = token;
+            done(!!token);
+          }, function () { done(false); });
+        });
+        return;
+      }
+      done(!!(grecaptcha.getResponse && grecaptcha.getResponse().length));
+    }
+
+    function captchaError(message) {
+      var slot = form.querySelector('[data-error-for="recaptcha"]');
+      if (slot) slot.textContent = message;
+      if (status) {
+        status.textContent = message;
+        status.className = 'form-status is-error';
+      }
+    }
+
+    var passed = false;
+
     on(form, 'submit', function (e) {
+      if (passed) return;             // second pass: let the browser send it
       e.preventDefault();
       if (!validate()) return;
 
-      var lead = { timestamp: new Date().toISOString() };
-      FIELDS.forEach(function (pair) { lead[pair[0]] = val(pair[0]); });
-      lead.message = val('message');
-
-      // Three destinations, in order of reliability: the database (shared,
-      // survives the visitor's device), this browser's local log, and finally
-      // WhatsApp, which is what the visitor actually sees.
-      postLead(lead);
-      var stored = saveLead(lead);
-
-      var url = waUrl();
-
-      /* Shown when the redirect below is blocked (pop-up blockers, in-app
-         browsers), so the visitor still has a one-tap way through. */
-      if (status) {
-        status.textContent = (stored ? 'Demande enregistrée. ' : '')
-          + 'WhatsApp s’ouvre avec votre demande pré-remplie — il ne reste qu’à l’envoyer. ';
-        status.className = 'form-status is-ok';
-        if (url) {
-          var link = document.createElement('a');
-          link.href = url;
-          link.target = '_blank';
-          link.rel = 'noopener';
-          link.setAttribute('data-wa-link', '');
-          link.textContent = 'Ouvrir WhatsApp';
-          status.appendChild(link);
+      captchaReady(function (ok) {
+        if (!ok) {
+          captchaError('Merci de confirmer que vous n’êtes pas un robot.');
+          return;
         }
-      }
-
-      if (url) window.location.href = url;
+        captchaError('');
+        if (status) {
+          status.textContent = 'Envoi en cours…';
+          status.className = 'form-status is-ok';
+        }
+        passed = true;
+        form.submit();
+      });
     });
   }
 
@@ -504,100 +441,17 @@
     });
   }
 
-  /* --------------------------------------------------- catalogue (API) --- */
-  /* Products entered in the back-office. The page already carries whatever was
-     baked in at build time; this refreshes it from the database. If the API is
-     not there — static hosting, PHP down — the static cards simply stay. */
-  function initCatalog() {
-    var mount = $('[data-catalog]');
-    if (!mount || !window.fetch) return;
-
-    var slug = mount.getAttribute('data-catalog');
-    var list = $('[data-catalog-list]', mount);
-    if (!slug || !list) return;
-
-    fetch('api/catalog.php?category=' + encodeURIComponent(slug), {
-      credentials: 'same-origin',
-      headers: { 'Accept': 'application/json' }
-    })
-      .then(function (r) { return r.ok ? r.json() : null; })
-      .then(function (data) {
-        var items = data && data.products && data.products[slug];
-        if (!items || !items.length) return;
-        list.innerHTML = items.map(function (p) {
-          return '<li>' + card(p, false) + '</li>';
-        }).join('');
-        mount.hidden = false;
-        mount.classList.add('is-in');
-      })
-      .catch(function () { /* the statically built cards remain */ });
-  }
-
-  function esc(value) {
-    return String(value == null ? '' : value)
-      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
-  }
-
-  /* Mirrors product_card() in tools/build_pages.py: a page must look the same
-     whether its cards were baked in or fetched. */
-  function card(prod, isVariant) {
-    var photo = prod.images && prod.images[0] ? prod.images[0].path : '';
-    var vid = prod.video && prod.video.id ? prod.video.id : '';
-
-    var media = '';
-    if (photo) {
-      media = '<div class="product__media"><img src="' + esc(photo) + '" alt="'
-            + esc(prod.title) + '" loading="lazy" decoding="async">'
-            + (vid ? '<button class="product__play" type="button" data-video="' + esc(vid)
-                   + '" aria-label="Voir la vidéo : ' + esc(prod.title) + '">' + '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>'
-                   + '</button>' : '')
-            + '</div>';
-    }
-
-    var specs = (prod.specs || []).filter(function (sp) { return sp.label || sp.value; });
-    var specHtml = specs.length
-      ? '<dl class="product__specs">' + specs.map(function (sp) {
-          return '<div><dt>' + esc(sp.label) + '</dt><dd>' + esc(sp.value) + '</dd></div>';
-        }).join('') + '</dl>'
-      : '';
-
-    var actions = (prod.docs || []).map(function (d) {
-      return '<a class="btn btn--ghost btn--sm" href="' + esc(d.path) + '" download>'
-           + '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' + '<span>' + esc(d.label || 'Fiche technique (PDF)') + '</span></a>';
-    });
-    if (vid && !photo) {
-      actions.push('<button class="btn btn--ghost btn--sm" type="button" data-video="'
-        + esc(vid) + '">' + '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>' + '<span>Voir la vidéo</span></button>');
-    }
-    if (!isVariant) {
-      actions.push('<a class="btn btn--primary btn--sm" href="devis.html">'
-        + '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></svg>' + '<span>Demander un devis</span></a>');
-    }
-
-    var subs = (prod.variants || []).filter(function (v) { return v.title; });
-    var variantHtml = subs.length
-      ? '<div class="product__variants"><h4>Déclinaisons</h4><ul>' + subs.map(function (v) {
-          return '<li>' + card(v, true) + '</li>';
-        }).join('') + '</ul></div>'
-      : '';
-
-    return '<article class="product' + (isVariant ? ' product--sub' : '') + '">' + media
-         + '<div class="product__body"><h3>' + esc(prod.title) + '</h3>'
-         + (prod.description ? '<p>' + esc(prod.description) + '</p>' : '')
-         + specHtml + variantHtml
-         + (actions.length ? '<div class="product__actions">' + actions.join('') + '</div>' : '')
-         + '</div></article>';
-  }
-
   /* ------------------------------------------------------------ misc --- */
   function initMisc() {
     var year = $('#year');
     if (year) year.textContent = String(new Date().getFullYear());
 
-    var here = location.pathname.split('/').pop() || 'index.html';
-    $$('.nav__list a[href], .drawer__list a[href]').forEach(function (a) {
-      if (a.getAttribute('href') !== here) return;
+    /* The same page answers on /pergolas, /pergolas.php and /pergolas.html,
+       so the slug on <body> is what decides which link is current. */
+    var here = document.body.getAttribute('data-slug');
+    if (!here) return;
+    $$('.nav__list a[data-slug], .drawer__list a[data-slug]').forEach(function (a) {
+      if (a.getAttribute('data-slug') !== here) return;
       a.classList.add('is-current');
       a.setAttribute('aria-current', 'page');
       var item = a.closest('.nav__item');
@@ -617,7 +471,6 @@
     initReveal();
     initQuoteForm();
     initVideo();
-    initCatalog();
     initMisc();
   }
 

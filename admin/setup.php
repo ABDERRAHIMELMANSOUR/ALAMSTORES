@@ -49,7 +49,7 @@ function connect(array $db): PDO
 }
 
 /** Le fichier de configuration, tel qu'il doit être écrit. */
-function config_source(array $db, array $emails, string $salt): string
+function config_source(array $db, array $emails, string $salt, array $captcha): string
 {
     $q = static function (string $v): string {
         return "'" . str_replace(["\\", "'"], ["\\\\", "\\'"], $v) . "'";
@@ -70,7 +70,14 @@ function config_source(array $db, array $emails, string $salt): string
         . "        'charset'  => 'utf8mb4',\n"
         . "    ],\n"
         . "    'ip_salt' => " . $q($salt) . ",\n"
+        . "    'whatsapp' => '212600055562',\n"
         . "    'notify_email' => [\n" . $list . "    ],\n"
+        . "    'recaptcha' => [\n"
+        . "        'site_key'   => " . $q($captcha['site']) . ",\n"
+        . "        'secret_key' => " . $q($captcha['secret']) . ",\n"
+        . "        'version'    => " . $q($captcha['version']) . ",\n"
+        . "        'min_score'  => 0.5,\n"
+        . "    ],\n"
         . "    'allowed_origins' => [\n"
         . "        'https://alamstores.ma',\n"
         . "        'https://www.alamstores.ma',\n"
@@ -180,12 +187,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             preg_split('/[\s,;]+/', (string) ($_POST['emails'] ?? ''))),
             static function ($m) { return filter_var($m, FILTER_VALIDATE_EMAIL); }));
 
+        $captcha = [
+            'site'    => trim((string) ($_POST['rc_site'] ?? '')),
+            'secret'  => trim((string) ($_POST['rc_secret'] ?? '')),
+            'version' => ($_POST['rc_version'] ?? 'v2') === 'v3' ? 'v3' : 'v2',
+        ];
+
         if ($db['name'] === '' || $db['user'] === '') {
             $errors[] = 'Nom de la base et utilisateur sont obligatoires.';
         } else {
             try {
                 $pdo = connect($db);
-                $source = config_source($db, $emails, bin2hex(random_bytes(32)));
+                $source = config_source($db, $emails, bin2hex(random_bytes(32)), $captcha);
                 if (@file_put_contents(CONFIG_PATH, $source) !== false) {
                     @chmod(CONFIG_PATH, 0640);
                     $notices[] = 'Connexion réussie. api/config.php a été créé.';
@@ -275,7 +288,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   .steps span.is-on { background: var(--brand-600); color: #fff; }
   .steps span.is-done { background: #dcfce7; color: #166534; }
   label { display: block; font-size: .78rem; font-weight: 700; margin: 14px 0 5px; }
-  input[type=text], input[type=password], input[type=number], textarea {
+  input[type=text], input[type=password], input[type=number], select, textarea {
     width: 100%; padding: 10px 12px; border: 1px solid var(--line);
     border-radius: var(--r-sm); font: inherit; }
   .grid2 { display: grid; gap: 14px; grid-template-columns: 2fr 1fr; }
@@ -330,6 +343,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <textarea id="emails" name="emails" rows="2"
         >contact@alamstores.ma, kassettebrahim.1997@gmail.com</textarea>
         <p class="hint">Une adresse par ligne ou séparées par des virgules.</p>
+
+        <label for="rc_site">reCAPTCHA — clé du site</label>
+        <input id="rc_site" name="rc_site" type="text"
+               value="6LejfrItAAAAAMv9gSWoYpQYZfYUsJqQVACgbJqp">
+        <label for="rc_secret">reCAPTCHA — clé secrète</label>
+        <input id="rc_secret" name="rc_secret" type="password" autocomplete="off">
+        <label for="rc_version">Type de reCAPTCHA</label>
+        <select id="rc_version" name="rc_version">
+          <option value="v2">v2 — case « Je ne suis pas un robot »</option>
+          <option value="v3">v3 — invisible, par score</option>
+        </select>
+        <p class="hint">Les deux clés viennent de
+           <a href="https://www.google.com/recaptcha/admin" target="_blank" rel="noopener">google.com/recaptcha/admin</a>.
+           Laissez la clé secrète vide pour installer sans protection anti-robot
+           et l'ajouter plus tard dans <code>api/config.php</code>.</p>
+
         <p style="margin-top:20px">
           <button class="btn btn--primary" type="submit">Tester et enregistrer</button></p>
       </form>

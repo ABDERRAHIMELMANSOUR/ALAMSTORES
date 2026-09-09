@@ -43,8 +43,9 @@ Ce qu'il y a dedans :
 
 | Dossier / fichier | À envoyer sur le serveur ? | Rôle |
 |---|---|---|
-| `index.html` et les 24 autres `.html` | **oui** | les pages du site |
+| `index.php` et les 24 autres `.php` | **oui** | les pages du site |
 | `assets/` | **oui** | images, styles, script, polices |
+| `includes/` | **oui** | l'en-tête, le pied de page et le catalogue partagés |
 | `admin/` | **oui** | le back-office |
 | `api/` | **oui** | les échanges avec la base |
 | `db/` | **oui** | le schéma SQL, lu par l'installateur |
@@ -146,6 +147,18 @@ Trois étapes s'enchaînent.
 **Étape 1 — Base de données.** Recopiez les quatre valeurs de l'étape 2, et les
 adresses e-mail qui doivent recevoir les demandes de devis (elles sont
 pré-remplies avec `contact@alamstores.ma` et `kassettebrahim.1997@gmail.com`).
+
+La même page demande les **clés reCAPTCHA**. La clé du site est déjà remplie ;
+collez la **clé secrète** depuis
+[google.com/recaptcha/admin](https://www.google.com/recaptcha/admin) et choisissez
+le type — **v2** si votre clé affiche une case « Je ne suis pas un robot »,
+**v3** si elle est invisible. En cas de doute, laissez v2 : si la case
+n'apparaît pas sur `/devis`, revenez ici et passez en v3.
+
+Vous pouvez laisser la clé secrète vide pour l'instant : le formulaire
+fonctionne, simplement sans filtrage anti-robot, et vous ajouterez la clé plus
+tard dans `api/config.php`.
+
 Cliquez sur **Tester et enregistrer**.
 
 - Si tout va bien, le fichier `api/config.php` est créé automatiquement.
@@ -183,11 +196,14 @@ dans FileZilla, `admin/setup.php` → clic droit → **Supprimer**.
 | À tester | Résultat attendu |
 |---|---|
 | `https://alamstores.ma` | la page d'accueil, carrousel qui défile |
-| `https://alamstores.ma/pergolas` | la page s'ouvre (URL sans `.html` → le `.htaccess` fonctionne) |
+| `https://alamstores.ma/pergolas` | la page s'ouvre (URL sans extension → le `.htaccess` fonctionne) |
+| `https://alamstores.ma/pergolas.html` | redirige (301) vers `/pergolas` — les anciennes adresses restent valables |
 | La bulle verte en bas à droite | ouvre WhatsApp sur le 06 00 05 55 62 |
 | `https://alamstores.ma/admin/` | l'écran de connexion, puis le tableau de bord |
 | Ajouter un produit de test | il apparaît sur la page de sa catégorie |
-| Envoyer un devis de test depuis `/devis` | il apparaît dans **Devis reçus**, et un e-mail arrive |
+| Sur `/devis`, la case reCAPTCHA | elle s'affiche au-dessus du bouton d'envoi |
+| Envoyer un devis de test depuis `/devis` | WhatsApp s'ouvre avec la demande, elle apparaît dans **Devis reçus**, et un e-mail arrive |
+| Envoyer le formulaire à moitié vide | il revient avec vos réponses conservées et les champs en erreur signalés |
 | `https://alamstores.ma/api/config.php` | **doit afficher une erreur 403** |
 | `https://alamstores.ma/db/schema.sql` | **doit afficher une erreur 404** |
 
@@ -273,12 +289,18 @@ ce sont des fichiers, pas la base. Voir la section « Rebuilding » du `README.m
 | « Connexion refusée » à l'étape 1 | serveur `localhost` incorrect | Essayez l'adresse exacte donnée par l'hébergeur |
 | Photos qui ne se téléversent pas | limite `upload_max_filesize` | Passez-la à 16 Mo dans le panneau PHP |
 | Le site s'affiche sans mise en forme | `assets/` incomplet | Retransférez le dossier avec FileZilla |
-| Les produits ne s'affichent pas | l'API ne répond pas | Ouvrez `/api/catalog.php` : vous devez voir du JSON |
+| Les produits ne s'affichent pas | la base ne répond pas | Ouvrez `/api/catalog.php` : vous devez voir du JSON |
+| La case reCAPTCHA ne s'affiche pas | vos clés sont en v3, pas en v2 | Passez `'version' => 'v3'` dans `api/config.php` |
+| « La vérification anti-robot n'a pas abouti » à chaque envoi | clé secrète erronée, ou clé v3 déclarée en v2 | Vérifiez les deux clés sur google.com/recaptcha/admin |
 
-> **Le site ne casse jamais parce que la base est en panne.** Chaque page porte
-> une copie du catalogue figée au moment de la génération, et ne la remplace par
-> celle de la base que si l'API répond. Si PHP tombe, les pages restent en
-> ligne — seul le back-office devient inaccessible.
+> **Le site ne casse jamais parce que la base est en panne.** Le catalogue est
+> écrit par le serveur depuis la base ; si elle ne répond pas, chaque page
+> retombe sur la copie figée au moment de la génération. Et tant que
+> `api/config.php` n'existe pas — l'état juste après le transfert FTP — toutes
+> les pages s'affichent quand même, entièrement.
+>
+> Testé : base injoignable et fichier de configuration absent renvoient tous
+> deux des pages complètes en HTTP 200.
 
 ---
 

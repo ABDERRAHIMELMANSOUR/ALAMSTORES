@@ -34,6 +34,27 @@ return [
         'kassettebrahim.1997@gmail.com',
     ],
 
+    // Numéro WhatsApp vers lequel le formulaire de devis redirige, au format
+    // international, chiffres uniquement. Doit rester identique à CONTACT
+    // dans tools/build_pages.py.
+    'whatsapp' => '212600055562',
+
+    // ------------------------------------------------------------ reCAPTCHA
+    // La clé du site est publique : elle apparaît dans le HTML de la page.
+    // La clé secrète ne doit JAMAIS sortir de ce fichier, ni être versionnée.
+    // Récupérez-la sur https://www.google.com/recaptcha/admin
+    //
+    // 'version' : 'v2' pour la case « Je ne suis pas un robot »,
+    //             'v3' pour la vérification invisible par score.
+    // Laissez 'secret_key' vide pour désactiver la vérification (le
+    // formulaire continue de fonctionner, sans filtrage).
+    'recaptcha' => [
+        'site_key'   => '6LejfrItAAAAAMv9gSWoYpQYZfYUsJqQVACgbJqp',
+        'secret_key' => '',        // <- à renseigner
+        'version'    => 'v2',
+        'min_score'  => 0.5,       // v3 uniquement
+    ],
+
     // Origines autorisées à appeler l'API (votre domaine, rien d'autre).
     'allowed_origins' => [
         'https://alamstores.ma',
