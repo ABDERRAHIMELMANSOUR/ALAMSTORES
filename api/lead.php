@@ -16,10 +16,16 @@ declare(strict_types=1);
 require __DIR__ . '/bootstrap.php';
 require_once dirname(__DIR__) . '/includes/recaptcha.php';
 
-require_method('POST');
 send_security_headers();
 
 const DEVIS_PAGE = '../devis.php';
+
+// Ce point d'entrée n'est pas une page : quelqu'un qui l'ouvre directement est
+// renvoyé au formulaire plutôt que de tomber sur du JSON.
+if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
+    header('Location: ' . DEVIS_PAGE, true, 303);
+    exit;
+}
 
 /** Renvoie au formulaire en conservant la saisie et les erreurs. */
 function back_to_form(array $old, array $errors, string $message): void
@@ -41,10 +47,14 @@ function back_confirmed(string $message): void
     exit;
 }
 
-// Une requête de navigateur qui vient d'ailleurs que du site est refusée.
-$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-if ($origin !== '' && !in_array($origin, (array) cfg('allowed_origins', []), true)) {
-    json_out(['error' => 'Origine non autorisée.'], 403);
+// Une requête de navigateur qui vient d'ailleurs que du site est refusée —
+// mais seulement si la liste des origines a été renseignée. Tant qu'elle est
+// vide (site pas encore configuré), on ne bloque personne.
+$origin  = $_SERVER['HTTP_ORIGIN'] ?? '';
+$allowed = (array) cfg('allowed_origins', []);
+if ($origin !== '' && $allowed && !in_array($origin, $allowed, true)) {
+    header('Location: ' . DEVIS_PAGE, true, 303);
+    exit;
 }
 
 $lead = [
@@ -97,6 +107,12 @@ if ($errors) {
 $hash = ip_hash();
 $pdo  = null;
 try {
+    if (!config_installed() || !cfg('db')) {
+        // Pas encore installé : on ne stocke rien, mais la demande part quand
+        // même par e-mail et par WhatsApp. Un client ne doit jamais buter sur
+        // une configuration incomplète.
+        throw new RuntimeException('configuration absente');
+    }
     $pdo = db();
     if ($hash !== '') {
         $stmt = $pdo->prepare('SELECT COUNT(*) FROM leads

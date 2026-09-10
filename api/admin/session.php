@@ -16,6 +16,7 @@ require dirname(__DIR__) . '/bootstrap.php';
 
 $method = require_method('GET', 'POST', 'DELETE');
 send_security_headers();
+require_installed();
 start_session();
 
 // ------------------------------------------------------------------ lecture

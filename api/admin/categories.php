@@ -19,6 +19,7 @@ require dirname(__DIR__) . '/bootstrap.php';
 
 $method = require_method('GET', 'POST', 'PUT', 'DELETE');
 send_security_headers();
+require_installed();
 require_login();
 
 $pdo = db();

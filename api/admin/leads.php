@@ -14,6 +14,7 @@ require dirname(__DIR__) . '/bootstrap.php';
 
 $method = require_method('GET', 'PATCH', 'DELETE');
 send_security_headers();
+require_installed();
 require_login();
 
 $pdo = db();

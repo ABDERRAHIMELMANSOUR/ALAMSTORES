@@ -17,6 +17,7 @@ require dirname(__DIR__) . '/bootstrap.php';
 
 require_method('POST');
 send_security_headers();
+require_installed();
 require_login();
 require_csrf();
 

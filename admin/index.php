@@ -14,7 +14,8 @@ require dirname(__DIR__) . '/api/bootstrap.php';
 send_security_headers(true);
 start_session();
 
-$user = current_user();
+$installed = config_installed() && cfg('db');
+$user = $installed ? current_user() : null;
 $csrf = csrf_token();
 
 function h(?string $v): string
@@ -162,7 +163,30 @@ function h(?string $v): string
 </head>
 <body>
 
-<?php if (!$user): ?>
+<?php if (!$installed): ?>
+<!-- ---------------------------------------------------- pas encore installé -->
+<main class="adm">
+  <div class="card-box login">
+    <div class="adm__brand" style="margin-bottom:18px">
+      <img src="../assets/images/2019/05/Logo-stores-rideaux-maroc.png" alt="Alam Stores">
+    </div>
+    <h2>Le back-office n'est pas encore installé</h2>
+    <p class="hint">Le fichier <code>api/config.php</code> est absent, ou il ne
+       contient pas les identifiants de votre base de données. Sans lui, ni le
+       tableau de bord ni l'enregistrement des demandes de devis ne peuvent
+       fonctionner.</p>
+    <p style="margin-top:22px">
+      <a class="btn btn--primary" href="setup.php" style="width:100%">Lancer l'installation</a></p>
+    <p class="hint" style="margin-top:18px">L'installation demande le nom de votre
+       base, l'utilisateur et le mot de passe MySQL — ils viennent du panneau de
+       votre hébergeur, rubrique « Bases de données MySQL ». Le détail est dans
+       <code>INSTALLATION.md</code>.</p>
+    <p class="hint">Si <code>setup.php</code> a déjà été supprimé, envoyez
+       <code>api/config.php</code> par FTP et rechargez cette page.</p>
+  </div>
+</main>
+
+<?php elseif (!$user): ?>
 <!-- ------------------------------------------------------------- connexion -->
 <main class="adm">
   <div class="card-box login">
@@ -478,6 +502,11 @@ function h(?string $v): string
     return fetch(API + path, options).then(function (r) {
       if (r.status === 401) { location.reload(); throw new Error('session'); }
       return r.json().catch(function () { return {}; }).then(function (d) {
+        if (d && d.not_setup) {
+          // api/config.php a disparu depuis le chargement de la page.
+          window.location.href = 'setup.php';
+          throw new Error('setup');
+        }
         if (!r.ok) { throw d && d.error ? d : new Error('Erreur ' + r.status); }
         return d;
       });

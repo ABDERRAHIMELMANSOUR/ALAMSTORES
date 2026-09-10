@@ -174,6 +174,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $action = (string) ($_POST['action'] ?? '');
 
+    // Dossier api/ non inscriptible : plutôt que de faire recopier le fichier à
+    // la main dans un éditeur — où un mauvais encodage casse tout — on le sert
+    // en téléchargement, prêt à être déposé par FTP.
+    if ($action === 'download') {
+        $source = (string) ($_POST['source'] ?? '');
+        if ($source === '' || strncmp($source, '<?php', 5) !== 0) {
+            http_response_code(400);
+            exit('Contenu invalide.');
+        }
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename="config.php"');
+        header('Content-Length: ' . strlen($source));
+        header('Cache-Control: no-store');
+        echo $source;
+        exit;
+    }
+
     // --- étape 1 : la connexion et le fichier de configuration --------------
     if ($action === 'config') {
         $db = [
@@ -207,8 +224,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     // Dossier non inscriptible : on affiche le fichier à déposer.
                     $configSource = $source;
                     $errors[] = 'Connexion réussie, mais api/config.php n’a pas pu être '
-                              . 'écrit. Créez-le vous-même avec le contenu ci-dessous, '
-                              . 'envoyez-le par FTP, puis rechargez cette page.';
+                              . 'écrit : le dossier api/ n’autorise pas l’écriture. '
+                              . 'Téléchargez le fichier ci-dessous, envoyez-le dans '
+                              . 'api/ avec FileZilla, puis rechargez cette page.';
                 }
             } catch (Throwable $e) {
                 $pdo = null;
@@ -364,11 +382,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </form>
 
       <?php if ($configSource !== null): ?>
-        <h2 style="margin-top:26px">À créer manuellement</h2>
-        <p class="lede">Enregistrez ce texte dans un fichier nommé
-           <code>config.php</code> et déposez-le dans le dossier <code>api/</code>
-           avec FileZilla, puis rechargez cette page.</p>
-        <pre><?= h($configSource) ?></pre>
+        <h2 style="margin-top:26px">Le fichier à déposer</h2>
+        <p class="lede">Téléchargez-le, déposez-le dans le dossier <code>api/</code>
+           de votre serveur avec FileZilla, puis rechargez cette page.</p>
+        <form method="post" style="margin-bottom:16px">
+          <input type="hidden" name="csrf" value="<?= h($_SESSION['csrf']) ?>">
+          <input type="hidden" name="action" value="download">
+          <input type="hidden" name="source" value="<?= h($configSource) ?>">
+          <button class="btn btn--primary" type="submit">Télécharger config.php</button>
+        </form>
+        <p class="hint">Autre solution, si vous préférez&nbsp;: dans FileZilla,
+           clic droit sur le dossier <code>api</code> → <strong>Droits d'accès au
+           fichier</strong> → mettez <code>755</code>, puis relancez cette page.
+           Elle écrira le fichier elle-même.</p>
+        <details style="margin-top:14px">
+          <summary class="hint" style="cursor:pointer">Voir le contenu du fichier</summary>
+          <pre><?= h($configSource) ?></pre>
+        </details>
       <?php endif; ?>
 
     <?php elseif ($step === 2): ?>

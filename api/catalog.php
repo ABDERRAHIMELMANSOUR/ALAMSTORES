@@ -23,7 +23,17 @@ if ($wanted !== '' && !preg_match('/^[a-z0-9-]{1,120}$/', $wanted)) {
     json_out(['error' => 'Catégorie invalide.'], 400);
 }
 
-$pdo = db();
+// Site pas encore installé : un catalogue vide vaut mieux qu'une erreur.
+if (!config_installed() || !cfg('db')) {
+    json_out(['generated' => gmdate('c'), 'categories' => [], 'products' => []]);
+}
+
+try {
+    $pdo = db();
+} catch (Throwable $e) {
+    error_log('[alamstores] catalogue : base injoignable — ' . $e->getMessage());
+    json_out(['generated' => gmdate('c'), 'categories' => [], 'products' => []]);
+}
 
 // -------------------------------------------------------------- catégories
 $categories = [];

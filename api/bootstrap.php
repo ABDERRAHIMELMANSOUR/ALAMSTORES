@@ -27,20 +27,74 @@ const LOGIN_LOCK_SECS  = 900;      // 15 min de blocage après 5 échecs
 
 // ---------------------------------------------------------------- configuration
 
+/**
+ * Valeurs par défaut, utilisées tant que api/config.php n'existe pas.
+ *
+ * Elles ne contiennent aucun secret : pas d'accès base, pas de clé privée.
+ * Le site reste donc utilisable dès le transfert FTP — les pages s'affichent,
+ * le formulaire de devis fonctionne et part vers WhatsApp — et l'installation
+ * ne fait qu'ajouter ce qui demande des identifiants.
+ */
+function config_defaults(): array
+{
+    return [
+        'db'              => [],
+        'ip_salt'         => '',
+        'whatsapp'        => '212600055562',
+        'notify_email'    => ['contact@alamstores.ma', 'kassettebrahim.1997@gmail.com'],
+        'recaptcha'       => ['site_key' => '', 'secret_key' => '',
+                              'version' => 'v2', 'min_score' => 0.5],
+        'allowed_origins' => [],
+        'debug'           => false,
+    ];
+}
+
+/** Vrai quand api/config.php existe et se charge. */
+function config_installed(): bool
+{
+    static $ok = null;
+    if ($ok === null) {
+        $path = __DIR__ . '/config.php';
+        $ok = is_file($path) && is_array(@require $path);
+    }
+    return $ok;
+}
+
+/**
+ * La configuration : les valeurs par défaut, écrasées par api/config.php quand
+ * il est là. Ne s'interrompt jamais — un fichier manquant est un site pas
+ * encore installé, pas une panne à montrer au visiteur.
+ */
 function config(): array
 {
     static $cfg = null;
     if ($cfg === null) {
+        $cfg  = config_defaults();
         $path = __DIR__ . '/config.php';
-        if (!is_file($path)) {
-            http_response_code(500);
-            header('Content-Type: application/json; charset=utf-8');
-            echo json_encode(['error' => 'Configuration absente. Copiez api/config.sample.php en api/config.php.']);
-            exit;
+        if (is_file($path)) {
+            $file = @require $path;
+            if (is_array($file)) {
+                // Fusion sur un seul niveau : 'db' et 'recaptcha' sont
+                // remplacés en bloc, ce qui est bien ce qu'on veut.
+                $cfg = array_merge($cfg, $file);
+            }
         }
-        $cfg = require $path;
     }
     return $cfg;
+}
+
+/** Coupe court sur les points d'entrée qui ont réellement besoin de la base. */
+function require_installed(): void
+{
+    if (config_installed() && cfg('db')) {
+        return;
+    }
+    json_out([
+        'error'     => 'Le back-office n’est pas encore installé : api/config.php est '
+                     . 'absent ou ne contient pas les identifiants de la base.',
+        'not_setup' => true,
+        'setup_url' => 'setup.php',
+    ], 503);
 }
 
 function cfg(string $key, $default = null)
