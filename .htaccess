@@ -33,6 +33,13 @@ Options -Indexes
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteCond %{REQUEST_FILENAME}\.php -f
   RewriteRule ^(.+)$ $1.php [L]
+
+  # Une catégorie créée dans le back-office n'a pas de fichier à elle :
+  # categorie.php la sert à partir de son slug. Si elle n'existe pas non plus
+  # en base, cette page répond 404 elle-même.
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^([a-z0-9-]+)$ categorie.php?c=$1 [L,QSA]
 </IfModule>
 
 # --------------------------------------------------------------- security --

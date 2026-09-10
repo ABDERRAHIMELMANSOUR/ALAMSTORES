@@ -53,9 +53,11 @@ def main():
     ]
     for slug, name, _parent, fam, pos in rows:
         lines.append(
+            # Seule `family` est mise à jour : le nom, l'ordre et la visibilité
+            # appartiennent au back-office une fois la catégorie créée, et
+            # rejouer la graine ne doit pas défaire ce qui y a été réglé.
             "INSERT INTO categories (slug, name, family, position) VALUES "
-            "(%s, %s, %s, %d) ON DUPLICATE KEY UPDATE "
-            "name = VALUES(name), family = VALUES(family), position = VALUES(position);"
+            "(%s, %s, %s, %d) ON DUPLICATE KEY UPDATE family = VALUES(family);"
             % (sql_str(slug), sql_str(name), sql_str(fam), pos))
 
     lines += ["", "-- 2. le rattachement parent/enfant, une fois tout inséré"]

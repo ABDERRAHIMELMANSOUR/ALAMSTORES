@@ -23,10 +23,13 @@ CREATE TABLE IF NOT EXISTS categories (
   parent_id   INT UNSIGNED  NULL,
   family      ENUM('interieur','exterieur','autre') NOT NULL DEFAULT 'autre',
   position    SMALLINT      NOT NULL DEFAULT 0,
+  -- Masquer une catégorie la retire du menu, du pied de page et de la page
+  -- d'accueil, et met sa page en 404. Les produits ne sont pas supprimés.
+  is_visible  TINYINT(1)    NOT NULL DEFAULT 1,
   PRIMARY KEY (id),
   UNIQUE KEY uniq_categories_slug (slug),
   KEY idx_categories_parent (parent_id),
-  KEY idx_categories_family (family, position),
+  KEY idx_categories_family (family, is_visible, position),
   CONSTRAINT fk_categories_parent FOREIGN KEY (parent_id)
     REFERENCES categories (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

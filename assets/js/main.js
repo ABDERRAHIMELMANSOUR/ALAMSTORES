@@ -364,6 +364,11 @@
       e.preventDefault();
       if (!validate()) return;
 
+      /* Which button was pressed decides WhatsApp or e-mail. form.submit()
+         drops that value, so it is carried in a hidden field instead. */
+      var submitter = e.submitter || $('button[name="channel"]', form);
+      var channel = submitter && submitter.value ? submitter.value : 'whatsapp';
+
       captchaReady(function (ok) {
         if (!ok) {
           captchaError('Merci de confirmer que vous n’êtes pas un robot.');
@@ -374,6 +379,14 @@
           status.textContent = 'Envoi en cours…';
           status.className = 'form-status is-ok';
         }
+        var hidden = $('input[name="channel"][type="hidden"]', form);
+        if (!hidden) {
+          hidden = document.createElement('input');
+          hidden.type = 'hidden';
+          hidden.name = 'channel';
+          form.appendChild(hidden);
+        }
+        hidden.value = channel;
         passed = true;
         form.submit();
       });

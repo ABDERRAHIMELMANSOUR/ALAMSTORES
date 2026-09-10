@@ -5,26 +5,26 @@
 SET NAMES utf8mb4;
 
 -- 1. les lignes, sans le parent (il peut ne pas exister encore)
-INSERT INTO categories (slug, name, family, position) VALUES ('stores-interieurs', 'Stores Intérieurs', 'interieur', 2) ON DUPLICATE KEY UPDATE name = VALUES(name), family = VALUES(family), position = VALUES(position);
-INSERT INTO categories (slug, name, family, position) VALUES ('stores-enrouleurs', 'Stores Enrouleurs', 'interieur', 3) ON DUPLICATE KEY UPDATE name = VALUES(name), family = VALUES(family), position = VALUES(position);
-INSERT INTO categories (slug, name, family, position) VALUES ('store-enrouleur-occultant', 'Store Enrouleur Occultant', 'interieur', 4) ON DUPLICATE KEY UPDATE name = VALUES(name), family = VALUES(family), position = VALUES(position);
-INSERT INTO categories (slug, name, family, position) VALUES ('store-enrouleur-tamisant', 'Store Enrouleur Tamisant', 'interieur', 5) ON DUPLICATE KEY UPDATE name = VALUES(name), family = VALUES(family), position = VALUES(position);
-INSERT INTO categories (slug, name, family, position) VALUES ('store-enrouleur-screen', 'Store Enrouleur Screen', 'interieur', 6) ON DUPLICATE KEY UPDATE name = VALUES(name), family = VALUES(family), position = VALUES(position);
-INSERT INTO categories (slug, name, family, position) VALUES ('store-enrouleur-imprime', 'Store Enrouleur Imprimé', 'interieur', 7) ON DUPLICATE KEY UPDATE name = VALUES(name), family = VALUES(family), position = VALUES(position);
-INSERT INTO categories (slug, name, family, position) VALUES ('stores-venitiens', 'Stores Vénitiens', 'interieur', 8) ON DUPLICATE KEY UPDATE name = VALUES(name), family = VALUES(family), position = VALUES(position);
-INSERT INTO categories (slug, name, family, position) VALUES ('store-venitien-bois', 'Store Vénitien Bois', 'interieur', 9) ON DUPLICATE KEY UPDATE name = VALUES(name), family = VALUES(family), position = VALUES(position);
-INSERT INTO categories (slug, name, family, position) VALUES ('store-venitien-aluminium', 'Store Vénitien Aluminium', 'interieur', 10) ON DUPLICATE KEY UPDATE name = VALUES(name), family = VALUES(family), position = VALUES(position);
-INSERT INTO categories (slug, name, family, position) VALUES ('stores-californiens', 'Stores Californiens', 'interieur', 11) ON DUPLICATE KEY UPDATE name = VALUES(name), family = VALUES(family), position = VALUES(position);
-INSERT INTO categories (slug, name, family, position) VALUES ('stores-bateaux', 'Stores Bateaux', 'interieur', 12) ON DUPLICATE KEY UPDATE name = VALUES(name), family = VALUES(family), position = VALUES(position);
-INSERT INTO categories (slug, name, family, position) VALUES ('store-duo-jour-nuit', 'Store Duo Jour / Nuit', 'interieur', 13) ON DUPLICATE KEY UPDATE name = VALUES(name), family = VALUES(family), position = VALUES(position);
-INSERT INTO categories (slug, name, family, position) VALUES ('panneaux-japonais', 'Panneaux Japonais', 'interieur', 14) ON DUPLICATE KEY UPDATE name = VALUES(name), family = VALUES(family), position = VALUES(position);
-INSERT INTO categories (slug, name, family, position) VALUES ('stores-exterieurs', 'Stores Extérieurs', 'exterieur', 15) ON DUPLICATE KEY UPDATE name = VALUES(name), family = VALUES(family), position = VALUES(position);
-INSERT INTO categories (slug, name, family, position) VALUES ('pergolas', 'Pergolas', 'exterieur', 16) ON DUPLICATE KEY UPDATE name = VALUES(name), family = VALUES(family), position = VALUES(position);
-INSERT INTO categories (slug, name, family, position) VALUES ('parasols', 'Parasols', 'exterieur', 17) ON DUPLICATE KEY UPDATE name = VALUES(name), family = VALUES(family), position = VALUES(position);
-INSERT INTO categories (slug, name, family, position) VALUES ('toiles-tendues', 'Toiles Tendues', 'exterieur', 18) ON DUPLICATE KEY UPDATE name = VALUES(name), family = VALUES(family), position = VALUES(position);
-INSERT INTO categories (slug, name, family, position) VALUES ('abris-de-voiture', 'Abris de Voiture', 'exterieur', 19) ON DUPLICATE KEY UPDATE name = VALUES(name), family = VALUES(family), position = VALUES(position);
-INSERT INTO categories (slug, name, family, position) VALUES ('moustiquaires', 'Moustiquaires', 'exterieur', 20) ON DUPLICATE KEY UPDATE name = VALUES(name), family = VALUES(family), position = VALUES(position);
-INSERT INTO categories (slug, name, family, position) VALUES ('motorisations-automatismes', 'Motorisations & Automatismes', 'autre', 21) ON DUPLICATE KEY UPDATE name = VALUES(name), family = VALUES(family), position = VALUES(position);
+INSERT INTO categories (slug, name, family, position) VALUES ('stores-interieurs', 'Stores Intérieurs', 'interieur', 2) ON DUPLICATE KEY UPDATE family = VALUES(family);
+INSERT INTO categories (slug, name, family, position) VALUES ('stores-enrouleurs', 'Stores Enrouleurs', 'interieur', 3) ON DUPLICATE KEY UPDATE family = VALUES(family);
+INSERT INTO categories (slug, name, family, position) VALUES ('store-enrouleur-occultant', 'Store Enrouleur Occultant', 'interieur', 4) ON DUPLICATE KEY UPDATE family = VALUES(family);
+INSERT INTO categories (slug, name, family, position) VALUES ('store-enrouleur-tamisant', 'Store Enrouleur Tamisant', 'interieur', 5) ON DUPLICATE KEY UPDATE family = VALUES(family);
+INSERT INTO categories (slug, name, family, position) VALUES ('store-enrouleur-screen', 'Store Enrouleur Screen', 'interieur', 6) ON DUPLICATE KEY UPDATE family = VALUES(family);
+INSERT INTO categories (slug, name, family, position) VALUES ('store-enrouleur-imprime', 'Store Enrouleur Imprimé', 'interieur', 7) ON DUPLICATE KEY UPDATE family = VALUES(family);
+INSERT INTO categories (slug, name, family, position) VALUES ('stores-venitiens', 'Stores Vénitiens', 'interieur', 8) ON DUPLICATE KEY UPDATE family = VALUES(family);
+INSERT INTO categories (slug, name, family, position) VALUES ('store-venitien-bois', 'Store Vénitien Bois', 'interieur', 9) ON DUPLICATE KEY UPDATE family = VALUES(family);
+INSERT INTO categories (slug, name, family, position) VALUES ('store-venitien-aluminium', 'Store Vénitien Aluminium', 'interieur', 10) ON DUPLICATE KEY UPDATE family = VALUES(family);
+INSERT INTO categories (slug, name, family, position) VALUES ('stores-californiens', 'Stores Californiens', 'interieur', 11) ON DUPLICATE KEY UPDATE family = VALUES(family);
+INSERT INTO categories (slug, name, family, position) VALUES ('stores-bateaux', 'Stores Bateaux', 'interieur', 12) ON DUPLICATE KEY UPDATE family = VALUES(family);
+INSERT INTO categories (slug, name, family, position) VALUES ('store-duo-jour-nuit', 'Store Duo Jour / Nuit', 'interieur', 13) ON DUPLICATE KEY UPDATE family = VALUES(family);
+INSERT INTO categories (slug, name, family, position) VALUES ('panneaux-japonais', 'Panneaux Japonais', 'interieur', 14) ON DUPLICATE KEY UPDATE family = VALUES(family);
+INSERT INTO categories (slug, name, family, position) VALUES ('stores-exterieurs', 'Stores Extérieurs', 'exterieur', 15) ON DUPLICATE KEY UPDATE family = VALUES(family);
+INSERT INTO categories (slug, name, family, position) VALUES ('pergolas', 'Pergolas', 'exterieur', 16) ON DUPLICATE KEY UPDATE family = VALUES(family);
+INSERT INTO categories (slug, name, family, position) VALUES ('parasols', 'Parasols', 'exterieur', 17) ON DUPLICATE KEY UPDATE family = VALUES(family);
+INSERT INTO categories (slug, name, family, position) VALUES ('toiles-tendues', 'Toiles Tendues', 'exterieur', 18) ON DUPLICATE KEY UPDATE family = VALUES(family);
+INSERT INTO categories (slug, name, family, position) VALUES ('abris-de-voiture', 'Abris de Voiture', 'exterieur', 19) ON DUPLICATE KEY UPDATE family = VALUES(family);
+INSERT INTO categories (slug, name, family, position) VALUES ('moustiquaires', 'Moustiquaires', 'exterieur', 20) ON DUPLICATE KEY UPDATE family = VALUES(family);
+INSERT INTO categories (slug, name, family, position) VALUES ('motorisations-automatismes', 'Motorisations & Automatismes', 'autre', 21) ON DUPLICATE KEY UPDATE family = VALUES(family);
 
 -- 2. le rattachement parent/enfant, une fois tout inséré
 UPDATE categories SET parent_id = NULL WHERE slug = 'stores-interieurs';

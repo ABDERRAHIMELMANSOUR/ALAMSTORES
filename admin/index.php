@@ -54,7 +54,31 @@ function h(?string $v): string
     font-size: .7rem; font-weight: 800;
   }
   .adm__panel { display: grid; gap: 22px; }
-  @media (min-width: 940px) { #panel-products { grid-template-columns: minmax(0, 1fr) 420px; align-items: start; } }
+  @media (min-width: 940px) {
+    #panel-products,
+    #panel-categories { grid-template-columns: minmax(0, 1fr) 420px; align-items: start; }
+  }
+  .cat-tree { list-style: none; margin: 0; padding: 0; }
+  .cat-tree ul { list-style: none; margin: 4px 0 4px 22px; padding: 0 0 0 12px;
+                 border-left: 1px dashed var(--line); }
+  .cat-row {
+    display: flex; align-items: center; gap: 8px; padding: 7px 10px; margin-bottom: 4px;
+    border: 1px solid var(--line); border-radius: var(--r-sm, 10px); background: #fff;
+  }
+  .cat-row.is-hidden { opacity: .58; border-style: dashed; }
+  .cat-row.is-on { border-color: var(--brand-600); background: var(--brand-50); }
+  .cat-row__name { font-weight: 700; font-size: .88rem; }
+  .cat-row__meta { font-size: .74rem; color: var(--text-mute); }
+  .cat-row__acts { margin-left: auto; display: flex; gap: 4px; flex: none; }
+  .cat-row__acts button {
+    appearance: none; border: 1px solid var(--line); background: #fff; border-radius: 7px;
+    width: 28px; height: 28px; cursor: pointer; font-size: .8rem; line-height: 1;
+    display: grid; place-items: center; padding: 0;
+  }
+  .cat-row__acts button:hover { border-color: var(--brand-400); color: var(--brand-700); }
+  .cat-row__acts button.danger:hover { border-color: var(--danger, #b91c1c); color: var(--danger, #b91c1c); }
+  .cat-fam { font-size: .74rem; font-weight: 800; letter-spacing: .06em;
+             text-transform: uppercase; color: var(--text-mute); margin: 16px 0 6px; }
   .card-box {
     background: #fff; border: 1px solid var(--line); border-radius: var(--r-lg, 16px);
     padding: 20px; box-shadow: 0 1px 2px rgba(15, 23, 42, .04);
@@ -206,6 +230,8 @@ function h(?string $v): string
   <div class="adm__tabs" role="tablist">
     <button class="adm__tab" id="tab-products" role="tab" aria-selected="true"
             aria-controls="panel-products" type="button">Produits</button>
+    <button class="adm__tab" id="tab-categories" role="tab" aria-selected="false"
+            aria-controls="panel-categories" type="button">Catégories</button>
     <button class="adm__tab" id="tab-leads" role="tab" aria-selected="false"
             aria-controls="panel-leads" type="button">Devis reçus<span class="adm__badge" id="leads-badge">0</span></button>
   </div>
@@ -311,6 +337,74 @@ function h(?string $v): string
     </div>
   </section>
 
+  <!-- ---------------------------------------------------------- catégories -->
+  <section class="adm__panel" id="panel-categories" role="tabpanel"
+           aria-labelledby="tab-categories" hidden>
+    <div class="card-box">
+      <h2>Arbre des catégories</h2>
+      <p class="hint">Deux grandes familles, Intérieur et Extérieur, chacune avec
+         ses sous-catégories. Masquer une catégorie la retire du menu, du pied de
+         page et de la page d'accueil, et met sa page en 404 — sans rien
+         supprimer.</p>
+      <div class="actions" style="margin:0 0 16px">
+        <button class="btn btn--primary btn--sm" type="button" id="new-category">Nouvelle catégorie</button>
+      </div>
+      <div id="category-tree"><p class="empty">Chargement…</p></div>
+    </div>
+
+    <div class="card-box">
+      <h2 id="cat-form-title">Nouvelle catégorie</h2>
+      <p class="hint">Une catégorie rangée sous une autre en hérite : elle reste
+         du même côté du menu.</p>
+      <form id="category-form">
+        <div class="row">
+          <div>
+            <label for="c-name">Nom <span class="req">*</span></label>
+            <input id="c-name" name="name" type="text" maxlength="180" required>
+            <p class="err" data-cerr="name"></p>
+          </div>
+          <div>
+            <label for="c-parent">Rangée sous</label>
+            <select id="c-parent" name="parent_id"></select>
+            <p class="err" data-cerr="parent_id"></p>
+          </div>
+          <div id="c-family-wrap">
+            <label for="c-family">Famille</label>
+            <select id="c-family" name="family">
+              <option value="interieur">Stores Intérieurs</option>
+              <option value="exterieur">Stores Extérieurs</option>
+              <option value="autre">Autre</option>
+            </select>
+            <p class="hint" style="margin:4px 0 0">Utilisée seulement pour une
+               catégorie de premier niveau.</p>
+          </div>
+          <div>
+            <label for="c-visible">Visibilité</label>
+            <select id="c-visible" name="is_visible">
+              <option value="1">Affichée sur le site</option>
+              <option value="0">Masquée</option>
+            </select>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn btn--primary btn--sm" type="submit">Enregistrer</button>
+          <button class="mini" type="button" id="cat-cancel">Annuler</button>
+          <button class="mini mini--danger" type="button" id="cat-delete" hidden>Supprimer</button>
+        </div>
+      </form>
+      <div class="note">
+        <strong>Ce que voit un visiteur</strong><br>
+        Les catégories d'origine ont chacune leur page (<code>pergolas.php</code>,
+        <code>parasols.php</code>…) avec leur texte et leurs photos. Une catégorie
+        créée ici n'a pas de page à elle : elle est servie par
+        <code>categorie.php</code>, avec son fil d'Ariane, ses sous-catégories et
+        ses produits. Pour lui donner une vraie page rédigée, ajoutez son slug à
+        <code>PAGES</code> dans <code>tools/build_pages.py</code> et relancez le
+        générateur.
+      </div>
+    </div>
+  </section>
+
   <!-- --------------------------------------------------------------- leads -->
   <section class="adm__panel" id="panel-leads" role="tabpanel" aria-labelledby="tab-leads" hidden>
     <div class="card-box">
@@ -357,7 +451,8 @@ function h(?string $v): string
   var CSRF = <?= json_encode($csrf, JSON_UNESCAPED_SLASHES) ?>;
   var API  = '../api/';
 
-  var state = { products: [], categories: [], editing: null, images: [], docs: [], specs: [] };
+  var state = { products: [], categories: [], cats: [], editing: null,
+               editingCat: null, images: [], docs: [], specs: [] };
 
   var $  = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
@@ -397,13 +492,15 @@ function h(?string $v): string
 
   /* ----------------------------------------------------------- onglets --- */
   function showTab(name) {
-    ['products', 'leads'].forEach(function (t) {
+    ['products', 'categories', 'leads'].forEach(function (t) {
       $('#tab-' + t).setAttribute('aria-selected', String(t === name));
       $('#panel-' + t).hidden = t !== name;
     });
     if (name === 'leads') { loadLeads(); }
+    if (name === 'categories') { loadCategories(); }
   }
   $('#tab-products').addEventListener('click', function () { showTab('products'); });
+  $('#tab-categories').addEventListener('click', function () { showTab('categories'); });
   $('#tab-leads').addEventListener('click', function () { showTab('leads'); });
 
   $('#logout').addEventListener('click', function () {
@@ -702,6 +799,260 @@ function h(?string $v): string
       .catch(function (err) { toast((err && err.error) || 'Suppression impossible.', true); });
   });
 
+  /* --------------------------------------------------------- catégories --- */
+  var FAMILY_ORDER = ['interieur', 'exterieur', 'autre'];
+
+  function loadCategories() {
+    return api('admin/categories.php').then(function (d) {
+      state.cats = d.categories || [];
+      if (d.csrf) { CSRF = d.csrf; }
+      fillParentOptions();
+      renderTree();
+      // La liste des catégories du formulaire produit suit la même source.
+      return loadProducts();
+    }).catch(function (e) { toast((e && e.error) || 'Chargement impossible.', true); });
+  }
+
+  function catChildren(parentId) {
+    return (state.cats || []).filter(function (c) { return c.parent_id === parentId; });
+  }
+
+  function catById(id) {
+    return (state.cats || []).filter(function (c) { return c.id === id; })[0] || null;
+  }
+
+  function renderTree() {
+    var host = $('#category-tree');
+    if (!state.cats || !state.cats.length) {
+      host.innerHTML = '<p class="empty">Aucune catégorie. La base n’a peut-être pas '
+                     + 'été initialisée (db/seed_categories.sql).</p>';
+      return;
+    }
+    var html = '';
+    FAMILY_ORDER.forEach(function (fam) {
+      var roots = catChildren(null).filter(function (c) { return c.family === fam; });
+      if (!roots.length) { return; }
+      html += '<p class="cat-fam">' + esc(FAMILY[fam]) + '</p><ul class="cat-tree">'
+            + roots.map(branch).join('') + '</ul>';
+    });
+    host.innerHTML = html;
+
+    $$('[data-cat-edit]', host).forEach(function (b) {
+      b.addEventListener('click', function () { editCategory(Number(b.dataset.catEdit)); });
+    });
+    $$('[data-cat-toggle]', host).forEach(function (b) {
+      b.addEventListener('click', function () { toggleCategory(Number(b.dataset.catToggle)); });
+    });
+    $$('[data-cat-move]', host).forEach(function (b) {
+      b.addEventListener('click', function () {
+        moveCategory(Number(b.dataset.catMove), Number(b.dataset.dir));
+      });
+    });
+    $$('[data-cat-del]', host).forEach(function (b) {
+      b.addEventListener('click', function () { deleteCategory(Number(b.dataset.catDel)); });
+    });
+    $$('[data-cat-add]', host).forEach(function (b) {
+      b.addEventListener('click', function () { newCategory(Number(b.dataset.catAdd)); });
+    });
+  }
+
+  function branch(cat) {
+    var kids = catChildren(cat.id);
+    var siblings = catChildren(cat.parent_id);
+    var i = siblings.indexOf(cat);
+    var meta = [];
+    if (cat.product_count) { meta.push(cat.product_count + ' produit(s)'); }
+    if (kids.length) { meta.push(kids.length + ' sous-catégorie(s)'); }
+    meta.push(cat.has_page ? 'page dédiée' : 'page générique');
+    if (!cat.is_visible) { meta.push('masquée'); }
+
+    return '<li><div class="cat-row' + (cat.is_visible ? '' : ' is-hidden')
+      + (state.editingCat === cat.id ? ' is-on' : '') + '">'
+      + '<span><span class="cat-row__name">' + esc(cat.name) + '</span><br>'
+      + '<span class="cat-row__meta">' + esc(meta.join(' · ')) + '</span></span>'
+      + '<span class="cat-row__acts">'
+      + '<button type="button" data-cat-move="' + cat.id + '" data-dir="-1"'
+      + (i <= 0 ? ' disabled' : '') + ' title="Monter">&#9650;</button>'
+      + '<button type="button" data-cat-move="' + cat.id + '" data-dir="1"'
+      + (i >= siblings.length - 1 ? ' disabled' : '') + ' title="Descendre">&#9660;</button>'
+      + '<button type="button" data-cat-toggle="' + cat.id + '" title="'
+      + (cat.is_visible ? 'Masquer' : 'Afficher') + '">' + (cat.is_visible ? '&#128065;' : '&#128584;') + '</button>'
+      + '<button type="button" data-cat-add="' + cat.id + '" title="Ajouter une sous-catégorie">+</button>'
+      + '<button type="button" data-cat-edit="' + cat.id + '" title="Renommer">&#9998;</button>'
+      + '<button type="button" class="danger" data-cat-del="' + cat.id + '" title="Supprimer">&times;</button>'
+      + '</span></div>'
+      + (kids.length ? '<ul>' + kids.map(branch).join('') + '</ul>' : '')
+      + '</li>';
+  }
+
+  function fillParentOptions(exclude) {
+    var sel = $('#c-parent');
+    var current = sel.value;
+    sel.innerHTML = '<option value="">— Catégorie principale —</option>';
+    FAMILY_ORDER.forEach(function (fam) {
+      var inFam = (state.cats || []).filter(function (c) { return c.family === fam; });
+      if (!inFam.length) { return; }
+      var group = document.createElement('optgroup');
+      group.label = FAMILY[fam];
+      inFam.forEach(function (c) {
+        // Une catégorie ne peut pas être rangée sous elle-même ni sous l'une
+        // de ses descendantes : la branche se détacherait de l'arbre.
+        if (exclude && (c.id === exclude || isDescendant(c.id, exclude))) { return; }
+        var o = document.createElement('option');
+        o.value = c.id;
+        var parent = c.parent_id ? catById(c.parent_id) : null;
+        o.textContent = parent ? parent.name + ' › ' + c.name : c.name;
+        group.appendChild(o);
+      });
+      if (group.children.length) { sel.appendChild(group); }
+    });
+    sel.value = current;
+  }
+
+  function isDescendant(id, ancestor) {
+    var cursor = catById(id);
+    for (var i = 0; i < 10 && cursor; i++) {
+      if (cursor.id === ancestor) { return true; }
+      cursor = cursor.parent_id ? catById(cursor.parent_id) : null;
+    }
+    return false;
+  }
+
+  function syncFamilyField() {
+    $('#c-family-wrap').hidden = $('#c-parent').value !== '';
+  }
+  $('#c-parent').addEventListener('change', syncFamilyField);
+
+  function resetCategoryForm() {
+    state.editingCat = null;
+    $('#category-form').reset();
+    $('#cat-form-title').textContent = 'Nouvelle catégorie';
+    $('#cat-delete').hidden = true;
+    $$('[data-cerr]').forEach(function (el) { el.textContent = ''; });
+    fillParentOptions();
+    $('#c-parent').value = '';
+    syncFamilyField();
+    renderTree();
+  }
+
+  function newCategory(parentId) {
+    resetCategoryForm();
+    if (parentId) {
+      $('#c-parent').value = String(parentId);
+      syncFamilyField();
+      var parent = catById(parentId);
+      $('#cat-form-title').textContent = parent
+        ? 'Nouvelle sous-catégorie de « ' + parent.name + ' »' : 'Nouvelle catégorie';
+    }
+    $('#c-name').focus();
+  }
+
+  function editCategory(id) {
+    var cat = catById(id);
+    if (!cat) { return; }
+    state.editingCat = id;
+    fillParentOptions(id);
+    $('#c-name').value = cat.name;
+    $('#c-parent').value = cat.parent_id === null ? '' : String(cat.parent_id);
+    $('#c-family').value = cat.family;
+    $('#c-visible').value = cat.is_visible ? '1' : '0';
+    syncFamilyField();
+    $('#cat-form-title').textContent = 'Modifier : ' + cat.name;
+    $('#cat-delete').hidden = false;
+    $$('[data-cerr]').forEach(function (el) { el.textContent = ''; });
+    renderTree();
+    $('#c-name').focus();
+  }
+
+  function toggleCategory(id) {
+    var cat = catById(id);
+    if (!cat) { return; }
+    api('admin/categories.php?id=' + id,
+        { method: 'PUT', body: { is_visible: !cat.is_visible } })
+      .then(function () {
+        toast(cat.is_visible ? 'Catégorie masquée sur le site.' : 'Catégorie affichée sur le site.');
+        return loadCategories();
+      })
+      .catch(function (e) { toast((e && e.error) || 'Modification impossible.', true); });
+  }
+
+  /* Réordonner, c'est échanger la position avec le voisin du même niveau. */
+  function moveCategory(id, dir) {
+    var cat = catById(id);
+    if (!cat) { return; }
+    var siblings = catChildren(cat.parent_id);
+    var i = siblings.indexOf(cat);
+    var j = i + dir;
+    if (j < 0 || j >= siblings.length) { return; }
+    var other = siblings[j];
+    api('admin/categories.php?id=' + cat.id, { method: 'PUT', body: { position: other.position } })
+      .then(function () {
+        return api('admin/categories.php?id=' + other.id,
+                   { method: 'PUT', body: { position: cat.position } });
+      })
+      .then(loadCategories)
+      .catch(function (e) { toast((e && e.error) || 'Déplacement impossible.', true); });
+  }
+
+  function deleteCategory(id) {
+    var cat = catById(id);
+    if (!cat) { return; }
+    if (!window.confirm('Supprimer la catégorie « ' + cat.name + ' » ?')) { return; }
+
+    api('admin/categories.php?id=' + id, { method: 'DELETE' })
+      .then(function () { toast('Catégorie supprimée.'); return loadCategories(); })
+      .then(resetCategoryForm)
+      .catch(function (err) {
+        if (err && err.needs_force) {
+          var what = [];
+          if (err.products) { what.push(err.products + ' produit(s)'); }
+          if (err.children) { what.push(err.children + ' sous-catégorie(s)'); }
+          if (!window.confirm('« ' + cat.name + ' » contient ' + what.join(' et ')
+              + '.\nTout supprimer définitivement, y compris les produits ?')) { return; }
+          return api('admin/categories.php?id=' + id + '&force=1', { method: 'DELETE' })
+            .then(function () { toast('Catégorie et contenu supprimés.'); return loadCategories(); })
+            .then(resetCategoryForm);
+        }
+        toast((err && err.error) || 'Suppression impossible.', true);
+      });
+  }
+
+  $('#category-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    $$('[data-cerr]').forEach(function (el) { el.textContent = ''; });
+
+    var payload = {
+      name:       $('#c-name').value,
+      parent_id:  $('#c-parent').value === '' ? null : Number($('#c-parent').value),
+      family:     $('#c-family').value,
+      is_visible: $('#c-visible').value === '1'
+    };
+    var editing = state.editingCat;
+
+    api('admin/categories.php' + (editing ? '?id=' + editing : ''),
+        { method: editing ? 'PUT' : 'POST', body: payload })
+      .then(function () {
+        toast(editing ? 'Catégorie mise à jour.' : 'Catégorie ajoutée.');
+        return loadCategories();
+      })
+      .then(resetCategoryForm)
+      .catch(function (err) {
+        if (err && err.fields) {
+          Object.keys(err.fields).forEach(function (k) {
+            var slot = $('[data-cerr="' + k + '"]');
+            if (slot) { slot.textContent = err.fields[k]; }
+          });
+        }
+        toast((err && err.error) || 'Enregistrement impossible.', true);
+      });
+  });
+
+  $('#new-category').addEventListener('click', function () { newCategory(null); });
+  $('#cat-cancel').addEventListener('click', resetCategoryForm);
+  $('#cat-delete').addEventListener('click', function () {
+    if (state.editingCat) { deleteCategory(state.editingCat); }
+  });
+
   /* -------------------------------------------------------------- leads --- */
   var leadTimer = null;
 
@@ -833,7 +1184,8 @@ function h(?string $v): string
   }());
 
   reset();            // dessine les zones média vides avant la première réponse
-  loadProducts();
+  resetCategoryForm();
+  loadCategories();   // enchaîne sur loadProducts() : même source de catégories
   loadLeads();
 }());
 </script>

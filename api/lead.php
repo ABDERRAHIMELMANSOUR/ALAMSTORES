@@ -31,6 +31,16 @@ function back_to_form(array $old, array $errors, string $message): void
     exit;
 }
 
+/** Renvoie au formulaire avec un accusé de réception, sans la saisie. */
+function back_confirmed(string $message): void
+{
+    alam_session();
+    $_SESSION['devis'] = ['old' => [], 'errors' => [],
+                          'message' => $message, 'success' => true];
+    header('Location: ' . DEVIS_PAGE . '#devis-form', true, 303);
+    exit;
+}
+
 // Une requête de navigateur qui vient d'ailleurs que du site est refusée.
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 if ($origin !== '' && !in_array($origin, (array) cfg('allowed_origins', []), true)) {
@@ -154,6 +164,16 @@ if ($recipients) {
         'Content-Type: text/plain; charset=UTF-8',
         'X-Mailer: alamstores',
     ]));
+}
+
+// ------------------------------------------------------------ destination ---
+// Le bouton choisi décide de ce qui arrive au visiteur. Dans les deux cas la
+// demande est déjà en base et l'e-mail de notification est parti : c'est le
+// canal de réponse qui change, pas l'enregistrement.
+if (($_POST['channel'] ?? 'whatsapp') === 'email') {
+    back_confirmed($recipients
+        ? 'Merci, votre demande nous est bien parvenue. Nous vous répondons sous 24 h ouvrées.'
+        : 'Votre demande a bien été enregistrée. Nous vous répondons sous 24 h ouvrées.');
 }
 
 // -------------------------------------------------------------- WhatsApp ---

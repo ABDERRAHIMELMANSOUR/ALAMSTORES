@@ -6,9 +6,18 @@
 require_once __DIR__ . '/bootstrap.php';
 require_once __DIR__ . '/icons.php';
 require_once __DIR__ . '/catalogue.php';
+require_once __DIR__ . '/nav.php';
 
 $page = (array) ($page ?? []);
 $slug = (string) ($page['slug'] ?? '');
+
+// Une catégorie masquée depuis le back-office ne doit plus répondre, sinon
+// elle resterait accessible par son adresse et par les moteurs de recherche.
+if ($slug !== '' && !alam_category_visible($slug)) {
+    http_response_code(404);
+    require __DIR__ . '/../404.php';
+    exit;
+}
 
 // Lu ici, avant la première ligne de HTML : une session ne peut plus s'ouvrir
 // une fois les en-têtes partis. Le formulaire de devis s'en sert plus bas pour
@@ -57,12 +66,7 @@ alam_flash();
 
       <nav class="nav" aria-label="Navigation principale">
         <ul class="nav__list">
-            <li class="nav__item"><a class="nav__link" href="index.php" data-slug="home">Accueil</a></li>
-            <li class="nav__item"><a class="nav__link" href="societe.php" data-slug="societe">Société</a></li>
-            <li class="nav__item"><a class="nav__link" href="stores-interieurs.php" data-slug="stores-interieurs">Stores Intérieurs <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="nav__caret"><polyline points="6 9 12 15 18 9"/></svg></a><ul class="nav__sub"><li class="nav__item"><a href="stores-enrouleurs.php" data-slug="stores-enrouleurs">Stores Enrouleurs <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="nav__caret"><polyline points="9 18 15 12 9 6"/></svg></a><ul class="nav__sub"><li><a href="store-enrouleur-occultant.php" data-slug="store-enrouleur-occultant">Store Enrouleur Occultant</a></li><li><a href="store-enrouleur-tamisant.php" data-slug="store-enrouleur-tamisant">Store Enrouleur Tamisant</a></li><li><a href="store-enrouleur-screen.php" data-slug="store-enrouleur-screen">Store Enrouleur Screen</a></li><li><a href="store-enrouleur-imprime.php" data-slug="store-enrouleur-imprime">Store Enrouleur Imprimé</a></li></ul></li><li class="nav__item"><a href="stores-venitiens.php" data-slug="stores-venitiens">Stores Vénitiens <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="nav__caret"><polyline points="9 18 15 12 9 6"/></svg></a><ul class="nav__sub"><li><a href="store-venitien-bois.php" data-slug="store-venitien-bois">Store Vénitien Bois</a></li><li><a href="store-venitien-aluminium.php" data-slug="store-venitien-aluminium">Store Vénitien Aluminium</a></li></ul></li><li><a href="stores-californiens.php" data-slug="stores-californiens">Stores Californiens</a></li><li><a href="stores-bateaux.php" data-slug="stores-bateaux">Stores Bateaux</a></li><li><a href="store-duo-jour-nuit.php" data-slug="store-duo-jour-nuit">Store Duo Jour / Nuit</a></li><li><a href="panneaux-japonais.php" data-slug="panneaux-japonais">Panneaux Japonais</a></li></ul></li>
-            <li class="nav__item"><a class="nav__link" href="stores-exterieurs.php" data-slug="stores-exterieurs">Stores Extérieurs <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="nav__caret"><polyline points="6 9 12 15 18 9"/></svg></a><ul class="nav__sub"><li><a href="pergolas.php" data-slug="pergolas">Pergolas</a></li><li><a href="parasols.php" data-slug="parasols">Parasols</a></li><li><a href="toiles-tendues.php" data-slug="toiles-tendues">Toiles Tendues</a></li><li><a href="abris-de-voiture.php" data-slug="abris-de-voiture">Abris de Voiture</a></li><li><a href="moustiquaires.php" data-slug="moustiquaires">Moustiquaires</a></li></ul></li>
-            <li class="nav__item"><a class="nav__link" href="service.php" data-slug="service">Service</a></li>
-            <li class="nav__item"><a class="nav__link" href="partenaires.php" data-slug="partenaires">Partenaires</a></li>
+            <?= alam_nav_html() ?>
         </ul>
       </nav>
 
@@ -85,12 +89,7 @@ alam_flash();
     </div>
     <div class="drawer__body">
       <ul class="drawer__list">
-            <li><div class="drawer__row"><a href="index.php" data-slug="home">Accueil</a></div></li>
-            <li><div class="drawer__row"><a href="societe.php" data-slug="societe">Société</a></div></li>
-            <li><div class="drawer__row"><a href="stores-interieurs.php">Stores Intérieurs</a><button class="drawer__expand" type="button" aria-expanded="false" aria-label="Afficher les pages Stores Intérieurs"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button></div><ul class="drawer__sub"><div><li><a href="stores-enrouleurs.php" data-slug="stores-enrouleurs">Stores Enrouleurs</a></li><li><a href="store-enrouleur-occultant.php" data-slug="store-enrouleur-occultant">&nbsp;&nbsp;Store Enrouleur Occultant</a></li><li><a href="store-enrouleur-tamisant.php" data-slug="store-enrouleur-tamisant">&nbsp;&nbsp;Store Enrouleur Tamisant</a></li><li><a href="store-enrouleur-screen.php" data-slug="store-enrouleur-screen">&nbsp;&nbsp;Store Enrouleur Screen</a></li><li><a href="store-enrouleur-imprime.php" data-slug="store-enrouleur-imprime">&nbsp;&nbsp;Store Enrouleur Imprimé</a></li><li><a href="stores-venitiens.php" data-slug="stores-venitiens">Stores Vénitiens</a></li><li><a href="store-venitien-bois.php" data-slug="store-venitien-bois">&nbsp;&nbsp;Store Vénitien Bois</a></li><li><a href="store-venitien-aluminium.php" data-slug="store-venitien-aluminium">&nbsp;&nbsp;Store Vénitien Aluminium</a></li><li><a href="stores-californiens.php" data-slug="stores-californiens">Stores Californiens</a></li><li><a href="stores-bateaux.php" data-slug="stores-bateaux">Stores Bateaux</a></li><li><a href="store-duo-jour-nuit.php" data-slug="store-duo-jour-nuit">Store Duo Jour / Nuit</a></li><li><a href="panneaux-japonais.php" data-slug="panneaux-japonais">Panneaux Japonais</a></li></div></ul></li>
-            <li><div class="drawer__row"><a href="stores-exterieurs.php">Stores Extérieurs</a><button class="drawer__expand" type="button" aria-expanded="false" aria-label="Afficher les pages Stores Extérieurs"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button></div><ul class="drawer__sub"><div><li><a href="pergolas.php" data-slug="pergolas">Pergolas</a></li><li><a href="parasols.php" data-slug="parasols">Parasols</a></li><li><a href="toiles-tendues.php" data-slug="toiles-tendues">Toiles Tendues</a></li><li><a href="abris-de-voiture.php" data-slug="abris-de-voiture">Abris de Voiture</a></li><li><a href="moustiquaires.php" data-slug="moustiquaires">Moustiquaires</a></li></div></ul></li>
-            <li><div class="drawer__row"><a href="service.php" data-slug="service">Service</a></div></li>
-            <li><div class="drawer__row"><a href="partenaires.php" data-slug="partenaires">Partenaires</a></div></li>
+            <?= alam_drawer_html() ?>
       </ul>
     </div>
     <div class="drawer__foot">

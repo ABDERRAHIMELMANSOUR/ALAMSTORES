@@ -136,6 +136,18 @@ Clic droit sur un dossier → **Droits d'accès au fichier** :
 
 ## 4. Lancer l'installateur
 
+> **Vous aviez déjà installé une version précédente ?** Ne relancez pas
+> l'installateur : importez seulement la mise à jour de la base, une fois,
+> depuis phpMyAdmin (onglet **Importer**) ou en ligne de commande :
+>
+> ```bash
+> mysql -u <user> -p <base> < db/migrations/2026-09-10-categories-visibles.sql
+> ```
+>
+> Elle ajoute la colonne dont l'onglet **Catégories** a besoin. Une erreur
+> « Duplicate column name » signifie simplement que c'est déjà fait.
+
+
 Ouvrez dans votre navigateur :
 
 ```
@@ -168,7 +180,7 @@ Cliquez sur **Tester et enregistrer**.
 
 **Étape 2 — Tables.** Un bouton, rien à saisir. Il crée les sept tables et
 importe l'arbre des catégories (les 20 catégories correspondent aux pages du
-site).
+site). Vous les gérerez ensuite depuis l'onglet **Catégories** du back-office.
 
 **Étape 3 — Votre compte.** Choisissez un identifiant et un mot de passe d'au
 moins 12 caractères, mélangeant lettres, chiffres et symboles. Le mot de passe
@@ -204,6 +216,8 @@ dans FileZilla, `admin/setup.php` → clic droit → **Supprimer**.
 | Sur `/devis`, la case reCAPTCHA | elle s'affiche au-dessus du bouton d'envoi |
 | Envoyer un devis de test depuis `/devis` | WhatsApp s'ouvre avec la demande, elle apparaît dans **Devis reçus**, et un e-mail arrive |
 | Envoyer le formulaire à moitié vide | il revient avec vos réponses conservées et les champs en erreur signalés |
+| Les deux boutons d'envoi | **Envoyer sur WhatsApp** ouvre la conversation pré-remplie, **Envoyer par e-mail** affiche un accusé de réception |
+| Dans **Catégories**, masquer une catégorie | elle disparaît du menu et sa page renvoie 404 ; la réafficher la remet |
 | `https://alamstores.ma/api/config.php` | **doit afficher une erreur 403** |
 | `https://alamstores.ma/db/schema.sql` | **doit afficher une erreur 404** |
 
@@ -266,6 +280,20 @@ page de sa catégorie.
 **Ajouter une déclinaison** — même formulaire, en choisissant le produit
 principal dans **Sous-produit de**. Elle s'affiche en retrait sous son parent,
 dans un bloc **Déclinaisons**.
+
+**Gérer les catégories** — onglet **Catégories**. Les deux familles, Intérieur
+et Extérieur, avec leurs sous-catégories sur trois niveaux. Sur chaque ligne :
+▲▼ pour l'ordre, l'œil pour afficher ou masquer, **+** pour ajouter une
+sous-catégorie, le crayon pour renommer, la croix pour supprimer. Tout est
+répercuté sur le site à la page suivante, sans regénération.
+
+> Masquer plutôt que supprimer : une catégorie masquée sort du menu et sa page
+> renvoie 404, mais ses produits sont conservés. La suppression, elle, est
+> définitive et emporte les sous-catégories et les produits — le back-office
+> demande une seconde confirmation dans ce cas.
+>
+> Renommer ne change jamais l'adresse de la page : les liens déjà partagés et
+> indexés continuent de fonctionner.
 
 **Masquer sans supprimer** — passez **Visibilité** sur *Brouillon*.
 

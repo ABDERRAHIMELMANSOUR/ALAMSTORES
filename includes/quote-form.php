@@ -113,14 +113,21 @@ $flash = alam_flash();
           </div>
 
           <div class="form-nav">
-            <button class="btn btn--primary btn--lg" type="submit">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.47 14.38c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.65.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.65-2.05-.17-.3-.02-.46.13-.61.14-.14.3-.35.45-.53.15-.18.2-.3.3-.5.1-.2.05-.38-.02-.53-.08-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.38-.27.3-1.04 1.01-1.04 2.47 0 1.46 1.06 2.87 1.21 3.07.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.22 1.36.19 1.87.12.57-.09 1.75-.72 2-1.41.25-.69.25-1.28.17-1.41-.07-.13-.27-.2-.57-.35zM12.04 2.5A9.46 9.46 0 0 0 4 16.86L2.5 21.5l4.77-1.5a9.46 9.46 0 1 0 4.77-17.5zm0 17.16a7.7 7.7 0 0 1-3.92-1.07l-.28-.17-2.9.91.93-2.83-.18-.29a7.7 7.7 0 1 1 6.35 3.45z"/></svg><span>Envoyer ma demande</span></button>
+            <button class="btn btn--primary btn--lg" type="submit" name="channel" value="whatsapp">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.47 14.38c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.65.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.65-2.05-.17-.3-.02-.46.13-.61.14-.14.3-.35.45-.53.15-.18.2-.3.3-.5.1-.2.05-.38-.02-.53-.08-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.38-.27.3-1.04 1.01-1.04 2.47 0 1.46 1.06 2.87 1.21 3.07.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.22 1.36.19 1.87.12.57-.09 1.75-.72 2-1.41.25-.69.25-1.28.17-1.41-.07-.13-.27-.2-.57-.35zM12.04 2.5A9.46 9.46 0 0 0 4 16.86L2.5 21.5l4.77-1.5a9.46 9.46 0 1 0 4.77-17.5zm0 17.16a7.7 7.7 0 0 1-3.92-1.07l-.28-.17-2.9.91.93-2.83-.18-.29a7.7 7.7 0 1 1 6.35 3.45z"/></svg><span>Envoyer sur WhatsApp</span></button>
+            <button class="btn btn--ghost btn--lg" type="submit" name="channel" value="email">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="22 6 12 13 2 6"/></svg><span>Envoyer par e-mail</span></button>
           </div>
+<?php if (!empty($flash['success'])): ?>
+          <p class="form-status is-ok" role="status"><?= alam_e($flash['message']) ?></p>
+<?php else: ?>
           <p class="form-status" role="status" aria-live="polite"></p>
-          <p class="form-note">Un r&eacute;capitulatif complet s'ouvre dans WhatsApp, pr&ecirc;t
-             &agrave; envoyer au 06 00 05 55 62&nbsp;: vous relisez et vous gardez la main sur l'envoi.
-             Pas de WhatsApp&nbsp;? &Eacute;crivez-nous &agrave;
-             <a href="mailto:contact@alamstores.ma">contact@alamstores.ma</a>.</p>
+<?php endif; ?>
+          <p class="form-note"><strong>WhatsApp</strong>&nbsp;: un r&eacute;capitulatif complet
+             s'ouvre dans la conversation, pr&ecirc;t &agrave; envoyer au 06 00 05 55 62.
+             <strong>E-mail</strong>&nbsp;: votre demande nous est transmise directement,
+             vous n'avez rien d'autre &agrave; faire. Dans les deux cas nous vous
+             r&eacute;pondons sous 24&nbsp;h ouvr&eacute;es.</p>
         </div>
         <input type="text" name="website" tabindex="-1" autocomplete="off"
                aria-hidden="true" style="position:absolute;left:-9999px">

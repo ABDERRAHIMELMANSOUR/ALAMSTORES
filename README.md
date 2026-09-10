@@ -11,6 +11,7 @@ French — cPanel, FileZilla, the database and the web installer.
 index.php                  Accueil
 societe.php                … 24 further pages, one per original URL
 404.php
+categorie.php              serves categories created in the back-office
 admin.html                 redirect to /admin/ (old bookmark)
 sitemap.xml  robots.txt  .htaccess
 
@@ -18,6 +19,8 @@ includes/                  the shared chrome, generated except where noted
   header.php  footer.php   <head>, top bar, nav, drawer / footer, scripts
   bootstrap.php            helpers, database access, flash messages (hand-written)
   catalogue.php            renders the products from the database (hand-written)
+  nav.php                  menu, drawer and footer columns, from the database (hand-written)
+  nav-static.php           the menu as it stood at build time (fallback)
   recaptcha.php            widget + verification (hand-written)
   quote-form.php           the devis form
   icons.php                the SVG set
@@ -217,7 +220,18 @@ and fetches the reCAPTCHA token; the server does the real work:
    everything they typed and a message per field — nothing is retyped;
 3. store the request in the `leads` table;
 4. e-mail every address in `notify_email`;
-5. redirect to `https://wa.me/<number>` with the whole request pre-filled.
+5. then, depending on which button was pressed, either hand the request to
+   WhatsApp or confirm on the page.
+
+**Two buttons, one flow.** *Envoyer sur WhatsApp* redirects to
+`https://wa.me/<number>` with the whole request pre-filled; *Envoyer par e-mail*
+returns to the page with an acknowledgement. Steps 1 to 4 happen either way —
+the button chooses what the visitor sees next, not whether the request is
+recorded. So a lead is never lost because someone picked the "wrong" button.
+
+`form.submit()` drops the name and value of the button that was pressed, so the
+script copies the choice into a hidden `channel` field before submitting.
+Without JavaScript the browser sends it natively and the result is the same.
 
 Every filled field is in that WhatsApp message, in order and labelled — statut,
 entreprise, catégorie, prénom, nom, e-mail, téléphone, adresse, code postal,
@@ -257,6 +271,39 @@ Two deliberate fail-open choices: with `secret_key` empty the check is skipped
 entirely (so a half-finished install still receives leads), and if Google is
 unreachable the request is let through. Both are logged. A missing or invalid
 token with a configured secret is refused — that is the case that matters.
+
+## Categories — the "Catégories" tab
+
+The category tree is data, not code. **Catégories** in the back-office shows the
+two families — Stores Intérieurs and Stores Extérieurs — each with its
+subcategories, three levels deep, and lets you:
+
+| Action | Effect on the site |
+|---|---|
+| Rename | the new name appears in the menu, the footer and the page title |
+| Show / hide | hidden: gone from the menu, the drawer, the footer and the home page, and its page answers **404** — nothing is deleted |
+| Reorder (▲ ▼) | the menu and the footer follow immediately |
+| Add a subcategory | appears in the menu at once, served by `categorie.php` |
+| Delete | refused while it holds products or subcategories, unless you confirm a second time |
+
+The site reads this at display time (`includes/nav.php`), so a change is live on
+the next page load — no rebuild. If the database is unreachable the menu falls
+back to `includes/nav-static.php`, the tree as it stood at build time, so
+navigation never disappears.
+
+**Renaming never changes the slug.** The slug is the page address; changing it
+would break links already indexed by search engines and shared by customers.
+
+**Pages.** The original categories each have their own page (`pergolas.php`,
+`parasols.php`…) with their own copy and photos. A category created in the
+back-office has none, so `categorie.php` serves it — breadcrumbs,
+subcategories and products. To give it a properly written page, add its slug to
+`PAGES` in `tools/build_pages.py` and re-run the generator; the dashboard shows
+which categories already have one.
+
+Two guards worth knowing about: a category cannot be filed under itself or under
+one of its own descendants, and `family` is never typed in — it is inherited
+from the parent, so a subcategory can not end up on the wrong side of the menu.
 
 ## Leads — "Devis reçus"
 
@@ -323,11 +370,18 @@ Then open `https://votre-domaine/admin/`.
 > moment one does. Delete it anyway once you are in — `tools/security_scan.py`
 > reports it as a finding until you do.
 
+> **Upgrading an existing install?** Run
+> `db/migrations/2026-09-10-categories-visibles.sql` once — it adds the
+> `is_visible` column the Catégories tab needs. Replaying it is harmless; a
+> "Duplicate column name" error just means it is already done.
+
 `db/seed_categories.sql` is generated from the page tree by
 `python3 tools/build_sql.py`, so **a category slug in the database is a page
 slug on the site** — that is the whole mechanism that puts a product on the
 right page. Re-run both after adding a page; the seed is an idempotent upsert,
-replaying it never loses products.
+replaying it never loses products. It only refreshes `family`: names, order
+and visibility belong to the back-office once a category exists, and re-running
+the seed must not undo what was set there.
 
 ### What you can enter
 

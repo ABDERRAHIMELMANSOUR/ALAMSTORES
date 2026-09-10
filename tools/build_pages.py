@@ -472,6 +472,54 @@ def topbar_html():
            phone_display=esc(CONTACT["phone_display"]), hours=esc(CONTACT["hours"]))
 
 
+def php_value(value, indent=1):
+    """A PHP literal for a nested list/dict of strings — used by the generated
+    includes/*.php data files."""
+    pad = "    " * indent
+    if isinstance(value, dict):
+        if not value:
+            return "[]"
+        rows = "".join("%s    %s => %s,\n" % (pad, php_str(k), php_value(v, indent + 1))
+                       for k, v in value.items())
+        return "[\n%s%s]" % (rows, pad)
+    if isinstance(value, (list, tuple)):
+        if not value:
+            return "[]"
+        rows = "".join("%s    %s,\n" % (pad, php_value(v, indent + 1)) for v in value)
+        return "[\n%s%s]" % (rows, pad)
+    return php_str(value)
+
+
+def nav_node(slug):
+    return {"slug": slug, "label": nav_label(slug), "href": href(slug),
+            "children": [nav_node(k) for k in children(slug)]}
+
+
+FOOTER_COLUMNS = [("Stores Intérieurs", "stores-interieurs"),
+                  ("Stores Extérieurs", "stores-exterieurs")]
+
+
+def nav_static_php():
+    """includes/nav-static.php — the menu as it stands at build time.
+
+    includes/nav.php prefers the database, so this is what the site falls back
+    to when the database is unavailable, plus the fixed entries (Accueil,
+    Société, Service, Partenaires) that are pages rather than categories.
+    """
+    model = {
+        "top": [nav_node(slug) for slug in NAV_TOP],
+        "footer": [{"title": title, "slug": slug,
+                    "children": [nav_node(k) for k in children(slug)]}
+                   for title, slug in FOOTER_COLUMNS],
+    }
+    return ("<?php\n"
+            "/**\n"
+            " * Menu figé à la génération, généré par tools/build_pages.py.\n"
+            " * includes/nav.php s'en sert quand la base ne répond pas.\n"
+            " */\n"
+            "return %s;\n" % php_value(model))
+
+
 def nav_tree_html():
     """Desktop mega-less dropdown navigation."""
     out = []
@@ -539,7 +587,7 @@ def header_html():
 
       <nav class="nav" aria-label="Navigation principale">
         <ul class="nav__list">
-            {nav}
+            <?= alam_nav_html() ?>
         </ul>
       </nav>
 
@@ -562,7 +610,7 @@ def header_html():
     </div>
     <div class="drawer__body">
       <ul class="drawer__list">
-            {drawer}
+            <?= alam_drawer_html() ?>
       </ul>
     </div>
     <div class="drawer__foot">
@@ -574,7 +622,7 @@ def header_html():
     </div>
   </aside>
 """.format(topbar=topbar_html(), logo=LOGO, name=esc(SITE_NAME), tag=esc(SITE_TAGLINE),
-           nav=nav_tree_html(), drawer=drawer_tree_html(), close=icon("close"),
+           close=icon("close"),
            spark=icon("sparkle"),
            tel=esc(CONTACT["phone_tel"]), phone_display=esc(CONTACT["phone_display"]),
            email=esc(CONTACT["email"]))
@@ -666,8 +714,10 @@ def cards_html(slugs, sitemap, tag=None):
                  % (thumb, esc(TITLES[s]),
                     '<span class="card__tag">%s</span>' % esc(tag) if tag else "")) if thumb else ""
         blurb = card_blurb(s)
+        # A category hidden in the back-office drops off the home page too.
         items.append(
-            '<li><article class="card">'
+            "<?php if (alam_category_visible('%s')): ?>" % s
+            + '<li><article class="card">'
             '{media}'
             '<div class="card__body">'
             '<h3 class="card__title">{title}</h3>'
@@ -679,7 +729,8 @@ def cards_html(slugs, sitemap, tag=None):
             '</article></li>'.format(
                 media=media, title=esc(TITLES[s]),
                 blurb='<p class="card__text">%s</p>' % esc(blurb) if blurb else "",
-                arrow=icon("arrow-right"), h=href(s)))
+                arrow=icon("arrow-right"), h=href(s))
+            + "<?php endif; ?>")
     return '<ul class="card-grid">\n        %s\n      </ul>' % "\n        ".join(items)
 
 
@@ -1045,14 +1096,21 @@ $flash = alam_flash();
           </div>
 
           <div class="form-nav">
-            <button class="btn btn--primary btn--lg" type="submit">
-              {wapp}<span>Envoyer ma demande</span></button>
+            <button class="btn btn--primary btn--lg" type="submit" name="channel" value="whatsapp">
+              {wapp}<span>Envoyer sur WhatsApp</span></button>
+            <button class="btn btn--ghost btn--lg" type="submit" name="channel" value="email">
+              {mail}<span>Envoyer par e-mail</span></button>
           </div>
+<?php if (!empty($flash['success'])): ?>
+          <p class="form-status is-ok" role="status"><?= alam_e($flash['message']) ?></p>
+<?php else: ?>
           <p class="form-status" role="status" aria-live="polite"></p>
-          <p class="form-note">Un r&eacute;capitulatif complet s'ouvre dans WhatsApp, pr&ecirc;t
-             &agrave; envoyer au {phone}&nbsp;: vous relisez et vous gardez la main sur l'envoi.
-             Pas de WhatsApp&nbsp;? &Eacute;crivez-nous &agrave;
-             <a href="mailto:{email}">{email}</a>.</p>
+<?php endif; ?>
+          <p class="form-note"><strong>WhatsApp</strong>&nbsp;: un r&eacute;capitulatif complet
+             s'ouvre dans la conversation, pr&ecirc;t &agrave; envoyer au {phone}.
+             <strong>E-mail</strong>&nbsp;: votre demande nous est transmise directement,
+             vous n'avez rien d'autre &agrave; faire. Dans les deux cas nous vous
+             r&eacute;pondons sous 24&nbsp;h ouvr&eacute;es.</p>
         </div>
         <input type="text" name="website" tabindex="-1" autocomplete="off"
                aria-hidden="true" style="position:absolute;left:-9999px">
@@ -1061,7 +1119,7 @@ $flash = alam_flash();
   </section>
 """.format(whatsapp=esc(CONTACT["whatsapp"]), email=esc(CONTACT["email"]),
            phone=esc(CONTACT["whatsapp_display"]), statuts=statuts, cats=cats,
-           wapp=icon("whatsapp"),
+           wapp=icon("whatsapp"), mail=icon("mail"),
            coords="".join([
                field("firstname", "Prénom", required=True, extra='autocomplete="given-name"'),
                field("lastname", "Nom", required=True, extra='autocomplete="family-name"'),
@@ -1079,10 +1137,8 @@ $flash = alam_flash();
 # --------------------------------------------------------------------------
 
 def footer_html():
-    def col(title, slugs):
-        lis = "".join('<li><a href="%s">%s</a></li>' % (href(s), esc(TITLES[s])) for s in slugs)
-        return "<div><h3>%s</h3><ul>%s</ul></div>" % (esc(title), lis)
-
+    # The two link columns are rendered at display time from the database, so
+    # hiding a category in the back-office removes it here too.
     return """  <footer class="site-footer">
     <div class="shell">
       <div class="site-footer__grid">
@@ -1097,8 +1153,7 @@ def footer_html():
             <a href="tel:{tel}" aria-label="Téléphone">{phone}</a>
           </div>
         </div>
-        {c1}
-        {c2}
+        <?= alam_footer_columns_html() ?>
         <div>
           <h3>Contact</h3>
           {contact}
@@ -1126,11 +1181,6 @@ def footer_html():
            wapp=icon("whatsapp"), whatsapp=esc(CONTACT["whatsapp"]),
            li=icon("linkedin"), linkedin=esc(CONTACT["linkedin"]),
            email=esc(CONTACT["email"]), tel=esc(CONTACT["phone_tel"]),
-           c1=col("Stores Intérieurs", ["stores-enrouleurs", "stores-venitiens",
-                                        "stores-californiens", "stores-bateaux",
-                                        "store-duo-jour-nuit", "panneaux-japonais"]),
-           c2=col("Stores Extérieurs", ["pergolas", "parasols", "toiles-tendues",
-                                        "abris-de-voiture", "moustiquaires"]),
            contact=contact_card_html(compact=True))
 
 
@@ -1167,9 +1217,18 @@ HEADER_PARTIAL = """<?php
 require_once __DIR__ . '/bootstrap.php';
 require_once __DIR__ . '/icons.php';
 require_once __DIR__ . '/catalogue.php';
+require_once __DIR__ . '/nav.php';
 
 $page = (array) ($page ?? []);
 $slug = (string) ($page['slug'] ?? '');
+
+// Une catégorie masquée depuis le back-office ne doit plus répondre, sinon
+// elle resterait accessible par son adresse et par les moteurs de recherche.
+if ($slug !== '' && !alam_category_visible($slug)) {{
+    http_response_code(404);
+    require __DIR__ . '/../404.php';
+    exit;
+}}
 
 // Lu ici, avant la première ligne de HTML : une session ne peut plus s'ouvrir
 // une fois les en-têtes partis. Le formulaire de devis s'en sert plus bas pour
@@ -1223,10 +1282,16 @@ def icons_php():
             " * Jeu d'icônes SVG, généré par tools/build_pages.py depuis tools/icons.py.\n"
             " */\n"
             "$ALAM_ICONS = [\n%s];\n\n"
-            "function alam_icon(string $name): string\n"
+            "/** Une icône, éventuellement avec une classe CSS. */\n"
+            "function alam_icon(string $name, string $class = ''): string\n"
             "{\n"
             "    global $ALAM_ICONS;\n"
-            "    return $ALAM_ICONS[$name] ?? '';\n"
+            "    $svg = $ALAM_ICONS[$name] ?? '';\n"
+            "    if ($svg === '' || $class === '') {\n"
+            "        return $svg;\n"
+            "    }\n"
+            "    return str_replace('<svg ', '<svg class=\"'\n"
+            "        . htmlspecialchars($class, ENT_QUOTES, 'UTF-8') . '\" ', $svg);\n"
             "}\n" % rows)
 
 
@@ -1289,6 +1354,7 @@ def build():
         site=esc(SITE_NAME), logo=LOGO, header=header_html())))
     write("includes/footer.php", fix_links(FOOTER_PARTIAL.format(footer=footer_html())))
     write("includes/icons.php", icons_php())
+    write("includes/nav-static.php", nav_static_php())
     write("includes/quote-form.php", fix_links(quote_form()))
     write("includes/catalogue-static.php", fix_links(catalogue_static_php(products)))
 
