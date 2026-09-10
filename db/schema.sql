@@ -13,7 +13,7 @@ SET NAMES utf8mb4;
 SET time_zone = '+00:00';
 
 -- --------------------------------------------------------------- catégories
--- `slug` correspond au nom de la page statique (pergolas -> pergolas.html) :
+-- `slug` correspond au nom de la page du site (pergolas -> pergolas.php) :
 -- c'est ce qui relie un produit à sa place sur le site. `parent_id` porte les
 -- sous-catégories (Stores Enrouleurs -> Store Enrouleur Screen).
 CREATE TABLE IF NOT EXISTS categories (
