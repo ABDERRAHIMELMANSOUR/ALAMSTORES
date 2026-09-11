@@ -13,6 +13,13 @@
 return [
     // ---------------------------------------------------------- base de données
     'db' => [
+        // « localhost » ne répond pas partout : sur beaucoup d'hébergements
+        // (Webuzo, CloudLinux…) il passe par un socket Unix dont le chemin
+        // n'est pas celui par défaut, alors que 127.0.0.1 passe par le réseau.
+        // admin/setup.php essaie les deux et écrit ici celui qui marche.
+        //
+        // Connexion par socket ? Remplacez host et port par, par exemple :
+        //     'socket' => '/var/lib/mysql/mysql.sock',
         'host'     => '127.0.0.1',
         'port'     => 3306,
         'name'     => 'alamstores',

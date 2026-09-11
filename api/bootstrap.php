@@ -156,15 +156,35 @@ function send_security_headers(bool $html = false): void
 
 // ------------------------------------------------------------------- base
 
+/**
+ * Construit le DSN PDO à partir de la configuration.
+ *
+ * Trois formes acceptées, dans cet ordre : un `dsn` complet, un `socket` Unix,
+ * ou le couple host/port. Beaucoup d'hébergements (Webuzo, CloudLinux…) ne
+ * répondent pas sur « localhost » mais sur un socket ou sur 127.0.0.1 —
+ * admin/setup.php essaie les trois et écrit ici celle qui a marché.
+ */
+function db_dsn(array $d): string
+{
+    if (!empty($d['dsn'])) {
+        return (string) $d['dsn'];
+    }
+    $charset = $d['charset'] ?? 'utf8mb4';
+    if (!empty($d['socket'])) {
+        return sprintf('mysql:unix_socket=%s;dbname=%s;charset=%s',
+                       $d['socket'], $d['name'] ?? '', $charset);
+    }
+    return sprintf('mysql:host=%s;port=%d;dbname=%s;charset=%s',
+                   $d['host'] ?? 'localhost', (int) ($d['port'] ?? 3306),
+                   $d['name'] ?? '', $charset);
+}
+
 function db(): PDO
 {
     static $pdo = null;
     if ($pdo === null) {
         $d = cfg('db');
-        // Un `dsn` explicite l'emporte : utile pour une connexion par socket
-        // Unix, ou pour la base de test utilisée par tools/test_api.php.
-        $dsn = $d['dsn'] ?? sprintf('mysql:host=%s;port=%d;dbname=%s;charset=%s',
-                                    $d['host'], (int) $d['port'], $d['name'], $d['charset']);
+        $dsn = db_dsn($d);
         $pdo = new PDO($dsn, $d['user'] ?? null, $d['password'] ?? null, [
             // Requêtes préparées côté serveur : pas d'échappement fait maison,
             // donc pas d'injection SQL possible par concaténation.

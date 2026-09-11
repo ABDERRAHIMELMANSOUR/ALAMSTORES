@@ -35,17 +35,106 @@ function h($v): string
 }
 
 /** Connexion PDO à partir des valeurs saisies ou du fichier existant. */
+/**
+ * Construit le DSN PDO. Copie de la fonction du même nom dans
+ * api/bootstrap.php : cette page doit rester autonome, elle s'exécute avant
+ * que api/config.php existe.
+ */
+function db_dsn(array $d): string
+{
+    $charset = $d['charset'] ?? 'utf8mb4';
+    if (!empty($d['dsn'])) {
+        return (string) $d['dsn'];
+    }
+    if (!empty($d['socket'])) {
+        return sprintf('mysql:unix_socket=%s;dbname=%s;charset=%s',
+                       $d['socket'], $d['name'] ?? '', $charset);
+    }
+    return sprintf('mysql:host=%s;port=%d;dbname=%s;charset=%s',
+                   $d['host'] ?? 'localhost', (int) ($d['port'] ?? 3306),
+                   $d['name'] ?? '', $charset);
+}
+
 function connect(array $db): PDO
 {
-    // Un `dsn` explicite l'emporte, comme dans api/bootstrap.php.
-    $dsn = $db['dsn'] ?? sprintf('mysql:host=%s;port=%d;dbname=%s;charset=utf8mb4',
-                                 $db['host'] ?? '', (int) ($db['port'] ?? 3306),
-                                 $db['name'] ?? '');
-    return new PDO($dsn, $db['user'] ?? null, $db['password'] ?? null, [
+    return new PDO(db_dsn($db), $db['user'] ?? null, $db['password'] ?? null, [
         PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         PDO::ATTR_EMULATE_PREPARES   => false,
     ]);
+}
+
+/**
+ * Les adresses à essayer, dans l'ordre, pour joindre MySQL.
+ *
+ * « localhost » échoue sur beaucoup d'hébergements (Webuzo, CloudLinux…) :
+ * il passe par un socket Unix dont le chemin n'est pas celui par défaut,
+ * alors que 127.0.0.1 passe par le réseau et marche. Plutôt que de faire
+ * deviner l'utilisateur, on essaie les possibilités courantes.
+ */
+function host_candidates(string $typed): array
+{
+    $out = [];
+    $typed = trim($typed);
+    if ($typed !== '' && strpos($typed, '/') === 0) {
+        $out[] = ['socket' => $typed, 'label' => 'socket ' . $typed];
+    } elseif ($typed !== '') {
+        $out[] = ['host' => $typed, 'label' => $typed];
+    }
+    foreach (['localhost', '127.0.0.1'] as $h) {
+        $out[] = ['host' => $h, 'label' => $h];
+    }
+    foreach ([
+        '/var/lib/mysql/mysql.sock',
+        '/tmp/mysql.sock',
+        '/var/run/mysqld/mysqld.sock',
+        '/usr/local/emps/var/mysql/mysql.sock',   // Webuzo
+        '/usr/local/mysql/data/mysql.sock',
+    ] as $sock) {
+        $out[] = ['socket' => $sock, 'label' => 'socket ' . $sock];
+    }
+
+    // Dédoublonnage en gardant l'ordre : la valeur saisie reste prioritaire.
+    $seen = [];
+    return array_values(array_filter($out, static function ($c) use (&$seen) {
+        $key = ($c['socket'] ?? '') . '|' . ($c['host'] ?? '');
+        if (isset($seen[$key])) {
+            return false;
+        }
+        $seen[$key] = true;
+        return true;
+    }));
+}
+
+/**
+ * Essaie chaque adresse et renvoie la première qui répond.
+ *
+ * Renvoie [PDO, réglage retenu, journal des essais]. Si aucune ne marche, le
+ * journal explique ce qui a été tenté — c'est ce qu'on affiche à l'écran.
+ */
+function connect_any(array $db): array
+{
+    $log = [];
+    foreach (host_candidates((string) ($db['host'] ?? '')) as $candidate) {
+        $attempt = $db;
+        unset($attempt['host'], $attempt['socket']);
+        if (isset($candidate['socket'])) {
+            // Un socket qui n'existe pas : inutile d'attendre le délai réseau.
+            if (!file_exists($candidate['socket'])) {
+                continue;
+            }
+            $attempt['socket'] = $candidate['socket'];
+        } else {
+            $attempt['host'] = $candidate['host'];
+        }
+        try {
+            $pdo = connect($attempt);
+            return [$pdo, $attempt, $log];
+        } catch (Throwable $e) {
+            $log[] = $candidate['label'] . ' — ' . $e->getMessage();
+        }
+    }
+    return [null, null, $log];
 }
 
 /** Le fichier de configuration, tel qu'il doit être écrit. */
@@ -58,12 +147,17 @@ function config_source(array $db, array $emails, string $salt, array $captcha): 
     foreach ($emails as $mail) {
         $list .= "        " . $q($mail) . ",\n";
     }
+    // Suivant ce qui a répondu : une adresse réseau, ou un socket Unix.
+    $where = isset($db['socket'])
+        ? "        'socket'   => " . $q($db['socket']) . ",\n"
+        : "        'host'     => " . $q($db['host'] ?? 'localhost') . ",\n"
+          . "        'port'     => " . (int) ($db['port'] ?? 3306) . ",\n";
+
     return "<?php\n"
         . "// Généré par admin/setup.php. Ne jamais versionner ce fichier.\n"
         . "return [\n"
         . "    'db' => [\n"
-        . "        'host'     => " . $q($db['host']) . ",\n"
-        . "        'port'     => " . (int) $db['port'] . ",\n"
+        . $where
         . "        'name'     => " . $q($db['name']) . ",\n"
         . "        'user'     => " . $q($db['user']) . ",\n"
         . "        'password' => " . $q($db['password']) . ",\n"
@@ -105,7 +199,9 @@ if (is_array($config) && !empty($config['db'])) {
     try {
         $pdo = connect($config['db']);
     } catch (Throwable $e) {
-        $pdo = null;                 // identifiants erronés : on repart de l'étape 1
+        // Le fichier existe mais l'adresse ne répond plus : on retente les
+        // autres formes avant de renvoyer l'utilisateur à l'étape 1.
+        [$pdo] = connect_any($config['db']);
     }
     if ($pdo) {
         // Interroger la table est plus portable que SHOW TABLES, et répond à la
@@ -142,9 +238,10 @@ if ($hasAdmin && empty($_POST['selfdestruct'])) {
 }
 
 // -------------------------------------------------------------- traitement ---
-$errors  = [];
-$notices = [];
-$step    = 1;
+$errors   = [];
+$notices  = [];
+$step     = 1;
+$attempts = [];        // journal des adresses essayées, affiché en cas d'échec
 $configSource = null;
 
 if ($hasAdmin && !empty($_POST['selfdestruct'])) {
@@ -213,12 +310,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($db['name'] === '' || $db['user'] === '') {
             $errors[] = 'Nom de la base et utilisateur sont obligatoires.';
         } else {
-            try {
-                $pdo = connect($db);
+            [$pdo, $working, $log] = connect_any($db);
+            if (!$pdo) {
+                $attempts = $log;
+                $errors[] = 'Aucune des adresses essayées ne répond. Vérifiez le nom '
+                          . 'de la base, l’utilisateur et le mot de passe — et que '
+                          . 'l’utilisateur est bien rattaché à la base avec tous les '
+                          . 'privilèges.';
+            } else {
+                $db = $working;
+                if (isset($db['socket'])) {
+                    $notices[] = 'Connexion réussie par le socket ' . $db['socket']
+                               . ' (« localhost » ne répondait pas).';
+                } elseif (($db['host'] ?? '') !== trim((string) ($_POST['host'] ?? ''))) {
+                    $notices[] = 'Connexion réussie sur ' . $db['host']
+                               . ' (l’adresse saisie ne répondait pas).';
+                }
                 $source = config_source($db, $emails, bin2hex(random_bytes(32)), $captcha);
                 if (@file_put_contents(CONFIG_PATH, $source) !== false) {
                     @chmod(CONFIG_PATH, 0640);
-                    $notices[] = 'Connexion réussie. api/config.php a été créé.';
+                    $notices[] = 'api/config.php a été créé.';
                     $step = 2;
                 } else {
                     // Dossier non inscriptible : on affiche le fichier à déposer.
@@ -228,9 +339,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                               . 'Téléchargez le fichier ci-dessous, envoyez-le dans '
                               . 'api/ avec FileZilla, puis rechargez cette page.';
                 }
-            } catch (Throwable $e) {
-                $pdo = null;
-                $errors[] = 'Connexion refusée : ' . $e->getMessage();
             }
         }
     }
@@ -337,6 +445,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <p class="msg msg--ok"><?= h($n) ?></p>
     <?php endforeach; ?>
 
+    <?php if ($attempts): ?>
+      <details style="margin-bottom:14px">
+        <summary class="hint" style="cursor:pointer">Voir ce qui a été essayé
+           (<?= count($attempts) ?> adresses)</summary>
+        <pre><?php foreach ($attempts as $a) { echo h($a), "\n"; } ?></pre>
+        <p class="hint">Si la même erreur revient partout — « Access denied »,
+           « Unknown database » — le problème n'est pas l'adresse du serveur mais
+           les identifiants, ou l'utilisateur qui n'est pas rattaché à la base.</p>
+      </details>
+    <?php endif; ?>
+
     <?php if ($step === 1): ?>
       <h2>1. Connexion à la base</h2>
       <p class="lede">Ces informations viennent de votre hébergeur (cPanel →
@@ -347,10 +466,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <input type="hidden" name="action" value="config">
         <div class="grid2">
           <div><label for="host">Serveur</label>
-            <input id="host" name="host" type="text" value="localhost" required></div>
+            <input id="host" name="host" type="text" value="localhost"></div>
           <div><label for="port">Port</label>
             <input id="port" name="port" type="number" value="3306"></div>
         </div>
+        <p class="hint">Laissez <code>localhost</code> si vous ne savez pas.
+           Si ça ne répond pas, l'installateur essaie tout seul
+           <code>127.0.0.1</code> puis les sockets MySQL habituels, et retient
+           celui qui marche. Vous pouvez aussi coller directement un chemin de
+           socket (il commence par <code>/</code>).</p>
         <label for="name">Nom de la base</label>
         <input id="name" name="name" type="text" required placeholder="ex. alamstor_site">
         <label for="user">Utilisateur</label>
